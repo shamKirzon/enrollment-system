@@ -1,1 +1,3 @@
-// place files you want to import through the `$lib` alias in this folder.
+export function capitalizeFirstLetter(str: string) {
+	return str.charAt(0).toUpperCase() + str.slice(1);
+}

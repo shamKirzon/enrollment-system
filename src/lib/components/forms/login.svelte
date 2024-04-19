@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
-	import { registerSchema, type LoginSchema } from '$lib/schemas/auth';
+	import { type LoginSchema, loginSchema } from '$lib/schemas/auth';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-sonner';
@@ -11,7 +11,7 @@
 	let loadingToast: string | number | undefined;
 
 	const form = superForm(data, {
-		validators: zodClient(registerSchema),
+		validators: zodClient(loginSchema),
 		onSubmit: () => {
 			loadingToast = toast.loading('Logging in...');
 		},
@@ -20,6 +20,7 @@
 		},
 		onResult: ({ result }) => {
 			toast.dismiss(loadingToast);
+			console.log(result);
 
 			switch (result.type) {
 				case 'success':
@@ -48,7 +49,7 @@
 	<Form.Field {form} name="email">
 		<Form.Control let:attrs>
 			<Form.Label>Email</Form.Label>
-			<Input {...attrs} bind:value={$formData.email} required />
+			<Input {...attrs} bind:value={$formData.email} type="email" required />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -56,7 +57,7 @@
 	<Form.Field {form} name="password">
 		<Form.Control let:attrs>
 			<Form.Label>Password</Form.Label>
-			<Input {...attrs} type="password" bind:value={$formData.password} required />
+			<Input {...attrs} bind:value={$formData.password} type="password" required />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>

@@ -4,6 +4,8 @@ import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { loginSchema } from '$lib/schemas/auth';
 import { BACKEND_URL } from '$env/static/private';
+import type { Result } from '$lib/types';
+import { Role, type User } from '$lib/types/user';
 
 export const load: PageServerLoad = async () => {
 	return {
@@ -15,7 +17,7 @@ export const actions: Actions = {
 	default: async (event) => {
 		const form = await superValidate(event, zod(loginSchema));
 
-		console.log('Registering user...');
+		console.log('Logging in...');
 
 		if (!form.valid) {
 			console.error('Invalid form data.');
@@ -33,14 +35,19 @@ export const actions: Actions = {
 			}
 		});
 
-		const { message }: { message: string } = await response.json();
+		const result: Result<{ user: User }> = await response.json();
 
-		console.log(message);
+		console.log(result);
 
-		if (!response.ok) {
-			error(response.status, `ERROR ${response.status}: ${message}`);
+		if (!response.ok || !result.data) {
+			error(response.status, `ERROR ${response.status}: ${result.message}`);
 		}
 
-		redirect(303, '/dashboard');
+		event.cookies.set('session', `${result.data.user.id}`, { path: '/' });
+
+		const dashboardRoute =
+			result.data?.user.role === Role.Admin ? '/admin/dashboard' : '/dashboard';
+
+		redirect(303, dashboardRoute);
 	}
 };

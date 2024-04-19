@@ -7,7 +7,7 @@ import pcsAnnex2 from './pcsAnnex2.webp';
 // import kessokuBand from './KessokuBand.webp';
 // import qrCode from './pcsQrCode.webp';
 // import pcsMembers from './pcsMembers.webp';
-import pcsLogoNew from './pcsLogoNew.webp';
+import pcsLogo from './pcsLogoNew.webp';
 import pcsLogoNewOutlineWhite from './pcsLogoNewOutlineWhite.webp';
 import logoLeaf from './logoLeaf.webp';
 import logoCandleBook from './logoCandleBook.webp';
@@ -27,11 +27,11 @@ import seniorHighDepartment from './seniorHighDepartment.webp';
 import kinaadman from './kinaadman.webp';
 import kinaadman2 from './kinaadman2.webp';
 import kinaadman3 from './kinaadman3.webp';
-import bsp from './bsp.webp';;
+import bsp from './bsp.webp';
 import mathquizbee from './mathquizbee.webp';
 import confirmation from './confirmation.webp';
 import confirmation2 from './confirmation2.webp';
-import equalizer from './equalizer.webp'
+import equalizer from './equalizer.webp';
 
 export {
 	gradeSchool,
@@ -42,7 +42,7 @@ export {
 	seniorHighDepartment,
 	pcsAnnex2,
 	pcsAnnex,
-	pcsLogoNew,
+	pcsLogo,
 	pcsLogoNewOutlineWhite,
 	logoLeaf,
 	logoCandleBook,
@@ -59,5 +59,5 @@ export {
 	mathquizbee,
 	confirmation,
 	confirmation2,
-	equalizer,
+	equalizer
 };

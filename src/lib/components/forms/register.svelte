@@ -93,5 +93,6 @@
 		<Form.FieldErrors />
 	</Form.Field>
 
+	<a href="/login" class="underline text-sm">Already have an account?</a>
 	<Form.Button class="mt-4">Submit</Form.Button>
 </form>
