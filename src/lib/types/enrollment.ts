@@ -1,18 +1,18 @@
 export type AcademicYear = {
 	id: number;
-	year: string;
-	start_at: Date;
-	end_at: Date;
+	start_at: string;
+	end_at: string;
 	status: AcademicYearStatus;
 };
 
 export type AcademicYearWithStudentCount = AcademicYear & {
+	year: string;
 	student_count: number;
 };
 
 export enum AcademicYearStatus {
 	Upcoming = 'upcoming',
 	Open = 'open',
-	Ongoing = 'Ongoing',
+	Ongoing = 'ongoing',
 	Finished = 'finished'
 }

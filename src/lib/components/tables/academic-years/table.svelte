@@ -7,11 +7,12 @@
 	import { capitalizeFirstLetter } from '$lib';
 	import { Badge } from '$lib/components/ui/badge';
 	import { academicYearStatusMap } from './utils';
+	import { format } from 'date-fns';
 
 	export let data: AcademicYearWithStudentCount[];
 
-	const table = createTable(readable(data));
-	const columns = table.createColumns([
+	$: table = createTable(readable(data));
+	$: columns = table.createColumns([
 		table.column({
 			accessor: 'year',
 			header: 'Year'
@@ -36,15 +37,22 @@
 			}
 		}),
 		table.column({
-			accessor: ({ id }) => id,
+			accessor: ({ id, start_at, end_at, status }) => {
+				return {
+					id,
+					start_at,
+					end_at,
+					status
+				};
+			},
 			header: '',
 			cell: ({ value }) => {
-				return createRender(TableActions, { id: value });
+				return createRender(TableActions, { academicYear: value });
 			}
 		})
 	]);
 
-	const { headerRows, pageRows, tableAttrs, tableBodyAttrs } = table.createViewModel(columns);
+	$: ({ headerRows, pageRows, tableAttrs, tableBodyAttrs } = table.createViewModel(columns));
 </script>
 
 <Table.Root {...$tableAttrs}>
@@ -79,6 +87,11 @@
 											<Render of={cell.render()} />
 										</span>
 									</Badge>
+								{:else if cell.id === 'year'}
+									{@const academicYear = cell.row.original}
+									<span>
+										{format(academicYear.start_at, 'yyyy')}-{format(academicYear.end_at, 'yyyy')}
+									</span>
 								{:else}
 									<Render of={cell.render()} />
 								{/if}

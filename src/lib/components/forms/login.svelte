@@ -62,5 +62,6 @@
 		<Form.FieldErrors />
 	</Form.Field>
 
+	<a href="/register" class="underline text-xs">Don't have an account?</a>
 	<Form.Button class="mt-4">Submit</Form.Button>
 </form>

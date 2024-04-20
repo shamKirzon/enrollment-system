@@ -6,7 +6,7 @@ export type Route = {
 	icon?: ComponentType<SvelteComponent>;
 };
 
-export type Result<T> = {
+export type Result<T = undefined> = {
 	message: string;
 	data?: T;
 };

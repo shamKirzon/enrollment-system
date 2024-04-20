@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { RegisterForm } from '$lib/components/forms';
+	import { GuestLayout } from '$lib/components/layouts';
 	import * as Card from '$lib/components/ui/card';
 
 	export let data;
 </script>
 
-<div class="flex justify-center items-center min-h-screen bg-gray-100">
+<GuestLayout>
 	<Card.Root class="w-full max-w-md">
 		<Card.Header>
 			<Card.Title class="text-2xl">Register</Card.Title>
@@ -15,4 +16,4 @@
 			<RegisterForm data={data.form} />
 		</Card.Content>
 	</Card.Root>
-</div>
+</GuestLayout>

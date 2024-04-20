@@ -3,7 +3,10 @@
 	import { pcsLogo } from '$lib/assets/images';
 	import type { Route } from '$lib/types';
 	import { Role, type User } from '$lib/types/user';
-	import { Dashboard } from 'svelte-radix';
+	// import { Dashboard } from 'svelte-radix';
+	import Users from 'virtual:icons/mdi/users';
+	import Dashboard from 'virtual:icons/radix-icons/dashboard';
+	import School from 'virtual:icons/lucide/school';
 
 	export let user: User;
 
@@ -23,7 +26,13 @@
 		},
 		{
 			name: 'Enrollments',
-			path: '/admin/enrollments'
+			path: '/admin/enrollments',
+			icon: School
+		},
+		{
+			name: 'Users',
+			path: '/admin/users',
+			icon: Users
 		}
 	];
 
@@ -42,9 +51,12 @@
 			{@const isCurrentPath = $page.url.pathname === route.path}
 			<a
 				href={route.path}
-				class={`flex gap-2 items-center ${isCurrentPath ? 'text-black' : 'text-muted-foreground'}`}
+				class={`flex gap-2 items-center py-2 ${isCurrentPath ? 'text-black' : 'text-muted-foreground'}`}
 			>
-				{route.name}
+				<svelte:component this={route.icon} class="text-2xl" />
+				<span class="text-sm md:text-base lg:text-lg font-medium">
+					{route.name}
+				</span>
 			</a>
 		{/each}
 	</nav>
