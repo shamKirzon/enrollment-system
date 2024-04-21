@@ -22,13 +22,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const userData = await event.locals.getUserData();
 	const user = userData.data?.user;
 
-	if (!event.route.id?.startsWith('/(auth)') && event.url.pathname === '/') {
-		if (!session) {
-			redirect(303, '/login');
-		}
+	if (!event.route.id?.startsWith('/(auth)') && !session) {
+		redirect(303, '/login');
 	}
 
-	if (event.route.id?.startsWith('/(auth)') && session) {
+	if ((event.route.id?.startsWith('/(auth)') || event.route.id === '/') && session) {
 		if (user?.role === Role.Admin) {
 			redirect(303, '/admin/dashboard');
 		}

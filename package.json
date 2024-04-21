@@ -41,6 +41,7 @@
 		"@internationalized/date": "^3.5.2",
 		"bits-ui": "^0.21.4",
 		"clsx": "^2.1.0",
+		"cmdk-sv": "^0.0.17",
 		"date-fns": "^3.6.0",
 		"formsnap": "^1.0.0",
 		"mode-watcher": "^0.3.0",

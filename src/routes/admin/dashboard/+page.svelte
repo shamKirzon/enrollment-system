@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { CreateAcademicYearForm } from '$lib/components/forms';
+	import { ContentLayout } from '$lib/components/layouts';
 	import { AcademicYearsTable } from '$lib/components/tables';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
@@ -9,16 +10,20 @@
 
 	export let data;
 
+	let totalStudents = 0;
+
+	data.academicYears?.map((ay) => (totalStudents += ay.student_count));
+
 	setContext('form', data.form);
 </script>
 
-<div class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-12 flex w-full gap-2 h-full">
+<ContentLayout>
 	<div class="flex flex-col gap-2 flex-[2_2_0%] h-full">
 		<div class="flex gap-2">
 			<Card.Root>
 				<Card.Header>
 					<Card.Description>Students Enrolled</Card.Description>
-					<Card.Title class="text-4xl">100,000</Card.Title>
+					<Card.Title class="text-4xl">{totalStudents}</Card.Title>
 				</Card.Header>
 			</Card.Root>
 		</div>
@@ -52,4 +57,4 @@
 			</Card.Content>
 		</Card.Root>
 	</div>
-</div>
+</ContentLayout>

@@ -10,3 +10,9 @@ export type Result<T = undefined> = {
 	message: string;
 	data?: T;
 };
+
+export type StatusBadge = {
+	color: string;
+	icon: ComponentType<SvelteComponent>;
+	variant?: 'default' | 'secondary' | 'destructive' | 'outline';
+};

@@ -19,11 +19,17 @@
 		}),
 		table.column({
 			accessor: 'start_at',
-			header: 'Start'
+			header: 'Start',
+			cell: ({ value }) => {
+				return `${format(value, 'MMMM')} ${format(value, 'd')}`;
+			}
 		}),
 		table.column({
 			accessor: 'end_at',
-			header: 'End'
+			header: 'End',
+			cell: ({ value }) => {
+				return `${format(value, 'MMMM')} ${format(value, 'd')}`;
+			}
 		}),
 		table.column({
 			accessor: 'student_count',
