@@ -5,7 +5,11 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Button } from '$lib/components/ui/button';
 	import CirclePlusOutline from 'virtual:icons/flowbite/circle-plus-outline';
-	import { AcademicYearsCombobox, EnrollmentStatusCombobox } from '$lib/components/combobox';
+	import {
+		AcademicYearsCombobox,
+		EnrollmentStatusCombobox,
+		YearLevelCombobox
+	} from '$lib/components/combobox';
 
 	export let data;
 
@@ -20,7 +24,10 @@
 
 <ContentLayout class="flex-col">
 	<div class="flex gap-2 justify-between">
-		<AcademicYearsCombobox {academicYears} />
+		<div class="flex gap-2">
+			<AcademicYearsCombobox {academicYears} />
+			<YearLevelCombobox yearLevels={data.yearLevels} />
+		</div>
 		<EnrollmentStatusCombobox />
 	</div>
 

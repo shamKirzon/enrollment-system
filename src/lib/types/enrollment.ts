@@ -19,13 +19,13 @@ export enum AcademicYearStatus {
 export type Enrollment = {
 	id: number;
 	enrolled_at: string; // Date
-	level: string;
 	section?: string;
 	tuition_plan: string;
 	status: EnrollmentStatus;
 	payment_receipt_url: string;
 	student_id: number;
 	academic_year_id: number;
+	year_level: number;
 };
 
 export enum EnrollmentStatus {
@@ -39,4 +39,10 @@ export type EnrollmentWithDetails = Enrollment & {
 	first_name: string;
 	middle_name?: string;
 	last_name: string;
+	level: string;
+};
+
+export type YearLevel = {
+	id: string;
+	name: string;
 };

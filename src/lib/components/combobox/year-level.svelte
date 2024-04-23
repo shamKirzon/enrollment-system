@@ -6,26 +6,16 @@
 	import { Button } from '$lib/components/ui/button';
 	import { cn } from '$lib/utils';
 	import { tick } from 'svelte';
-	import { EnrollmentStatus } from '$lib/types/enrollment';
+	import type { YearLevel } from '$lib/types/enrollment';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 
-	const enrollmentStatuses = [
-		{
-			value: EnrollmentStatus.Pending,
-			label: 'Pending'
-		},
-		{
-			value: EnrollmentStatus.Done,
-			label: 'Done'
-		}
-	];
+	export let yearLevels: YearLevel[];
 
 	let open = false;
 	let value = '';
 
-	$: selectedValue =
-		enrollmentStatuses.find((f) => f.value === value)?.label ?? 'Select a status...';
+	$: selectedValue = yearLevels.find((f) => f.name === value)?.name ?? 'Select a year level...';
 
 	// We want to refocus the trigger button when the user selects
 	// an item from the list so users can continue navigating the
@@ -69,20 +59,20 @@
 	</Popover.Trigger>
 	<Popover.Content class="w-52 p-0">
 		<Command.Root>
-			<Command.Input placeholder="Search a status..." />
-			<Command.Empty>No status found.</Command.Empty>
+			<Command.Input placeholder="Search year level..." />
+			<Command.Empty>No year level found.</Command.Empty>
 			<Command.Group>
-				{#each enrollmentStatuses as status}
+				{#each yearLevels as yearLevel (yearLevel.id)}
 					<Command.Item
-						value={status.value}
+						value={yearLevel.name}
 						onSelect={(currentValue) => {
 							value = currentValue;
 							closeAndFocusTrigger(ids.trigger);
-							replaceSearchParam('status', value);
+							replaceSearchParam('level', `${yearLevel.id}`);
 						}}
 					>
-						<Check class={cn('mr-2 h-4 w-4', value !== status.value && 'text-transparent')} />
-						{status.label}
+						<Check class={cn('mr-2 h-4 w-4', value !== yearLevel.name && 'text-transparent')} />
+						{yearLevel.name}
 					</Command.Item>
 				{/each}
 			</Command.Group>
@@ -91,7 +81,7 @@
 				onSelect={() => {
 					value = '';
 					closeAndFocusTrigger(ids.trigger);
-					deleteSearchParam('status');
+					deleteSearchParam('level');
 				}}
 			>
 				<span class="ml-7"> Reset </span>

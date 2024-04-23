@@ -7,7 +7,8 @@
 	import { cn } from '$lib/utils';
 	import { tick } from 'svelte';
 	import { format } from 'date-fns';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll, replaceState } from '$app/navigation';
+	import { page } from '$app/stores';
 
 	// export let academicYears: string[];
 	export let academicYears: { id: number; start_at: string; end_at: string }[];
@@ -38,6 +39,22 @@
 			document.getElementById(triggerId)?.focus();
 		});
 	}
+
+	function replaceSearchParam(k: string, v: string) {
+		let query = new URLSearchParams($page.url.searchParams.toString());
+
+		query.set(k, v);
+
+		goto(`?${query.toString()}`);
+	}
+
+	function deleteSearchParam(k: string) {
+		let query = new URLSearchParams($page.url.searchParams.toString());
+
+		query.delete(k);
+
+		goto(`?${query.toString()}`);
+	}
 </script>
 
 <Popover.Root bind:open let:ids>
@@ -58,23 +75,13 @@
 			<Command.Input placeholder="Search academic years..." />
 			<Command.Empty>No academic years found.</Command.Empty>
 			<Command.Group>
-				<Command.Item
-					onSelect={() => {
-						value = '';
-						closeAndFocusTrigger(ids.trigger);
-						goto(`/admin/enrollments`);
-					}}
-				>
-					<span class="ml-6"> None </span>
-				</Command.Item>
 				{#each academicYears as { id, start_at, end_at } (id)}
 					<Command.Item
 						value={ayFormat(start_at, end_at)}
 						onSelect={(currentValue) => {
 							value = currentValue;
-							console.log(value);
 							closeAndFocusTrigger(ids.trigger);
-							goto(`/admin/enrollments?year=${id}`);
+							replaceSearchParam('year', `${id}`);
 						}}
 					>
 						<Check
@@ -84,6 +91,16 @@
 					</Command.Item>
 				{/each}
 			</Command.Group>
+			<Command.Separator />
+			<Command.Item
+				onSelect={() => {
+					value = '';
+					closeAndFocusTrigger(ids.trigger);
+					deleteSearchParam('year');
+				}}
+			>
+				<span class="ml-7"> Reset </span>
+			</Command.Item>
 		</Command.Root>
 	</Popover.Content>
 </Popover.Root>
