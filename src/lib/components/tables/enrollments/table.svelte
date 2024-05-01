@@ -6,6 +6,7 @@
 	import Badge from './badge.svelte';
 	import { format } from 'date-fns';
 	import TableActions from './table-actions.svelte';
+	import PaymentReceiptDialog from './payment-receipt-dialog.svelte';
 
 	export let data: EnrollmentWithDetails[];
 
@@ -38,8 +39,21 @@
 			header: 'Level'
 		}),
 		table.column({
-			accessor: 'payment_receipt_url',
-			header: 'Payment Receipt'
+			accessor: ({ first_name, middle_name, last_name, payment_receipt_url }) => {
+				return {
+					first_name,
+					middle_name,
+					last_name,
+					payment_receipt_url
+				};
+			},
+			header: 'Payment Receipt',
+			cell: ({ value }) => {
+				const studentName = `${value.last_name}, ${value.first_name} ${value.middle_name ? `${value.middle_name}.` : ''}`;
+				const paymentReceiptUrl = value.payment_receipt_url;
+
+				return createRender(PaymentReceiptDialog, { studentName, paymentReceiptUrl });
+			}
 		}),
 		table.column({
 			accessor: 'status',

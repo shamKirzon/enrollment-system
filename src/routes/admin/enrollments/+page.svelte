@@ -10,6 +10,7 @@
 		EnrollmentStatusCombobox,
 		YearLevelCombobox
 	} from '$lib/components/combobox';
+	import { EnrollmentsPagination } from '$lib/components/paginations';
 
 	export let data;
 
@@ -31,30 +32,36 @@
 		<EnrollmentStatusCombobox />
 	</div>
 
-	<Card.Root class="w-full">
-		<Card.Header class="flex flex-row items-center justify-between">
-			<div>
-				<Card.Title>Enrollments</Card.Title>
-				<Card.Description>A list of enrolled students.</Card.Description>
-			</div>
+	<div class="flex w-full h-full flex-col gap-2">
+		<!-- <div class="flex flex-col h-full bg-blue-200">fff</div> -->
+		<Card.Root class="w-full h-full flex flex-col overflow-y-auto">
+			<Card.Header class="flex flex-row items-center justify-between">
+				<div>
+					<Card.Title>Enrollments</Card.Title>
+					<Card.Description>A list of enrolled students.</Card.Description>
+				</div>
 
-			<Dialog.Root>
-				<Dialog.Trigger asChild let:builder>
-					<Button class="space-x-1" builders={[builder]}>
-						<CirclePlusOutline />
-						<span>Create</span>
-					</Button>
-				</Dialog.Trigger>
+				<Dialog.Root>
+					<Dialog.Trigger asChild let:builder>
+						<Button class="space-x-1" builders={[builder]}>
+							<CirclePlusOutline />
+							<span>Create</span>
+						</Button>
+					</Dialog.Trigger>
 
-				<Dialog.Content>
-					<Dialog.Header>
-						<Dialog.Title>Create a new enrollment entry</Dialog.Title>
-					</Dialog.Header>
-				</Dialog.Content>
-			</Dialog.Root>
-		</Card.Header>
-		<Card.Content>
-			<EnrollmentsTable data={data.enrollments} />
-		</Card.Content>
-	</Card.Root>
+					<Dialog.Content>
+						<Dialog.Header>
+							<Dialog.Title>Create a new enrollment entry</Dialog.Title>
+						</Dialog.Header>
+					</Dialog.Content>
+				</Dialog.Root>
+			</Card.Header>
+			<Card.Content class="h-full overflow-y-auto flex flex-col">
+				<EnrollmentsTable data={data.enrollments} />
+			</Card.Content>
+		</Card.Root>
+
+		<!-- <div class="h-10 w-full flex bg-red-500">foo</div> -->
+		<EnrollmentsPagination count={data.enrollmentCount} />
+	</div>
 </ContentLayout>

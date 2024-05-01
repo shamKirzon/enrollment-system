@@ -34,5 +34,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 		redirect(303, '/dashboard');
 	}
 
+	if (event.route.id?.startsWith('/admin') && user?.role === Role.Student) {
+		redirect(303, '/dashboard');
+	}
+
 	return await resolve(event);
 };

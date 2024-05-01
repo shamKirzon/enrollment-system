@@ -8,7 +8,9 @@ import type {
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ fetch, url }) => {
-	const getEnrollments = async (): Promise<Result<{ enrollments: EnrollmentWithDetails[] }>> => {
+	const getEnrollments = async (): Promise<
+		Result<{ enrollments: EnrollmentWithDetails[]; total_count: number }>
+	> => {
 		const searchParams = url.searchParams.toString();
 
 		let api = `${BACKEND_URL}/api/enrollments.php`;
@@ -18,7 +20,8 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 		}
 
 		const response = await fetch(api, { method: 'GET' });
-		const result: Result<{ enrollments: EnrollmentWithDetails[] }> = await response.json();
+		const result: Result<{ enrollments: EnrollmentWithDetails[]; total_count: number }> =
+			await response.json();
 
 		console.log(result.message);
 
@@ -50,6 +53,7 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 
 	return {
 		enrollments: enrollmentsData?.enrollments || [],
+		enrollmentCount: enrollmentsData?.total_count || 0,
 		academicYears: academicYearsData?.academic_years || [],
 		yearLevels: yearLevelsData?.year_levels || []
 	};

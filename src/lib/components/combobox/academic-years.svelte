@@ -7,7 +7,7 @@
 	import { cn } from '$lib/utils';
 	import { tick } from 'svelte';
 	import { format } from 'date-fns';
-	import { goto, invalidateAll, replaceState } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
 	// export let academicYears: string[];
