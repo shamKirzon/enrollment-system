@@ -1,17 +1,40 @@
 <script lang="ts">
 	import type { EnrollmentWithDetails } from '$lib/types/enrollment';
-	import { readable } from 'svelte/store';
+	import { readable, type Writable } from 'svelte/store';
 	import { createRender, createTable, Render, Subscribe } from 'svelte-headless-table';
 	import * as Table from '$lib/components/ui/table';
 	import Badge from './badge.svelte';
 	import { format } from 'date-fns';
 	import TableActions from './table-actions.svelte';
 	import PaymentReceiptDialog from './payment-receipt-dialog.svelte';
+	import { addSelectedRows } from 'svelte-headless-table/plugins';
+	import TableCheckbox from './table-checkbox.svelte';
 
 	export let data: EnrollmentWithDetails[];
+	export let selectedRows: Writable<number[]>;
 
-	$: table = createTable(readable(data));
+	$: table = createTable(readable(data), {
+		select: addSelectedRows()
+	});
+
 	$: columns = table.createColumns([
+		table.column({
+			accessor: 'id',
+			header: (_, { pluginStates }) => {
+				const { allPageRowsSelected } = pluginStates.select;
+				return createRender(TableCheckbox, {
+					checked: allPageRowsSelected
+				});
+			},
+			cell: ({ row }, { pluginStates }) => {
+				const { getRowState } = pluginStates.select;
+				const { isSelected } = getRowState(row);
+
+				return createRender(TableCheckbox, {
+					checked: isSelected
+				});
+			}
+		}),
 		table.column({
 			accessor: ({ first_name, middle_name, last_name }) => {
 				return {
@@ -71,7 +94,29 @@
 		})
 	]);
 
-	$: ({ headerRows, pageRows, tableAttrs, tableBodyAttrs } = table.createViewModel(columns));
+	$: ({ headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates, rows } =
+		table.createViewModel(columns));
+	$: ({ selectedDataIds } = pluginStates.select);
+
+	function getSelectedRowData(selectedData: Record<string, boolean>): void {
+		if (!selectedData) return;
+
+		const keys = Object.keys(selectedData || []);
+
+		$selectedRows = [];
+
+		keys.forEach((idx) => {
+			const i = Number(idx);
+
+			selectedRows.update(($row) => {
+				$row.push(data[i].id);
+
+				return $row;
+			});
+		});
+	}
+
+	$: getSelectedRowData($selectedDataIds);
 </script>
 
 <Table.Root {...$tableAttrs}>

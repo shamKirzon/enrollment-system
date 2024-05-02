@@ -6,7 +6,7 @@
 	export let data;
 </script>
 
-<Toaster richColors />
+<Toaster richColors closeButton />
 
 {#if data.session && data.user}
 	<Sidebar user={data.user} />

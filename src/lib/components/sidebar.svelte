@@ -1,12 +1,16 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { pcsLogo } from '$lib/assets/images';
-	import type { Route } from '$lib/types';
+	import type { Result, Route } from '$lib/types';
 	import { Role, type User } from '$lib/types/user';
 	// import { Dashboard } from 'svelte-radix';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import Users from 'virtual:icons/mdi/users';
 	import Dashboard from 'virtual:icons/radix-icons/dashboard';
 	import School from 'virtual:icons/lucide/school';
+	import { toast } from 'svelte-sonner';
+	import { invalidateAll } from '$app/navigation';
+	import { DotsHorizontal } from 'svelte-radix';
 
 	export let user: User;
 
@@ -37,6 +41,21 @@
 	];
 
 	const routes = user.role === Role.Admin ? ADMIN_ROUTES : ROUTES;
+
+	async function logout(): Promise<void> {
+		const response = await fetch('/api/logout', { method: 'post' });
+
+		const result: Result = await response.json();
+
+		if (!response.ok) {
+			toast.error(result.message);
+			return;
+		}
+
+		await invalidateAll();
+
+		toast.success(result.message);
+	}
 </script>
 
 <aside
@@ -60,4 +79,21 @@
 			</a>
 		{/each}
 	</nav>
+
+	<DropdownMenu.Root>
+		<DropdownMenu.Trigger class="mt-auto text-start flex items-center justify-between">
+			<span>
+				{user.first_name}
+				{user.last_name}
+			</span>
+			<DotsHorizontal size={16} />
+		</DropdownMenu.Trigger>
+		<DropdownMenu.Content class="w-52">
+			<DropdownMenu.Group>
+				<DropdownMenu.Label>My Account</DropdownMenu.Label>
+				<DropdownMenu.Separator />
+				<DropdownMenu.Item on:click={logout}>Log Out</DropdownMenu.Item>
+			</DropdownMenu.Group>
+		</DropdownMenu.Content>
+	</DropdownMenu.Root>
 </aside>
