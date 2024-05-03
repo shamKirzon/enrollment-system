@@ -6,18 +6,43 @@ import { error, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
+import type { User, UserCount } from '$lib/types/user';
 
-export const load: PageServerLoad = async ({ fetch }) => {
-	const response = await fetch(`${BACKEND_URL}/academic-years/academic-years.php`, {
-		method: 'GET'
-	});
-	const result: Result<{ academic_years: AcademicYearWithStudentCount[] }> = await response.json();
+export const load: PageServerLoad = async ({ fetch, url }) => {
+	const getAcademicYears = async () => {
+		const searchParams = url.searchParams.toString();
 
-	console.log(result.message);
+		let api = `${BACKEND_URL}/api/academic-years.php`;
+
+		if (searchParams) {
+			api += `?${searchParams}`;
+		}
+
+		const response = await fetch(api, { method: 'GET' });
+		const result: Result<{ academic_years: AcademicYearWithStudentCount[]; count: number }> =
+			await response.json();
+
+		console.log(result.message);
+
+		return result;
+	};
+
+	const getUsers = async () => {
+		const response = await fetch(`${BACKEND_URL}/api/users.php`, { method: 'GET' });
+		const result: Result<{ users: User[]; count: UserCount[] }> = await response.json();
+
+		console.log(result.message);
+
+		return result;
+	};
+
+	const { data: academicYears } = await getAcademicYears();
+	const { data: users } = await getUsers();
 
 	return {
 		form: await superValidate(zod(academicYearSchema)),
-		academicYears: result.data?.academic_years || []
+		academicYears,
+		users
 	};
 };
 
@@ -36,7 +61,7 @@ export const actions: Actions = {
 			});
 		}
 
-		const response = await event.fetch(`${BACKEND_URL}/academic-years/academic-years.php`, {
+		const response = await event.fetch(`${BACKEND_URL}/api/academic-years.php`, {
 			method: 'POST',
 			body: JSON.stringify(form.data),
 			headers: {
@@ -72,16 +97,13 @@ export const actions: Actions = {
 			});
 		}
 
-		const response = await event.fetch(
-			`${BACKEND_URL}/academic-years/academic-years.php?id=${id}`,
-			{
-				method: 'PATCH',
-				body: JSON.stringify(form.data),
-				headers: {
-					'Content-Type': 'application/json'
-				}
+		const response = await event.fetch(`${BACKEND_URL}/api/academic-years.php?id=${id}`, {
+			method: 'PATCH',
+			body: JSON.stringify(form.data),
+			headers: {
+				'Content-Type': 'application/json'
 			}
-		);
+		});
 
 		const result: Result = await response.json();
 

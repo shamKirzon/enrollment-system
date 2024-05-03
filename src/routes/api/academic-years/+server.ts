@@ -9,7 +9,7 @@ export const DELETE: RequestHandler = async ({ fetch, url }) => {
 		error(404, 'Academic year ID not found.');
 	}
 
-	const response = await fetch(`${BACKEND_URL}/academic-years/academic-years.php?id=${id}`, {
+	const response = await fetch(`${BACKEND_URL}/api/academic-years.php?id=${id}`, {
 		method: 'DELETE'
 	});
 	const result: Result = await response.json();

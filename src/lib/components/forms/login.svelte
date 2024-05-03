@@ -20,7 +20,6 @@
 		},
 		onResult: ({ result }) => {
 			toast.dismiss(loadingToast);
-			console.log(result);
 
 			switch (result.type) {
 				case 'success':

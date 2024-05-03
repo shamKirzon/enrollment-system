@@ -49,13 +49,13 @@
 	<DropdownMenu.Content>
 		<DropdownMenu.Label>Actions</DropdownMenu.Label>
 		<DropdownMenu.Separator />
-		<DropdownMenu.Item class="space-x-1" on:click={() => (isOpen.edit = true)}>
+		<DropdownMenu.Item on:click={() => (isOpen.edit = true)}>
+			<span class="mr-auto"> Edit </span>
 			<EditIcon />
-			<span> Edit </span>
 		</DropdownMenu.Item>
-		<DropdownMenu.Item class="space-x-1" on:click={() => (isOpen.delete = true)}>
+		<DropdownMenu.Item class="text-destructive" on:click={() => (isOpen.delete = true)}>
+			<span class="mr-auto"> Delete </span>
 			<DeleteIcon />
-			<span> Delete </span>
 		</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>

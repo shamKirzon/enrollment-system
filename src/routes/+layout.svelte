@@ -12,6 +12,8 @@
 	<Sidebar user={data.user} />
 {/if}
 
-<main class={`min-h-screen h-screen bg-gray-100 ${data.session ? 'pl-60' : ''}`}>
+<main class={`min-h-screen h-full bg-gray-100 ${data.session ? 'pl-60' : ''}`}>
+	<!-- <div class="h-screen"> -->
 	<slot />
+	<!-- </div> -->
 </main>

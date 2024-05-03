@@ -1,44 +1,16 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { pcsLogo } from '$lib/assets/images';
-	import type { Result, Route } from '$lib/types';
+	import type { Result } from '$lib/types';
 	import { Role, type User } from '$lib/types/user';
 	// import { Dashboard } from 'svelte-radix';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import Users from 'virtual:icons/mdi/users';
-	import Dashboard from 'virtual:icons/radix-icons/dashboard';
-	import School from 'virtual:icons/lucide/school';
 	import { toast } from 'svelte-sonner';
 	import { invalidateAll } from '$app/navigation';
 	import { DotsHorizontal } from 'svelte-radix';
+	import { ADMIN_ROUTES, ROUTES } from '$lib';
 
 	export let user: User;
-
-	const ROUTES: Route[] = [
-		{
-			name: 'Dashboard',
-			path: '/dashboard',
-			icon: Dashboard
-		}
-	];
-
-	const ADMIN_ROUTES: Route[] = [
-		{
-			name: 'Dashboard',
-			path: '/admin/dashboard',
-			icon: Dashboard
-		},
-		{
-			name: 'Enrollments',
-			path: '/admin/enrollments',
-			icon: School
-		},
-		{
-			name: 'Users',
-			path: '/admin/users',
-			icon: Users
-		}
-	];
 
 	const routes = user.role === Role.Admin ? ADMIN_ROUTES : ROUTES;
 

@@ -6,6 +6,13 @@ export type User = {
 	contact_number: string;
 	email: string;
 	role: Role;
+	created_at: string;
+	updated_at: string;
+};
+
+export type UserCount = {
+	role: Role;
+	value: number;
 };
 
 export enum Role {

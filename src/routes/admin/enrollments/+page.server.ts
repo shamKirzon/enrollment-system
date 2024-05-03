@@ -9,7 +9,7 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ fetch, url }) => {
 	const getEnrollments = async (): Promise<
-		Result<{ enrollments: EnrollmentWithDetails[]; total_count: number }>
+		Result<{ enrollments: EnrollmentWithDetails[]; count: number }>
 	> => {
 		const searchParams = url.searchParams.toString();
 
@@ -20,7 +20,7 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 		}
 
 		const response = await fetch(api, { method: 'GET' });
-		const result: Result<{ enrollments: EnrollmentWithDetails[]; total_count: number }> =
+		const result: Result<{ enrollments: EnrollmentWithDetails[]; count: number }> =
 			await response.json();
 
 		console.log(result.message);
@@ -53,7 +53,7 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 
 	return {
 		enrollments: enrollmentsData?.enrollments || [],
-		enrollmentCount: enrollmentsData?.total_count || 0,
+		enrollmentCount: enrollmentsData?.count || 0,
 		academicYears: academicYearsData?.academic_years || [],
 		yearLevels: yearLevelsData?.year_levels || []
 	};
