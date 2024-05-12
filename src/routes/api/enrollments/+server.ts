@@ -3,6 +3,23 @@ import type { Result } from '$lib/types';
 import type { Enrollment } from '$lib/types/enrollment';
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 
+export const POST: RequestHandler = async ({ fetch, request }) => {
+	const data = await request.json();
+
+	const response = await fetch(`${BACKEND_URL}/api/enrollments.php`, {
+		method: 'POST',
+		body: JSON.stringify(data),
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	});
+	const result: Result = await response.json();
+
+	console.log(result.message);
+
+	return json({});
+};
+
 export const DELETE: RequestHandler = async ({ fetch, url, request }) => {
 	// const id = url.searchParams.get('id');
 	//

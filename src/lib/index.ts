@@ -38,3 +38,8 @@ export const ADMIN_ROUTES: Route[] = [
 		icon: Users
 	}
 ];
+
+export const COLORS = {
+	primary: 'rgb(73, 34, 20)',
+	secondary: 'rgb(205, 127, 0)'
+};

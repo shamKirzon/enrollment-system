@@ -1,4 +1,3 @@
-import AcademicYears from './academic-years/table.svelte';
-import Enrollments from './enrollments/table.svelte';
+import Enrollment from './enrollment.svelte';
 
-export { AcademicYears as AcademicYearsTable, Enrollments as EnrollmentsTable };
+export { Enrollment as TableEnrollment };

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ContentLayout } from '$lib/components/layouts/index.js';
-	import { EnrollmentsTable } from '$lib/components/tables';
+	import { EnrollmentsTable } from '$lib/components/tables/admin';
 	import * as Card from '$lib/components/ui/card';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Button } from '$lib/components/ui/button';
