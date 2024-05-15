@@ -1,6 +1,10 @@
 <script lang="ts">
 	import * as Table from '$lib/components/ui/table';
 	import * as Card from '$lib/components/ui/card';
+	import type { AcademicYearEnrollment } from '$lib/types/enrollment';
+	import { format } from 'date-fns';
+
+	export let enrollments: AcademicYearEnrollment[];
 </script>
 
 <Card.Root>
@@ -20,13 +24,17 @@
 				</Table.Row>
 			</Table.Header>
 			<Table.Body>
-				<Table.Row>
-					<Table.Cell class="font-medium">year</Table.Cell>
-					<Table.Cell>Level</Table.Cell>
-					<Table.Cell>Section</Table.Cell>
-					<Table.Cell>A</Table.Cell>
-					<Table.Cell>badge</Table.Cell>
-				</Table.Row>
+				{#each enrollments as enrollment (enrollment.academic_year_id)}
+					{@const year = `${format(enrollment.start_at, 'yyyy')} - ${format(enrollment.end_at, 'yyyy')}`}
+
+					<Table.Row>
+						<Table.Cell class="font-medium">{year}</Table.Cell>
+						<Table.Cell>{enrollment.year_level}</Table.Cell>
+						<Table.Cell>{enrollment.section || '---'}</Table.Cell>
+						<Table.Cell>{enrollment.tuition_plan || '---'}</Table.Cell>
+						<Table.Cell>{enrollment.enrollment_status}</Table.Cell>
+					</Table.Row>
+				{/each}
 			</Table.Body>
 		</Table.Root>
 	</Card.Content>

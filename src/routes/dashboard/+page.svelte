@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { TableEnrollment } from '$lib/components/tables';
+	import { buttonVariants } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { setContext } from 'svelte';
 
@@ -16,9 +17,14 @@
 					<Card.Title>You are not enrolled</Card.Title>
 					<Card.Description>hello world</Card.Description>
 				</Card.Header>
+				<Card.Content>
+					<p>Pls enroll (´,,•ω•,,)♡</p>
+
+					<a href="/enrollments" class={buttonVariants({ variant: 'default' })}> Enroll </a>
+				</Card.Content>
 			</Card.Root>
 		</div>
 
-		<TableEnrollment />
+		<TableEnrollment enrollments={data.enrollments.data?.academic_year_enrollments || []} />
 	</div>
 </div>

@@ -46,3 +46,15 @@ export type YearLevel = {
 	id: string;
 	name: string;
 };
+
+export type AcademicYearEnrollment = {
+	academic_year_id: number;
+	start_at: string;
+	end_at: string;
+	academic_year_status: AcademicYearStatus;
+	tuition_plan: string;
+	enrollment_status: EnrollmentStatus;
+	section?: string;
+	enrolled_at: string;
+	year_level: string;
+};

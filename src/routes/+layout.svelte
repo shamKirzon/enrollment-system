@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Sidebar } from '$lib/components';
 	import { Toaster } from '$lib/components/ui/sonner';
+	import { Sidebar } from '$lib/components';
 	import '../app.pcss';
 
 	export let data;
