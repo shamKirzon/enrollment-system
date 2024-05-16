@@ -13,7 +13,11 @@
 			<Card.Description>Description here</Card.Description>
 		</Card.Header>
 		<Card.Content>
-			<FormEnrollment data={data.form} />
+			<FormEnrollment
+				data={data.form}
+				yearLevels={data.yearLevels || []}
+				academicYears={data.academicYears || []}
+			/>
 		</Card.Content>
 	</Card.Root>
 </ContentLayout>

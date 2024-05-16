@@ -24,7 +24,7 @@
 				</Table.Row>
 			</Table.Header>
 			<Table.Body>
-				{#each enrollments as enrollment (enrollment.academic_year_id)}
+				{#each enrollments as enrollment, idx (idx)}
 					{@const year = `${format(enrollment.start_at, 'yyyy')} - ${format(enrollment.end_at, 'yyyy')}`}
 
 					<Table.Row>

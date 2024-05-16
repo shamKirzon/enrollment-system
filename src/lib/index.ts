@@ -8,6 +8,22 @@ export function capitalizeFirstLetter(str: string) {
 	return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+export function objectToFormData(obj, formData = new FormData(), parentKey = null): FormData {
+	for (const key of Object.keys(obj)) {
+		const value = obj[key];
+
+		if (value instanceof File) {
+			formData.append(parentKey ? `${parentKey}[${key}]` : key, value);
+		} else if (value instanceof Object && !(value instanceof Date)) {
+			objectToFormData(value, formData, parentKey ? `${parentKey}[${key}]` : key);
+		} else {
+			formData.append(parentKey ? `${parentKey}[${key}]` : key, value);
+		}
+	}
+
+	return formData;
+}
+
 export const ROUTES: Route[] = [
 	{
 		name: 'Dashboard',

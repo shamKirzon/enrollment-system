@@ -14,8 +14,16 @@
 	$: table = createTable(readable(data));
 	$: columns = table.createColumns([
 		table.column({
-			accessor: 'year',
-			header: 'Year'
+			accessor: ({ start_at, end_at }) => {
+				return {
+					start_at,
+					end_at
+				};
+			},
+			header: 'Year',
+			cell: ({ value }) => {
+				return `${format(value.start_at, 'yyyy')}-${format(value.end_at, 'yyyy')}`;
+			}
 		}),
 		table.column({
 			accessor: 'start_at',
@@ -93,11 +101,6 @@
 											<Render of={cell.render()} />
 										</span>
 									</Badge>
-								{:else if cell.id === 'year'}
-									{@const academicYear = cell.row.original}
-									<span>
-										{format(academicYear.start_at, 'yyyy')}-{format(academicYear.end_at, 'yyyy')}
-									</span>
 								{:else}
 									<Render of={cell.render()} />
 								{/if}
