@@ -5,13 +5,14 @@ import { fail, superValidate, withFiles } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { BACKEND_URL } from '$env/static/private';
 import type { Result } from '$lib/types/index.js';
-import type { AcademicYearWithStudentCount, YearLevel } from '$lib/types/enrollment.js';
+import type { AcademicYear, YearLevel } from '$lib/types/enrollment.js';
 
 export const load: PageServerLoad = async ({ fetch }) => {
 	const getAcademicYears = async () => {
-		const response = await fetch(`${BACKEND_URL}/api/academic-years.php`, { method: 'GET' });
-		const result: Result<{ academic_years: AcademicYearWithStudentCount[] }> =
-			await response.json();
+		const response = await fetch(`${BACKEND_URL}/api/academic-years.php?status=open`, {
+			method: 'GET'
+		});
+		const result: Result<{ academic_years: AcademicYear[] }> = await response.json();
 
 		console.log(result.message);
 

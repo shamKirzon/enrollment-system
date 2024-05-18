@@ -26,7 +26,13 @@ export type Enrollment = {
 	student_id: number;
 	academic_year_id: number;
 	year_level: number;
+	student_status: StudentStatus;
 };
+
+export enum StudentStatus {
+	Old = 'old',
+	New = 'new'
+}
 
 export enum EnrollmentStatus {
 	Pending = 'pending',

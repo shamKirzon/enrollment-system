@@ -1,9 +1,10 @@
 <script lang="ts">
-	import type { EnrollmentWithDetails } from '$lib/types/enrollment';
+	import { StudentStatus, type EnrollmentWithDetails } from '$lib/types/enrollment';
 	import { readable, type Writable } from 'svelte/store';
 	import { createRender, createTable, Render, Subscribe } from 'svelte-headless-table';
 	import * as Table from '$lib/components/ui/table';
 	import Badge from './badge.svelte';
+	import BadgeNewStudent from './badge-student-status.svelte';
 	import { format } from 'date-fns';
 	import TableActions from './table-actions.svelte';
 	import PaymentReceiptDialog from './payment-receipt-dialog.svelte';
@@ -36,15 +37,22 @@
 			}
 		}),
 		table.column({
-			accessor: ({ first_name, middle_name, last_name }) => {
+			accessor: ({ first_name, middle_name, last_name, student_status }) => {
 				return {
 					first_name,
 					middle_name,
-					last_name
+					last_name,
+					student_status
 				};
 			},
 			header: 'Student',
 			cell: ({ value }) => {
+				if (value.student_status === StudentStatus.New) {
+					return createRender(BadgeNewStudent, {
+						name: `${value.last_name}, ${value.first_name} ${value.middle_name ? `${value.middle_name}.` : ''}`
+					});
+				}
+
 				return `${value.last_name}, ${value.first_name} ${value.middle_name ? `${value.middle_name}.` : ''}`;
 			}
 		}),
@@ -94,7 +102,7 @@
 		})
 	]);
 
-	$: ({ headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates, rows } =
+	$: ({ headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates } =
 		table.createViewModel(columns));
 	$: ({ selectedDataIds } = pluginStates.select);
 
