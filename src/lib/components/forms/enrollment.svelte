@@ -6,11 +6,11 @@
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-sonner';
-	import type { AcademicYearWithStudentCount, YearLevel } from '$lib/types/enrollment';
+	import type { AcademicYear, YearLevel } from '$lib/types/enrollment';
 	import { format } from 'date-fns';
 
 	export let data: SuperValidated<Infer<EnrollmentSchema>>;
-	export let academicYears: AcademicYearWithStudentCount[];
+	export let academicYears: AcademicYear[];
 	export let yearLevels: YearLevel[];
 
 	let loadingToast: string | number | undefined;

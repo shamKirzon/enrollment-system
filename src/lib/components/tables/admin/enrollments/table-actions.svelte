@@ -8,12 +8,16 @@
 	import { invalidateAll } from '$app/navigation';
 	import DeleteIcon from 'virtual:icons/material-symbols/delete-outline';
 	import { EnrollmentStatus } from '$lib/types/enrollment';
+	import { DrawerEnrollment } from '$lib/components/drawers';
 
 	export let id: number;
+	export let studentName: string;
+	export let paymentReceiptUrl: string;
 
 	const isOpen = {
 		edit: false,
-		delete: false
+		delete: false,
+		drawer: false
 	};
 
 	async function deleteEnrollment(): Promise<void> {
@@ -68,8 +72,8 @@
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content>
 		<DropdownMenu.Label>Actions</DropdownMenu.Label>
-		<!-- <DropdownMenu.Separator /> -->
-		<!-- <DropdownMenu.Item>Edit</DropdownMenu.Item> -->
+		<DropdownMenu.Separator />
+		<DropdownMenu.Item on:click={() => (isOpen.drawer = true)}>View details</DropdownMenu.Item>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Sub>
 			<DropdownMenu.SubTrigger>Set status</DropdownMenu.SubTrigger>
@@ -103,3 +107,5 @@
 		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>
+
+<DrawerEnrollment {studentName} {paymentReceiptUrl} isOpen={isOpen.drawer} />

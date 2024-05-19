@@ -2,18 +2,21 @@
 	import { Toaster } from '$lib/components/ui/sonner';
 	import { Sidebar } from '$lib/components';
 	import '../app.pcss';
+	import { LayoutDrawerScale } from '$lib/components/layouts';
 
 	export let data;
 </script>
 
-<Toaster richColors closeButton />
+<LayoutDrawerScale>
+	<Toaster richColors closeButton />
 
-{#if data.session && data.user}
-	<Sidebar user={data.user} />
-{/if}
+	{#if data.session && data.user}
+		<Sidebar user={data.user} />
+	{/if}
 
-<main class={`min-h-screen h-full bg-gray-100 ${data.session ? 'pl-60' : ''}`}>
-	<!-- <div class="h-screen"> -->
-	<slot />
-	<!-- </div> -->
-</main>
+	<main class={`min-h-screen h-full bg-gray-100 ${data.session ? 'pl-60' : ''}`}>
+		<!-- <div class="h-screen"> -->
+		<slot />
+		<!-- </div> -->
+	</main>
+</LayoutDrawerScale>

@@ -72,37 +72,6 @@
 				</Card.Root>
 			</Tabs.Content>
 		</Tabs.Root>
-
-		<Card.Root>
-			<Card.Header class="flex flex-row items-center justify-between">
-				<div>
-					<Card.Title>Academic Years</Card.Title>
-					<Card.Description>Previous academic years.</Card.Description>
-				</div>
-
-				<Dialog.Root>
-					<Dialog.Trigger asChild let:builder>
-						<Button class="space-x-1" builders={[builder]}>
-							<CirclePlusOutline />
-							<span>Create</span>
-						</Button>
-					</Dialog.Trigger>
-
-					<Dialog.Content>
-						<Dialog.Header>
-							<Dialog.Title>Create a new academic year</Dialog.Title>
-						</Dialog.Header>
-
-						<CreateAcademicYearForm data={data.form} />
-					</Dialog.Content>
-				</Dialog.Root>
-			</Card.Header>
-			<Card.Content>
-				<AcademicYearsTable data={data.academicYears?.academic_years || []} />
-			</Card.Content>
-		</Card.Root>
-
-		<Pagination count={data.academicYears?.count || 0} />
 	</div>
 
 	<div>

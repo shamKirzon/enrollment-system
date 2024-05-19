@@ -60,7 +60,7 @@
 		<EnrollmentStatusCombobox />
 	</div>
 
-	<div class="flex w-full h-full flex-col gap-2">
+	<div class="flex w-full h-full flex-col gap-2" data-vaul-drawer-wrapper>
 		<Card.Root class="w-full h-full flex flex-col overflow-y-auto">
 			<Card.Header class="flex flex-row items-center justify-between">
 				<div>

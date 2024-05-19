@@ -58,9 +58,16 @@ export type AcademicYearEnrollment = {
 	start_at: string;
 	end_at: string;
 	academic_year_status: AcademicYearStatus;
-	tuition_plan: string;
-	enrollment_status: EnrollmentStatus;
+	tuition_plan?: string;
+	enrollment_status?: EnrollmentStatus;
 	section?: string;
 	enrolled_at: string;
-	year_level: string;
+	year_level?: string;
+};
+
+export type Transaction = {
+	id: string;
+	amount: string | number;
+	payment_receipt_url: string;
+	created_at: string; // Date
 };

@@ -69,23 +69,23 @@
 			accessor: 'level',
 			header: 'Level'
 		}),
-		table.column({
-			accessor: ({ first_name, middle_name, last_name, payment_receipt_url }) => {
-				return {
-					first_name,
-					middle_name,
-					last_name,
-					payment_receipt_url
-				};
-			},
-			header: 'Payment Receipt',
-			cell: ({ value }) => {
-				const studentName = `${value.last_name}, ${value.first_name} ${value.middle_name ? `${value.middle_name}.` : ''}`;
-				const paymentReceiptUrl = value.payment_receipt_url;
-
-				return createRender(PaymentReceiptDialog, { studentName, paymentReceiptUrl });
-			}
-		}),
+		// table.column({
+		// 	accessor: ({ first_name, middle_name, last_name, payment_receipt_url }) => {
+		// 		return {
+		// 			first_name,
+		// 			middle_name,
+		// 			last_name,
+		// 			payment_receipt_url
+		// 		};
+		// 	},
+		// 	header: 'Payment Receipt',
+		// 	cell: ({ value }) => {
+		// 		const studentName = `${value.last_name}, ${value.first_name} ${value.middle_name ? `${value.middle_name}.` : ''}`;
+		// 		const paymentReceiptUrl = value.payment_receipt_url;
+		//
+		// 		return createRender(PaymentReceiptDialog, { studentName, paymentReceiptUrl });
+		// 	}
+		// }),
 		table.column({
 			accessor: 'status',
 			header: 'Status',
@@ -94,10 +94,21 @@
 			}
 		}),
 		table.column({
-			accessor: ({ id }) => id,
+			accessor: ({ id, first_name, middle_name, last_name, payment_receipt_url }) => {
+				return {
+					id,
+					first_name,
+					middle_name,
+					last_name,
+					payment_receipt_url
+				};
+			},
 			header: '',
 			cell: ({ value }) => {
-				return createRender(TableActions, { id: value });
+				const studentName = `${value.last_name}, ${value.first_name} ${value.middle_name ? `${value.middle_name}.` : ''}`;
+				const paymentReceiptUrl = value.payment_receipt_url;
+
+				return createRender(TableActions, { id: value.id, studentName, paymentReceiptUrl });
 			}
 		})
 	]);

@@ -29,10 +29,10 @@
 
 					<Table.Row>
 						<Table.Cell class="font-medium">{year}</Table.Cell>
-						<Table.Cell>{enrollment.year_level}</Table.Cell>
+						<Table.Cell>{enrollment.year_level || '---'}</Table.Cell>
 						<Table.Cell>{enrollment.section || '---'}</Table.Cell>
 						<Table.Cell>{enrollment.tuition_plan || '---'}</Table.Cell>
-						<Table.Cell>{enrollment.enrollment_status}</Table.Cell>
+						<Table.Cell>{enrollment.enrollment_status || '---'}</Table.Cell>
 					</Table.Row>
 				{/each}
 			</Table.Body>
