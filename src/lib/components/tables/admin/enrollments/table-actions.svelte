@@ -7,12 +7,13 @@
 	import { toast } from 'svelte-sonner';
 	import { invalidateAll } from '$app/navigation';
 	import DeleteIcon from 'virtual:icons/material-symbols/delete-outline';
-	import { EnrollmentStatus } from '$lib/types/enrollment';
+	import { EnrollmentStatus, type EnrollmentWithDetails } from '$lib/types/enrollment';
 	import { DrawerEnrollment } from '$lib/components/drawers';
 
-	export let id: number;
-	export let studentName: string;
-	export let paymentReceiptUrl: string;
+	// export let id: number;
+	// export let studentName: string;
+	// export let paymentReceiptUrl: string;
+	export let enrollment: EnrollmentWithDetails;
 
 	const isOpen = {
 		edit: false,
@@ -23,7 +24,7 @@
 	async function deleteEnrollment(): Promise<void> {
 		const response = await fetch(`/api/enrollments`, {
 			method: 'DELETE',
-			body: JSON.stringify([id]),
+			body: JSON.stringify([enrollment.id]),
 			headers: {
 				'Content-Type': 'application/json'
 			}
@@ -42,7 +43,7 @@
 	}
 
 	async function setEnrollmentStatus(status: EnrollmentStatus): Promise<void> {
-		const response = await fetch(`/api/enrollments?id=${id}`, {
+		const response = await fetch(`/api/enrollments?id=${enrollment.id}`, {
 			method: 'PATCH',
 			body: JSON.stringify({ status }),
 			headers: {
@@ -108,4 +109,4 @@
 	</Dialog.Content>
 </Dialog.Root>
 
-<DrawerEnrollment {studentName} {paymentReceiptUrl} isOpen={isOpen.drawer} />
+<DrawerEnrollment {enrollment} isOpen={isOpen.drawer} />

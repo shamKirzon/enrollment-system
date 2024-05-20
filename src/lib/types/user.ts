@@ -8,7 +8,14 @@ export type User = {
 	role: Role;
 	created_at: string;
 	updated_at: string;
+	avatar_url?: string;
+	sex: Sex;
 };
+
+export enum Sex {
+	Male = 'male',
+	Female = 'female'
+}
 
 export type UserCount = {
 	role: Role;
@@ -17,6 +24,7 @@ export type UserCount = {
 
 export enum Role {
 	Student = 'student',
+	Parent = 'parent',
 	Teacher = 'teacher',
 	Admin = 'admin'
 }

@@ -7,8 +7,11 @@
 	import CirclePlusOutline from 'virtual:icons/flowbite/circle-plus-outline';
 	import { CreateAcademicYearForm } from '$lib/components/forms';
 	import { ContentLayout } from '$lib/components/layouts';
+	import { setContext } from 'svelte';
 
 	export let data;
+
+	setContext('formAcademicYear', data.form);
 </script>
 
 <ContentLayout>

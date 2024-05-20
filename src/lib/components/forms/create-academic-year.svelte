@@ -89,8 +89,7 @@
 		{ value: 365, label: 'In a year' }
 	];
 
-	const action =
-		mode === 'create' ? '?/create_academic_year' : `?/update_academic_year&id=${academicYear?.id}`;
+	const action = mode === 'create' ? '?/create' : `?/update&id=${academicYear?.id}`;
 </script>
 
 <form {action} method="POST" use:enhance class="space-y-8">

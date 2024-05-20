@@ -94,21 +94,12 @@
 			}
 		}),
 		table.column({
-			accessor: ({ id, first_name, middle_name, last_name, payment_receipt_url }) => {
-				return {
-					id,
-					first_name,
-					middle_name,
-					last_name,
-					payment_receipt_url
-				};
+			accessor: (enrollment) => {
+				return enrollment;
 			},
 			header: '',
 			cell: ({ value }) => {
-				const studentName = `${value.last_name}, ${value.first_name} ${value.middle_name ? `${value.middle_name}.` : ''}`;
-				const paymentReceiptUrl = value.payment_receipt_url;
-
-				return createRender(TableActions, { id: value.id, studentName, paymentReceiptUrl });
+				return createRender(TableActions, { enrollment: value });
 			}
 		})
 	]);

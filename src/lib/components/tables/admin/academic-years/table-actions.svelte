@@ -16,7 +16,7 @@
 
 	export let academicYear: AcademicYear;
 
-	const form = getContext<SuperValidated<Infer<AcademicYearSchema>>>('form');
+	const form = getContext<SuperValidated<Infer<AcademicYearSchema>>>('formAcademicYear');
 
 	const isOpen = {
 		edit: false,

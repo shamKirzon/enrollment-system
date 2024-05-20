@@ -20,7 +20,7 @@
 		? value
 		: 'Select an academic year...';
 
-	console.log(selectedValue);
+	// console.log(selectedValue);
 
 	function ayFormat(startAt: string, endAt: string, mode: 'label' | 'default' = 'default'): string {
 		if (mode === 'label') {
