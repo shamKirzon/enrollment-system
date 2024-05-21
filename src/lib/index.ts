@@ -3,6 +3,7 @@ import Dashboard from 'virtual:icons/radix-icons/dashboard';
 import School from 'virtual:icons/lucide/school';
 import Money from 'virtual:icons/mdi/money';
 import Calendar from 'virtual:icons/mdi/calendar';
+import Books from 'virtual:icons/ph/books-duotone';
 import type { Route } from './types';
 
 export function capitalizeFirstLetter(str: string) {
@@ -58,6 +59,11 @@ export const ADMIN_ROUTES: Route[] = [
 		name: 'Academic Years',
 		path: '/admin/academic-years',
 		icon: Calendar
+	},
+	{
+		name: 'Subjects',
+		path: '/admin/subjects',
+		icon: Books
 	},
 	{
 		name: 'Users',

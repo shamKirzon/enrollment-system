@@ -71,3 +71,25 @@ export type Transaction = {
 	payment_receipt_url: string;
 	created_at: string; // Date
 };
+
+export type Section = {
+	id: string;
+	name: string;
+};
+
+export type Strand = {
+	id: string;
+	name: string;
+};
+
+export type Subject = {
+	id: string;
+	name: string;
+};
+
+export type SubjectLevel = {
+	id: string;
+	subject_id: string;
+	year_level_id: string;
+	strand_id?: string;
+};
