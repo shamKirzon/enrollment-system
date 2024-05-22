@@ -35,3 +35,12 @@ export const enrollmentSchema = z.object({
 });
 
 export type EnrollmentSchema = typeof enrollmentSchema;
+
+export const subjectSchema = z.object({
+	subject_id: z.string(),
+	subject_name: z.string(),
+	year_level_ids: z.string().array(),
+	strand_ids: z.string().array()
+});
+
+export type SubjectSchema = typeof subjectSchema;

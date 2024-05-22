@@ -85,6 +85,7 @@ export type Strand = {
 export type Subject = {
 	id: string;
 	name: string;
+	year_level_count: number;
 };
 
 export type SubjectLevel = {
@@ -92,4 +93,11 @@ export type SubjectLevel = {
 	subject_id: string;
 	year_level_id: string;
 	strand_id?: string;
+	subject_name: string;
+	year_level_name: string;
+	strand_name?: string;
 };
+
+// export type SubjectDetails = {
+//   id
+// }
