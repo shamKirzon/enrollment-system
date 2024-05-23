@@ -15,6 +15,24 @@
 
 	export let data;
 
+	// const subjectUpdateFormData = data.subjectLevelData?.subject_levels.reduce((acc, obj) => {
+	// 	const existingSubject = acc.find((item) => item.subject_id === obj.subject_id);
+	// 	if (existingSubject) {
+	// 		existingSubject.year_level_ids.push(obj.year_level_id);
+	// 		existingSubject.strand_ids.push(obj.strand_id); // Use spread operator for unique elements
+	// 	} else {
+	// 		acc.push({
+	// 			subject_id: obj.subject_id,
+	// 			subject_name: obj.subject_name,
+	// 			year_level_ids: [obj.year_level_id],
+	// 			strand_ids: [obj.strand_id]
+	// 		});
+	// 	}
+	// 	return acc;
+	// }, []);
+
+	// console.log(subjectUpdateFormData);
+
 	const selectedRows = writable<string[]>([]);
 
 	async function deleteSubjects(): Promise<void> {

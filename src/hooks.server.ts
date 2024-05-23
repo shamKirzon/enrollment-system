@@ -14,27 +14,36 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	event.locals.getUserData = async () => {
 		const response = await event.fetch(`${BACKEND_URL}/users/user.php?id=${session}`);
+
+		if (!response.ok || !session) {
+			return {
+				message: 'User does not exist.'
+			};
+		}
+
 		const result: Result<{ user: User }> = await response.json();
+
+		console.log(result);
 
 		return result;
 	};
-
-	const userData = await event.locals.getUserData();
-	const user = userData.data?.user;
 
 	if (!event.route.id?.startsWith('/(auth)') && !session) {
 		redirect(303, '/login');
 	}
 
 	if ((event.route.id?.startsWith('/(auth)') || event.route.id === '/') && session) {
+		const userData = await event.locals.getUserData();
+		const user = userData.data?.user;
+
 		if (user?.role === Role.Admin) {
 			redirect(303, '/admin/dashboard');
 		}
 
-		redirect(303, '/dashboard');
-	}
+		if (event.route.id?.startsWith('/admin') && user?.role === Role.Student) {
+			redirect(303, '/dashboard');
+		}
 
-	if (event.route.id?.startsWith('/admin') && user?.role === Role.Student) {
 		redirect(303, '/dashboard');
 	}
 

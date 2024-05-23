@@ -109,16 +109,33 @@
 				}}
 			>
 				<Select.Trigger {...attrs}>
-					<Select.Value placeholder="Select year levels" />
+					<div class="justify-between flex w-full pr-4">
+						<Select.Value placeholder="Select year levels" asChild let:attrs let:label>
+							<div {...attrs}>
+								{#if label.split(',').length > 3}
+									{label.split(',').slice(0, 3).join(',')}
+								{:else}
+									{label}
+								{/if}
+							</div>
+						</Select.Value>
+						{#if $formData.year_level_ids.length > 3}
+							<span>+{$formData.year_level_ids.length} more</span>
+						{/if}
+					</div>
 				</Select.Trigger>
-				<Select.Content>
+				<Select.Content class="max-w-full">
 					{#each yearLevels as yearLevel (yearLevel.id)}
 						<Select.Item value={yearLevel.id} label={yearLevel.name} />
 					{/each}
 				</Select.Content>
 			</Select.Root>
 
-			<input hidden bind:value={$formData.year_level_ids} name={attrs.name} />
+			{#each yearLevels as yearLevel (yearLevel.id)}
+				{@const checked = $formData.year_level_ids.includes(yearLevel.id)}
+
+				<input hidden type="checkbox" name={attrs.name} value={yearLevel.id} {checked} />
+			{/each}
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>

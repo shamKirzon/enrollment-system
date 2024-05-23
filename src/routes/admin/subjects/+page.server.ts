@@ -68,7 +68,7 @@ export const actions: Actions = {
 			});
 		}
 
-		console.log(form.data);
+		// console.log(form.data);
 
 		const createSubject = async () => {
 			const response = await event.fetch(`${BACKEND_URL}/api/subjects.php`, {
@@ -112,17 +112,17 @@ export const actions: Actions = {
 			};
 		};
 
-		// let result = await createSubject();
-		//
-		// if (result.code === 201 || result.code === 409) {
-		// 	result = await createSubjectLevel();
-		// }
-		//
-		// console.log(result);
+		let result = await createSubject();
+
+		if (result.code === 201 || result.code === 409) {
+			result = await createSubjectLevel();
+		}
+
+		console.log(result);
 
 		return {
 			form,
-			message: 'foo'
+			message: result.message
 		};
 	}
 };
