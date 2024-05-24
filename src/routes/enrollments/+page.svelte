@@ -17,6 +17,7 @@
 				data={data.form}
 				yearLevels={data.yearLevels || []}
 				academicYears={data.academicYears || []}
+				paymentModes={data.paymentModes || []}
 			/>
 		</Card.Content>
 	</Card.Root>

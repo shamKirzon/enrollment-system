@@ -15,8 +15,8 @@
 		<div class="flex gap-2">
 			<Card.Root>
 				<Card.Header>
-					<Card.Title>You are not enrolled</Card.Title>
-					<Card.Description>hello world</Card.Description>
+					<Card.Title>Insert Some Title Here</Card.Title>
+					<Card.Description>Hello world</Card.Description>
 				</Card.Header>
 				<Card.Content>
 					{#if data.enrollments.data?.academic_year_enrollments.some((e) => !e.enrollment_status)}

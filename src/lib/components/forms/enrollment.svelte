@@ -8,10 +8,12 @@
 	import { toast } from 'svelte-sonner';
 	import type { AcademicYear, YearLevel } from '$lib/types/enrollment';
 	import { format } from 'date-fns';
+	import type { PaymentMode } from '$lib/types/payment';
 
 	export let data: SuperValidated<Infer<EnrollmentSchema>>;
 	export let academicYears: AcademicYear[];
 	export let yearLevels: YearLevel[];
+	export let paymentModes: PaymentMode[];
 
 	let loadingToast: string | number | undefined;
 
@@ -104,12 +106,12 @@
 		<Form.FieldErrors />
 	</Form.Field>
 
-	<Form.Field {form} name="tuition_plan">
+	<Form.Field {form} name="tuition_plan_id">
 		<Form.Control let:attrs>
 			<Form.Label>Tuition Plan</Form.Label>
 			<Select.Root
 				onSelectedChange={(v) => {
-					v && ($formData.tuition_plan = v.value);
+					v && ($formData.tuition_plan_id = v.value);
 				}}
 			>
 				<Select.Trigger {...attrs}>
@@ -121,7 +123,7 @@
 					{/each}
 				</Select.Content>
 			</Select.Root>
-			<input hidden bind:value={$formData.tuition_plan} name={attrs.name} />
+			<input hidden bind:value={$formData.tuition_plan_id} name={attrs.name} />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>

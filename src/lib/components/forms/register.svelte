@@ -69,6 +69,14 @@
 		<Form.FieldErrors />
 	</Form.Field>
 
+	<Form.Field {form} name="suffix_name">
+		<Form.Control let:attrs>
+			<Form.Label>Suffix Name</Form.Label>
+			<Input {...attrs} bind:value={$formData.suffix_name} />
+		</Form.Control>
+		<Form.FieldErrors />
+	</Form.Field>
+
 	<Form.Field {form} name="email">
 		<Form.Control let:attrs>
 			<Form.Label>Email</Form.Label>
@@ -89,6 +97,14 @@
 		<Form.Control let:attrs>
 			<Form.Label>Password</Form.Label>
 			<Input {...attrs} type="password" bind:value={$formData.password} required />
+		</Form.Control>
+		<Form.FieldErrors />
+	</Form.Field>
+
+	<Form.Field {form} name="confirm_password">
+		<Form.Control let:attrs>
+			<Form.Label>Confirm Password</Form.Label>
+			<Input {...attrs} type="password" bind:value={$formData.confirm_password} required />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>

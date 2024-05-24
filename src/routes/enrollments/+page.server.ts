@@ -6,6 +6,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { BACKEND_URL } from '$env/static/private';
 import type { Result } from '$lib/types/index.js';
 import type { AcademicYear, YearLevel } from '$lib/types/enrollment.js';
+import type { PaymentMode, TuitionPlan } from '$lib/types/payment.js';
 
 export const load: PageServerLoad = async ({ fetch }) => {
 	const getAcademicYears = async () => {
@@ -28,12 +29,32 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		return result;
 	};
 
+	const getPaymentModes = async () => {
+		const response = await fetch(`${BACKEND_URL}/api/payments/modes.php`, { method: 'GET' });
+		const result: Result<{ payment_modes: PaymentMode[] }> = await response.json();
+
+		console.log(result.message);
+
+		return result;
+	};
+
+	const getTuitionPlans = async () => {
+		const response = await fetch(`${BACKEND_URL}/api/tuition-plans.php`, { method: 'GET' });
+		const result: Result<{ tuition_plans: TuitionPlan[] }> = await response.json();
+
+		console.log(result.message);
+
+		return result;
+	};
+
 	// const { data } = await getAcademicYears();
 
 	return {
 		form: await superValidate(zod(enrollmentSchema)),
 		yearLevels: (await getYearLevels()).data?.year_levels,
-		academicYears: (await getAcademicYears()).data?.academic_years
+		academicYears: (await getAcademicYears()).data?.academic_years,
+		paymentModes: (await getPaymentModes()).data?.payment_modes,
+		tuitionPlans: (await getTuitionPlans()).data?.tuition_plans
 	};
 };
 
@@ -60,31 +81,124 @@ export const actions: Actions = {
 			);
 		}
 
+		// TODO: A combination of `/enrollments/students.php` payload and `/transactions.php` payload
+		// 1. Submit the transaction
+		// 2. Get the submitted transaction's ID,
+		// 3. Submit the enrollment
+
+		const uploadPaymentReceipt = async (file: File, params: Record<string, any>) => {
+			const queryString = new URLSearchParams(params).toString();
+			const blob = new Blob([file], { type: 'image/*' });
+
+			const response = await event.fetch(
+				`${BACKEND_URL}/api/upload/payment-receipt.php?${queryString}`,
+				{
+					method: 'POST',
+					body: blob
+				}
+			);
+
+			const result: Result<{ payment_receipt_url: string }> = await response.json();
+
+			console.log(result.message);
+
+			if (result.data?.payment_receipt_url === undefined) {
+				error(404, 'Undefined payment receipt url.');
+			}
+
+			return result.data?.payment_receipt_url;
+		};
+
+		const createTransaction = async () => {
+			const {
+				transaction_number,
+				payment_receipt,
+				payment_method,
+				payment_amount,
+				payment_mode_id
+			} = form.data;
+
+			const transactionBody = {
+				transaction_number,
+				payment_amount,
+				payment_method,
+				payment_receipt,
+				payment_mode_id
+			};
+
+			const response = await event.fetch(`${BACKEND_URL}/api/transactions.php`, {
+				method: 'POST',
+				body: JSON.stringify(transactionBody),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			if (!response.ok) {
+				error(response.status, 'Failed to create transaction.');
+			}
+
+			const result: Result<{ transaction_id: string }> = await response.json();
+
+			console.log(result.message);
+
+			if (result.data?.transaction_id === undefined) {
+				error(404, 'Transaction ID not returned.');
+			}
+
+			return result.data.transaction_id;
+		};
+
+		const createEnrollment = async (paymentReceiptUrl: string, transactionId: string) => {
+			const { student_id, academic_year_id, year_level_id } = form.data;
+
+			const response = await event.fetch(`${BACKEND_URL}/api/enrollments/students.php`, {
+				method: 'POST',
+				body: JSON.stringify({
+					student_id,
+					academic_year_id,
+					year_level_id,
+					payment_receipt_url: paymentReceiptUrl,
+					transaction_id: transactionId
+				}),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			if (!response.ok) {
+				error(response.status, 'Failed to create enrollment.');
+			}
+
+			const result: Result = await response.json();
+
+			console.log(result.message);
+		};
+
+		// NOTE: Only applicable for those who chose the `installment` payment method
+		const createEnrolledTuitionPlan = async () => {
+			const response = await event.fetch(`${BACKEND_URL}/api/enrollments/tuition-plans.php`, {
+				method: 'POST',
+				body: JSON.stringify({
+					enrollment_id: '',
+					tuition_plan_id: ''
+				}),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+		};
+
 		const params = {
 			student_id: userId,
 			academic_year_id: form.data.academic_year_id,
 			year_level_id: form.data.year_level_id
 		};
 
-		const paymentReceiptUrl = await uploadPaymentReceipt(
-			event.fetch,
-			form.data.payment_receipt,
-			params
-		);
+		const paymentReceiptUrl = await uploadPaymentReceipt(form.data.payment_receipt, params);
+		const transactionId = await createTransaction();
 
-		const { payment_receipt, ...enrollmentData } = form.data;
-
-		const response = await event.fetch(`${BACKEND_URL}/api/enrollments/students.php`, {
-			method: 'POST',
-			body: JSON.stringify({ ...enrollmentData, payment_receipt_url: paymentReceiptUrl }),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-
-		const result = await response.json();
-
-		console.log(result);
+		await createEnrollment(paymentReceiptUrl, transactionId);
 
 		return withFiles({
 			message: 'Successfully submitted enrollment.',
@@ -92,25 +206,3 @@ export const actions: Actions = {
 		});
 	}
 };
-
-async function uploadPaymentReceipt(
-	fetch: (input: string | Request | URL, init?: RequestInit | undefined) => Promise<Response>,
-	file: File,
-	params: Record<string, any>
-): Promise<string> {
-	const queryString = new URLSearchParams(params).toString();
-	const blob = new Blob([file], { type: 'image/*' });
-
-	const response = await fetch(`${BACKEND_URL}/api/upload/payment-receipt.php?${queryString}`, {
-		method: 'POST',
-		body: blob
-	});
-
-	const result: Result<{ payment_receipt_url: string }> = await response.json();
-
-	if (result.data?.payment_receipt_url === undefined) {
-		error(404, 'Undefined payment receipt url.');
-	}
-
-	return result.data?.payment_receipt_url;
-}

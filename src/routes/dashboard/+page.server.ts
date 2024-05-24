@@ -13,6 +13,8 @@ export const load: PageServerLoad = async ({ fetch }) => {
 	const result: Result<{ academic_year_enrollments: AcademicYearEnrollment[]; count: number }> =
 		await response.json();
 
+	console.log(result.message);
+
 	return {
 		enrollments: result,
 		form: await superValidate(zod(enrollmentSchema))

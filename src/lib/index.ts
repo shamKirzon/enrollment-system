@@ -36,6 +36,11 @@ export const ROUTES: Route[] = [
 		name: 'Transactions',
 		path: '/transactions',
 		icon: Money
+	},
+	{
+		name: 'Report Cards',
+		path: '/report-cards',
+		icon: Money
 	}
 ];
 

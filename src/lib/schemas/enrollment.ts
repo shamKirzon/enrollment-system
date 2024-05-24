@@ -17,12 +17,13 @@ function sizeInMB(sizeInBytes: number, decimals = 2): number {
 }
 
 export const enrollmentSchema = z.object({
-	// year: z.string(),
 	year_level_id: z.string(),
-	tuition_plan: z.string(),
-	student_id: z.number(),
+	student_id: z.string(),
 	academic_year_id: z.number(),
-	amount: z.number(),
+
+	transaction_number: z.string(),
+	payment_amount: z.number(),
+	payment_method: z.enum(['cash', 'installment']),
 	payment_receipt: z
 		.instanceof(File, { message: 'Image is required.' })
 		.refine(
@@ -31,7 +32,10 @@ export const enrollmentSchema = z.object({
 		)
 		.refine((file) => {
 			return ACCEPTED_IMAGE_TYPES.includes(file.type);
-		}, `Only .jpg, .jpeg, .png, .webp, and .avif files are accepted.`)
+		}, `Only .jpg, .jpeg, .png, .webp, and .avif files are accepted.`),
+
+	tuition_plan_id: z.string().optional(),
+	payment_mode_id: z.string()
 });
 
 export type EnrollmentSchema = typeof enrollmentSchema;

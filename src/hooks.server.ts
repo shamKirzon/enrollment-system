@@ -15,7 +15,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.getUserData = async () => {
 		const response = await event.fetch(`${BACKEND_URL}/users/user.php?id=${session}`);
 
-		if (!response.ok || !session) {
+		if (!response.ok) {
 			return {
 				message: 'User does not exist.'
 			};

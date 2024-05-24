@@ -5,6 +5,8 @@
 	import { LayoutDrawerScale } from '$lib/components/layouts';
 
 	export let data;
+
+	console.log(data);
 </script>
 
 <LayoutDrawerScale>
