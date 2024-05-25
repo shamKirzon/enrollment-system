@@ -27,7 +27,7 @@
 		};
 	});
 
-	const selectedRows = writable<number[]>([]);
+	const selectedRows = writable<string[]>([]);
 
 	async function deleteEnrollments(): Promise<void> {
 		const response = await fetch(`/api/enrollments`, {

@@ -6,14 +6,17 @@
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-sonner';
-	import type { AcademicYear, YearLevel } from '$lib/types/enrollment';
+	import { StudentStatus, type AcademicYear, type YearLevel } from '$lib/types/enrollment';
 	import { format } from 'date-fns';
-	import type { PaymentMode } from '$lib/types/payment';
+	import type { PaymentMode, TuitionPlan } from '$lib/types/payment';
+	import { Separator } from '$lib/components/ui/separator';
 
 	export let data: SuperValidated<Infer<EnrollmentSchema>>;
 	export let academicYears: AcademicYear[];
 	export let yearLevels: YearLevel[];
 	export let paymentModes: PaymentMode[];
+	export let tuitionPlans: TuitionPlan[];
+	export let studentStatus: StudentStatus;
 
 	let loadingToast: string | number | undefined;
 
@@ -48,10 +51,10 @@
 
 	const { form: formData, enhance } = form;
 
-	const tuitionPlans = ['a', 'b'];
+	$formData.student_status = studentStatus;
 </script>
 
-<form method="POST" enctype="multipart/form-data" use:enhance>
+<form method="POST" enctype="multipart/form-data" class="space-y-8" use:enhance>
 	<!-- <Form.Field {form} name="year_level_id"> -->
 	<!-- 	<Form.Control let:attrs> -->
 	<!-- 		<Form.Label>Year Level</Form.Label> -->
@@ -106,24 +109,110 @@
 		<Form.FieldErrors />
 	</Form.Field>
 
-	<Form.Field {form} name="tuition_plan_id">
+	<input hidden bind:value={$formData.student_status} name="student_status" />
+
+	{#if studentStatus === StudentStatus.New}
+		<Separator />
+
+		<Form.Field {form} name="report_card">
+			<Form.Control let:attrs>
+				<Form.Label>Report Card</Form.Label>
+				<Input
+					{...attrs}
+					type="file"
+					accept="image/*"
+					on:change={(e) => {
+						$formData.report_card = e.currentTarget.files ? e.currentTarget.files[0] : undefined;
+					}}
+					required
+				/>
+			</Form.Control>
+			<Form.Description>Your previous report card.</Form.Description>
+			<Form.FieldErrors />
+		</Form.Field>
+	{/if}
+
+	<Separator />
+
+	<Form.Field {form} name="payment_method">
 		<Form.Control let:attrs>
-			<Form.Label>Tuition Plan</Form.Label>
+			<Form.Label>Payment Method</Form.Label>
 			<Select.Root
 				onSelectedChange={(v) => {
-					v && ($formData.tuition_plan_id = v.value);
+					v && ($formData.payment_method = v.value);
 				}}
 			>
 				<Select.Trigger {...attrs}>
-					<Select.Value placeholder="Select a tuition plan" />
+					<Select.Value placeholder="Select a payment method" />
 				</Select.Trigger>
 				<Select.Content>
-					{#each tuitionPlans as tuitionPlan, idx (idx)}
-						<Select.Item value={tuitionPlan} label={tuitionPlan} />
+					<Select.Item value="cash" label="Cash" />
+					<Select.Item value="installment" label="Installment" />
+				</Select.Content>
+			</Select.Root>
+			<input hidden bind:value={$formData.payment_method} name={attrs.name} />
+		</Form.Control>
+		<Form.FieldErrors />
+	</Form.Field>
+
+	{#if $formData.payment_method === 'installment'}
+		<Form.Field {form} name="tuition_plan_id">
+			<Form.Control let:attrs>
+				<Form.Label>Tuition Plan</Form.Label>
+				<Select.Root
+					onSelectedChange={(v) => {
+						v && ($formData.tuition_plan_id = v.value);
+					}}
+				>
+					<Select.Trigger {...attrs}>
+						<Select.Value placeholder="Select a tuition plan" />
+					</Select.Trigger>
+					<Select.Content>
+						{#each tuitionPlans as tuitionPlan, idx (idx)}
+							<Select.Item value={tuitionPlan.id} label={tuitionPlan.name} />
+						{/each}
+					</Select.Content>
+				</Select.Root>
+				<input hidden bind:value={$formData.tuition_plan_id} name={attrs.name} />
+			</Form.Control>
+			<Form.FieldErrors />
+		</Form.Field>
+	{/if}
+
+	<Form.Field {form} name="transaction_number">
+		<Form.Control let:attrs>
+			<Form.Label>Transaction Number</Form.Label>
+			<Input {...attrs} bind:value={$formData.transaction_number} />
+		</Form.Control>
+		<Form.FieldErrors />
+	</Form.Field>
+
+	<Form.Field {form} name="payment_amount">
+		<Form.Control let:attrs>
+			<Form.Label>Payment Amount</Form.Label>
+			<Input {...attrs} bind:value={$formData.payment_amount} type="number" />
+		</Form.Control>
+		<Form.FieldErrors />
+	</Form.Field>
+
+	<Form.Field {form} name="payment_mode_id">
+		<Form.Control let:attrs>
+			<Form.Label>Payment Method</Form.Label>
+			<Select.Root
+				onSelectedChange={(v) => {
+					v && ($formData.payment_mode_id = v.value);
+				}}
+			>
+				<Select.Trigger {...attrs}>
+					<Select.Value placeholder="Select a payment method" />
+				</Select.Trigger>
+				<Select.Content>
+					{#each paymentModes as paymentMode (paymentMode.id)}
+						<Select.Item value={paymentMode.id} label={paymentMode.payment_channel} />
 					{/each}
 				</Select.Content>
 			</Select.Root>
-			<input hidden bind:value={$formData.tuition_plan_id} name={attrs.name} />
+			<input hidden bind:value={$formData.payment_mode_id} name={attrs.name} />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>

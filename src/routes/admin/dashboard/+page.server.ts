@@ -28,9 +28,10 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 
 	const getUsers = async () => {
 		const response = await fetch(`${BACKEND_URL}/api/users.php`, { method: 'GET' });
-		const result: Result<{ users: User[]; count: UserCount[] }> = await response.json();
+		const result: Result<{ users: User[]; role_count: UserCount[] }> = await response.json();
 
 		console.log(result.message);
+		console.log(result.data);
 
 		return result;
 	};

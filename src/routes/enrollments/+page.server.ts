@@ -5,10 +5,15 @@ import { fail, superValidate, withFiles } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { BACKEND_URL } from '$env/static/private';
 import type { Result } from '$lib/types/index.js';
-import type { AcademicYear, YearLevel } from '$lib/types/enrollment.js';
-import type { PaymentMode, TuitionPlan } from '$lib/types/payment.js';
+import {
+	StudentStatus,
+	type AcademicYear,
+	type PreviousReportCardPayload,
+	type YearLevel
+} from '$lib/types/enrollment.js';
+import type { PaymentMode, TransactionPayload, TuitionPlan } from '$lib/types/payment.js';
 
-export const load: PageServerLoad = async ({ fetch }) => {
+export const load: PageServerLoad = async ({ fetch, locals }) => {
 	const getAcademicYears = async () => {
 		const response = await fetch(`${BACKEND_URL}/api/academic-years.php?status=open`, {
 			method: 'GET'
@@ -47,14 +52,27 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		return result;
 	};
 
-	// const { data } = await getAcademicYears();
+	const getStudentStatus = async () => {
+		const userData = await locals.getUserData();
+
+		const response = await fetch(
+			`${BACKEND_URL}/api/students/status.php?student_id=${userData?.data?.user?.id}`,
+			{ method: 'GET' }
+		);
+		const result: Result<{ student_status: StudentStatus }> = await response.json();
+
+		console.log(result.message);
+
+		return result;
+	};
 
 	return {
 		form: await superValidate(zod(enrollmentSchema)),
 		yearLevels: (await getYearLevels()).data?.year_levels,
 		academicYears: (await getAcademicYears()).data?.academic_years,
 		paymentModes: (await getPaymentModes()).data?.payment_modes,
-		tuitionPlans: (await getTuitionPlans()).data?.tuition_plans
+		tuitionPlans: (await getTuitionPlans()).data?.tuition_plans,
+		studentStatus: (await getStudentStatus()).data?.student_status
 	};
 };
 
@@ -109,26 +127,10 @@ export const actions: Actions = {
 			return result.data?.payment_receipt_url;
 		};
 
-		const createTransaction = async () => {
-			const {
-				transaction_number,
-				payment_receipt,
-				payment_method,
-				payment_amount,
-				payment_mode_id
-			} = form.data;
-
-			const transactionBody = {
-				transaction_number,
-				payment_amount,
-				payment_method,
-				payment_receipt,
-				payment_mode_id
-			};
-
+		const createTransaction = async (transaction: TransactionPayload) => {
 			const response = await event.fetch(`${BACKEND_URL}/api/transactions.php`, {
 				method: 'POST',
-				body: JSON.stringify(transactionBody),
+				body: JSON.stringify(transaction),
 				headers: {
 					'Content-Type': 'application/json'
 				}
@@ -170,23 +172,78 @@ export const actions: Actions = {
 				error(response.status, 'Failed to create enrollment.');
 			}
 
-			const result: Result = await response.json();
+			const result: Result<{ enrollment_id: string }> = await response.json();
 
 			console.log(result.message);
+
+			if (result.data?.enrollment_id === undefined) {
+				error(404, 'Enrollment ID not returned.');
+			}
+
+			return result.data?.enrollment_id;
 		};
 
 		// NOTE: Only applicable for those who chose the `installment` payment method
-		const createEnrolledTuitionPlan = async () => {
+		const createEnrolledTuitionPlan = async (enrollmentId: string, tuitionPlanId: string) => {
 			const response = await event.fetch(`${BACKEND_URL}/api/enrollments/tuition-plans.php`, {
 				method: 'POST',
 				body: JSON.stringify({
-					enrollment_id: '',
-					tuition_plan_id: ''
+					enrollment_id: enrollmentId,
+					tuition_plan_id: tuitionPlanId
 				}),
 				headers: {
 					'Content-Type': 'application/json'
 				}
 			});
+
+			if (!response.ok) {
+				error(response.status, 'Failed to create enrolled tuition plan.');
+			}
+
+			const result: Result = await response.json();
+
+			console.log(result.message);
+		};
+
+		const uploadReportCard = async (file: File, params: Record<string, string>) => {
+			const queryString = new URLSearchParams(params).toString();
+			const blob = new Blob([file], { type: 'image/*' });
+
+			const response = await event.fetch(
+				`${BACKEND_URL}/api/upload/report-card.php?${queryString}`,
+				{
+					method: 'POST',
+					body: blob
+				}
+			);
+
+			const result: Result<{ report_card_url: string }> = await response.json();
+
+			console.log(result.message);
+
+			if (result.data?.report_card_url === undefined) {
+				error(404, 'Report card URL not returned.');
+			}
+
+			return result.data?.report_card_url;
+		};
+
+		const insertPreviousReportCard = async (payload: PreviousReportCardPayload) => {
+			const response = await event.fetch(`${BACKEND_URL}/api/previous-report-cards.php`, {
+				method: 'POST',
+				body: JSON.stringify(payload),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			if (!response.ok) {
+				error(response.status, 'Failed to insert previous report card.');
+			}
+
+			const result: Result = await response.json();
+
+			console.log(result.message);
 		};
 
 		const params = {
@@ -196,9 +253,34 @@ export const actions: Actions = {
 		};
 
 		const paymentReceiptUrl = await uploadPaymentReceipt(form.data.payment_receipt, params);
-		const transactionId = await createTransaction();
 
-		await createEnrollment(paymentReceiptUrl, transactionId);
+		const { transaction_number, payment_method, payment_amount, payment_mode_id } = form.data;
+
+		const transactionId = await createTransaction({
+			transaction_number,
+			payment_method,
+			payment_amount,
+			payment_mode_id,
+			payment_receipt_url: paymentReceiptUrl
+		});
+		const enrollmentId = await createEnrollment(paymentReceiptUrl, transactionId);
+
+		if (form.data.tuition_plan_id) {
+			await createEnrolledTuitionPlan(enrollmentId, form.data.tuition_plan_id);
+		}
+
+		if (form.data.student_status === StudentStatus.New) {
+			if (form.data.report_card === undefined) {
+				error(404, 'Report Card file not found.');
+			}
+
+			const reportCardUrl = await uploadReportCard(form.data.report_card, { student_id: userId });
+
+			await insertPreviousReportCard({
+				enrollment_id: enrollmentId,
+				report_card_url: reportCardUrl
+			});
+		}
 
 		return withFiles({
 			message: 'Successfully submitted enrollment.',

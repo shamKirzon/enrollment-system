@@ -14,8 +14,8 @@
 
 	export let data;
 
-	const usersCount = data.users?.count.reduce((acc, cur) => acc + cur.value, 0) || 0;
-	const studentCount = data.users?.count.filter((u) => u.role === Role.Student)[0].value || 0;
+	const usersCount = data.users?.role_count.reduce((acc, cur) => acc + cur.value, 0) || 0;
+	const studentCount = data.users?.role_count.filter((u) => u.role === Role.Student)[0].value || 0;
 
 	setContext('form', data.form);
 </script>
@@ -82,7 +82,7 @@
 			</Card.Header>
 
 			<Card.Content>
-				<UsersChart data={data.users?.count || []} />
+				<UsersChart data={data.users?.role_count || []} />
 			</Card.Content>
 		</Card.Root>
 	</div>

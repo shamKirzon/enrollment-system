@@ -1,3 +1,5 @@
+import { StudentStatus } from '$lib/types/enrollment';
+import { PaymentMethod } from '$lib/types/payment';
 import { z } from 'zod';
 
 export const academicYearSchema = z.object({
@@ -9,7 +11,9 @@ export const academicYearSchema = z.object({
 export type AcademicYearSchema = typeof academicYearSchema;
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/avif'];
+const ACCEPTED_DOCUMENT_TYPES = ['application/pdf'];
 const MAX_IMAGE_SIZE = 5; // Megabytes
+const MAX_DOCUMENT_SIZE = 20; // Megabytes
 
 function sizeInMB(sizeInBytes: number, decimals = 2): number {
 	const result = sizeInBytes / (1024 * 1024);
@@ -22,8 +26,8 @@ export const enrollmentSchema = z.object({
 	academic_year_id: z.number(),
 
 	transaction_number: z.string(),
-	payment_amount: z.number(),
-	payment_method: z.enum(['cash', 'installment']),
+	payment_amount: z.coerce.number().nonnegative(),
+	payment_method: z.nativeEnum(PaymentMethod),
 	payment_receipt: z
 		.instanceof(File, { message: 'Image is required.' })
 		.refine(
@@ -34,6 +38,18 @@ export const enrollmentSchema = z.object({
 			return ACCEPTED_IMAGE_TYPES.includes(file.type);
 		}, `Only .jpg, .jpeg, .png, .webp, and .avif files are accepted.`),
 
+	report_card: z
+		.instanceof(File, { message: 'Image is required.' })
+		.refine(
+			(f) => sizeInMB(f.size) <= MAX_IMAGE_SIZE,
+			`The maximum file size is ${MAX_IMAGE_SIZE} MB.`
+		)
+		.refine((file) => {
+			return ACCEPTED_IMAGE_TYPES.includes(file.type);
+		}, `Only .jpg, .jpeg, .png, .webp, and .avif files are accepted.`)
+		.optional(),
+
+	student_status: z.nativeEnum(StudentStatus),
 	tuition_plan_id: z.string().optional(),
 	payment_mode_id: z.string()
 });

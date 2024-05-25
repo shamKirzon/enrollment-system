@@ -7,12 +7,11 @@
 	import BadgeNewStudent from './badge-student-status.svelte';
 	import { format } from 'date-fns';
 	import TableActions from './table-actions.svelte';
-	import PaymentReceiptDialog from './payment-receipt-dialog.svelte';
 	import { addSelectedRows } from 'svelte-headless-table/plugins';
 	import TableCheckbox from './table-checkbox.svelte';
 
 	export let data: EnrollmentWithDetails[];
-	export let selectedRows: Writable<number[]>;
+	export let selectedRows: Writable<string[]>;
 
 	$: table = createTable(readable(data), {
 		select: addSelectedRows()
@@ -20,7 +19,7 @@
 
 	$: columns = table.createColumns([
 		table.column({
-			accessor: 'id',
+			accessor: 'enrollment_id',
 			header: (_, { pluginStates }) => {
 				const { allPageRowsSelected } = pluginStates.select;
 				return createRender(TableCheckbox, {
@@ -66,7 +65,7 @@
 			}
 		}),
 		table.column({
-			accessor: 'level',
+			accessor: 'year_level_name',
 			header: 'Level'
 		}),
 		// table.column({
@@ -119,7 +118,7 @@
 			const i = Number(idx);
 
 			selectedRows.update(($row) => {
-				$row.push(data[i].id);
+				$row.push(data[i].enrollment_id);
 
 				return $row;
 			});

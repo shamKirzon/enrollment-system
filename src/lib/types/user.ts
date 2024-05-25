@@ -1,8 +1,12 @@
-export type User = {
-	id: string;
+export type UserName = {
 	first_name: string;
 	middle_name?: string;
 	last_name: string;
+	suffix_name?: string;
+};
+
+export type User = UserName & {
+	id: string;
 	contact_number: string;
 	email: string;
 	role: Role;

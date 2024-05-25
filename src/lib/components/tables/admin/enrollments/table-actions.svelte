@@ -24,7 +24,7 @@
 	async function deleteEnrollment(): Promise<void> {
 		const response = await fetch(`/api/enrollments`, {
 			method: 'DELETE',
-			body: JSON.stringify([enrollment.id]),
+			body: JSON.stringify([enrollment.enrollment_id]),
 			headers: {
 				'Content-Type': 'application/json'
 			}
@@ -43,7 +43,7 @@
 	}
 
 	async function setEnrollmentStatus(status: EnrollmentStatus): Promise<void> {
-		const response = await fetch(`/api/enrollments?id=${enrollment.id}`, {
+		const response = await fetch(`/api/enrollments?id=${enrollment.enrollment_id}`, {
 			method: 'PATCH',
 			body: JSON.stringify({ status }),
 			headers: {

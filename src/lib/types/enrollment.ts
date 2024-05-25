@@ -1,3 +1,5 @@
+import type { UserName } from './user';
+
 export type AcademicYear = {
 	id: number;
 	start_at: string; // Date
@@ -17,16 +19,14 @@ export enum AcademicYearStatus {
 }
 
 export type Enrollment = {
-	id: number;
+	id: string;
 	enrolled_at: string; // Date
-	tuition_plan: string;
 	status: EnrollmentStatus;
-	payment_receipt_url: string;
-	student_id: number;
-	section_id?: string;
+	student_id: string;
 	academic_year_id: number;
-	year_level: number;
-	student_status: StudentStatus;
+	year_level_id: string;
+	transaction_id: string;
+	// student_status: StudentStatus;
 };
 
 export enum StudentStatus {
@@ -39,14 +39,30 @@ export enum EnrollmentStatus {
 	Done = 'done'
 }
 
-export type EnrollmentWithDetails = Enrollment & {
-	ay_start_at: string;
-	ay_end_at: string;
-	first_name: string;
-	middle_name?: string;
-	last_name: string;
-	level: string;
+export type EnrollmentWithDetails = UserName & {
+	enrollment_id: string;
+	enrolled_at: string;
+	status: EnrollmentStatus;
+	student_id: string;
+	academic_year_id: number;
+	year_level_id: string;
+	transaction_id: string;
+	transaction_number: string;
+
+	academic_year_start_at: string;
+	academic_year_end_at: string;
+	year_level_name: string;
+	payment_amount: string;
+	payment_method: PaymentMethod;
+	tuition_plan_name?: string;
+	payment_receipt_url: string;
+	student_status: StudentStatus;
 };
+
+export enum PaymentMethod {
+	Cash = 'cash',
+	Installment = 'installment'
+}
 
 export type YearLevel = {
 	id: string;
@@ -96,6 +112,11 @@ export type SubjectLevel = {
 	subject_name: string;
 	year_level_name: string;
 	strand_name?: string;
+};
+
+export type PreviousReportCardPayload = {
+	report_card_url: string;
+	enrollment_id: string;
 };
 
 // export type SubjectDetails = {
