@@ -6,6 +6,7 @@
 	import * as Table from '$lib/components/ui/table';
 	import TableCheckbox from './table-checkbox.svelte';
 	import TableActions from './table-actions.svelte';
+	import { getSelectedRowData } from '$lib';
 
 	export let data: Subject[];
 	export let selectedRows: Writable<string[]>;
@@ -62,25 +63,7 @@
 		table.createViewModel(columns));
 	$: ({ selectedDataIds } = pluginStates.select);
 
-	function getSelectedRowData(selectedData: Record<string, boolean>): void {
-		if (!selectedData) return;
-
-		const keys = Object.keys(selectedData || []);
-
-		$selectedRows = [];
-
-		keys.forEach((idx) => {
-			const i = Number(idx);
-
-			selectedRows.update(($row) => {
-				$row.push(data[i].id);
-
-				return $row;
-			});
-		});
-	}
-
-	$: getSelectedRowData($selectedDataIds);
+	$: getSelectedRowData(data, selectedRows, $selectedDataIds, 'id');
 </script>
 
 <Table.Root {...$tableAttrs}>

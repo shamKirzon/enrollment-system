@@ -4,26 +4,67 @@ import School from 'virtual:icons/lucide/school';
 import Money from 'virtual:icons/mdi/money';
 import Calendar from 'virtual:icons/mdi/calendar';
 import Books from 'virtual:icons/ph/books-duotone';
-import type { Route } from './types';
+import Group from 'virtual:icons/lets-icons/group-scan';
+import type { Result, Route } from './types';
+import type { Writable } from 'svelte/store';
+import { toast } from 'svelte-sonner';
+import { invalidateAll } from '$app/navigation';
+import { type ChartArea } from 'chart.js';
 
-export function capitalizeFirstLetter(str: string) {
+export function capitalizeFirstLetter(str: string): string {
 	return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export function objectToFormData(obj, formData = new FormData(), parentKey = null): FormData {
-	for (const key of Object.keys(obj)) {
-		const value = obj[key];
+export function getSelectedRowData<T, R, L extends keyof T>(
+	data: T[],
+	selectedRows: Writable<R[]>,
+	selectedData: Record<string, boolean>,
+	key: L
+): void {
+	if (!selectedData) return;
 
-		if (value instanceof File) {
-			formData.append(parentKey ? `${parentKey}[${key}]` : key, value);
-		} else if (value instanceof Object && !(value instanceof Date)) {
-			objectToFormData(value, formData, parentKey ? `${parentKey}[${key}]` : key);
-		} else {
-			formData.append(parentKey ? `${parentKey}[${key}]` : key, value);
+	const keys = Object.keys(selectedData || []);
+
+	selectedRows.set([]);
+
+	keys.forEach((idx) => {
+		const i = Number(idx);
+
+		selectedRows.update(($row) => {
+			$row.push(data[i][key]);
+
+			return $row;
+		});
+	});
+}
+
+export async function deleteData<T>(data: T[], url: string): Promise<void> {
+	const response = await fetch(url, {
+		method: 'DELETE',
+		body: JSON.stringify(data),
+		headers: {
+			'Content-Type': 'application/json'
 		}
+	});
+
+	const result: Result = await response.json();
+
+	if (!response.ok) {
+		toast.error(result.message);
+		return;
 	}
 
-	return formData;
+	await invalidateAll();
+
+	toast.success(result.message);
+}
+
+export function getGradient(ctx: CanvasRenderingContext2D, chartArea: ChartArea, color: string) {
+	const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+	gradient.addColorStop(0.4, color);
+	gradient.addColorStop(0, 'transparent');
+
+	return gradient;
 }
 
 export const ROUTES: Route[] = [
@@ -66,6 +107,11 @@ export const ADMIN_ROUTES: Route[] = [
 		icon: Calendar
 	},
 	{
+		name: 'Sections',
+		path: '/admin/sections',
+		icon: Group
+	},
+	{
 		name: 'Subjects',
 		path: '/admin/subjects',
 		icon: Books
@@ -78,6 +124,10 @@ export const ADMIN_ROUTES: Route[] = [
 ];
 
 export const COLORS = {
-	primary: 'rgb(73, 34, 20)',
-	secondary: 'rgb(205, 127, 0)'
+	primary: (opacity: number) => {
+		return `rgba(73, 34, 20, ${opacity})`;
+	},
+	secondary: (opacity: number) => {
+		return `rgba(205, 127, 0, ${opacity})`;
+	}
 };

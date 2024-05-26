@@ -9,6 +9,7 @@
 	import DeleteIcon from 'virtual:icons/material-symbols/delete-outline';
 	import { EnrollmentStatus, type EnrollmentWithDetails } from '$lib/types/enrollment';
 	import { DrawerEnrollment } from '$lib/components/drawers';
+	import { deleteData } from '$lib';
 
 	// export let id: number;
 	// export let studentName: string;
@@ -22,24 +23,9 @@
 	};
 
 	async function deleteEnrollment(): Promise<void> {
-		const response = await fetch(`/api/enrollments`, {
-			method: 'DELETE',
-			body: JSON.stringify([enrollment.enrollment_id]),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-		const result: Result = await response.json();
-
-		if (!response.ok) {
-			toast.error(result.message);
-			return;
-		}
-
-		await invalidateAll();
+		await deleteData([enrollment.enrollment_id], '/api/enrollments');
 
 		isOpen.delete = false;
-		toast.success(result.message);
 	}
 
 	async function setEnrollmentStatus(status: EnrollmentStatus): Promise<void> {

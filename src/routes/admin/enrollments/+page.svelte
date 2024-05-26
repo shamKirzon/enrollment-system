@@ -13,9 +13,7 @@
 	import DeleteIcon from 'virtual:icons/material-symbols/delete-outline';
 	import { EnrollmentsPagination } from '$lib/components/paginations';
 	import { writable } from 'svelte/store';
-	import type { Result } from '$lib/types/index.js';
-	import { invalidateAll } from '$app/navigation';
-	import { toast } from 'svelte-sonner';
+	import { deleteData } from '$lib';
 
 	export let data;
 
@@ -28,27 +26,6 @@
 	});
 
 	const selectedRows = writable<string[]>([]);
-
-	async function deleteEnrollments(): Promise<void> {
-		const response = await fetch(`/api/enrollments`, {
-			method: 'DELETE',
-			body: JSON.stringify($selectedRows),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-
-		const result: Result = await response.json();
-
-		if (!response.ok) {
-			toast.error(result.message);
-			return;
-		}
-
-		await invalidateAll();
-
-		toast.success(result.message);
-	}
 </script>
 
 <ContentLayout class="flex-col">
@@ -86,7 +63,9 @@
 								</Dialog.Description>
 							</Dialog.Header>
 							<Dialog.Footer>
-								<Button on:click={deleteEnrollments}>Delete</Button>
+								<Button on:click={() => deleteData($selectedRows, '/api/enrollments')}
+									>Delete</Button
+								>
 							</Dialog.Footer>
 						</Dialog.Content>
 					</Dialog.Root>

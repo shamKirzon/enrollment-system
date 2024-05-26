@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { COLORS } from '$lib';
+	import { COLORS, getGradient } from '$lib';
 	import type { AcademicYearWithStudentCount } from '$lib/types/enrollment';
-	import { Chart, registerables } from 'chart.js';
+	import { Chart, registerables, type ChartArea } from 'chart.js';
 	import { format } from 'date-fns';
 	import { onMount } from 'svelte';
 
@@ -22,8 +22,16 @@
 					{
 						label: 'Students',
 						data: data.map((ay) => ay.student_count),
-						backgroundColor: COLORS.secondary,
-						borderColor: 'rgba(205, 127, 0, 0.4)'
+						fill: true,
+						backgroundColor: (context) => {
+							const { chart } = context;
+							const { ctx, chartArea } = chart;
+
+							if (!chartArea) return;
+
+							return getGradient(ctx, chartArea, COLORS.secondary(0.5));
+						},
+						borderColor: COLORS.secondary(0.6)
 					}
 				]
 			},
@@ -32,6 +40,12 @@
 				plugins: {
 					legend: {
 						display: false
+					}
+				},
+				scales: {
+					y: {
+						min: 0,
+						suggestedMax: 3
 					}
 				}
 			}

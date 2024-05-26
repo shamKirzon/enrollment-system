@@ -1,15 +1,13 @@
 <script lang="ts">
-	import type { TransactionDetails } from '$lib/types/payment';
+	import type { StudentSectionAssignment } from '$lib/types/enrollment';
+	import { addSelectedRows } from 'svelte-headless-table/plugins';
 	import { createRender, createTable, Render, Subscribe } from 'svelte-headless-table';
 	import { readable, type Writable } from 'svelte/store';
-	import * as Table from '$lib/components/ui/table';
-	import PaymentReceipt from './payment-receipt.svelte';
-	import { format } from 'date-fns';
-	import { addSelectedRows } from 'svelte-headless-table/plugins';
 	import TableCheckbox from './table-checkbox.svelte';
 	import { getSelectedRowData } from '$lib';
+	import * as Table from '$lib/components/ui/table';
 
-	export let data: TransactionDetails[];
+	export let data: StudentSectionAssignment[];
 	export let selectedRows: Writable<string[]>;
 
 	$: table = createTable(readable(data), {
@@ -18,7 +16,7 @@
 
 	$: columns = table.createColumns([
 		table.column({
-			accessor: 'transaction_id',
+			accessor: 'section_assignment_id',
 			header: (_, { pluginStates }) => {
 				const { allPageRowsSelected } = pluginStates.select;
 				return createRender(TableCheckbox, {
@@ -35,34 +33,24 @@
 			}
 		}),
 		table.column({
-			accessor: 'created_at',
-			header: 'Date',
+			accessor: ({ first_name, middle_name, last_name, suffix_name }) => {
+				return {
+					first_name,
+					middle_name,
+					last_name,
+					suffix_name
+				};
+			},
+			header: 'Student',
 			cell: ({ value }) => {
-				const date = format(value, 'MMMM d, yyyy - h:mm a');
-
-				return date;
+				return `${value.last_name}, ${value.first_name}${value.middle_name ? ` ${value.middle_name}.` : ''}${value.suffix_name ? ` ${value.suffix_name}.` : ''}`;
 			}
 		}),
 		table.column({
-			accessor: 'transaction_number',
-			header: 'Transaction Number'
-		}),
-		table.column({
-			accessor: 'payment_method',
-			header: 'Payment Method'
-		}),
-		table.column({
-			accessor: 'payment_amount',
-			header: 'Amount',
+			accessor: 'section_name',
+			header: 'Section',
 			cell: ({ value }) => {
-				return `Php. ${value}`;
-			}
-		}),
-		table.column({
-			accessor: 'payment_receipt_url',
-			header: 'Payment Receipt',
-			cell: ({ value }) => {
-				return createRender(PaymentReceipt, { paymentReceiptUrl: value });
+				return `St. ${value}`;
 			}
 		})
 	]);
@@ -71,7 +59,7 @@
 		table.createViewModel(columns));
 	$: ({ selectedDataIds } = pluginStates.select);
 
-	$: getSelectedRowData(data, selectedRows, $selectedDataIds, 'transaction_id');
+	$: getSelectedRowData(data, selectedRows, $selectedDataIds, 'enrollment_id');
 </script>
 
 <Table.Root {...$tableAttrs}>

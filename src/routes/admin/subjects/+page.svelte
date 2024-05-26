@@ -12,6 +12,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import type { Result } from '$lib/types/index.js';
 	import { setContext } from 'svelte';
+	import { deleteData } from '$lib';
 
 	export let data;
 
@@ -34,27 +35,6 @@
 	// console.log(subjectUpdateFormData);
 
 	const selectedRows = writable<string[]>([]);
-
-	async function deleteSubjects(): Promise<void> {
-		const response = await fetch(`/api/subjects`, {
-			method: 'DELETE',
-			body: JSON.stringify($selectedRows),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-
-		const result: Result = await response.json();
-
-		if (!response.ok) {
-			toast.error(result.message);
-			return;
-		}
-
-		await invalidateAll();
-
-		toast.success(result.message);
-	}
 
 	setContext('formSubject', data.form);
 	setContext('yearLevels', data.yearLevelData?.year_levels || []);
@@ -87,7 +67,7 @@
 							</Dialog.Description>
 						</Dialog.Header>
 						<Dialog.Footer>
-							<Button on:click={deleteSubjects}>Delete</Button>
+							<Button on:click={() => deleteData($selectedRows, '/api/subjects')}>Delete</Button>
 						</Dialog.Footer>
 					</Dialog.Content>
 				</Dialog.Root>

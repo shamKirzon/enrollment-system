@@ -9,6 +9,7 @@
 	import TableActions from './table-actions.svelte';
 	import { addSelectedRows } from 'svelte-headless-table/plugins';
 	import TableCheckbox from './table-checkbox.svelte';
+	import { getSelectedRowData } from '$lib';
 
 	export let data: EnrollmentWithDetails[];
 	export let selectedRows: Writable<string[]>;
@@ -107,25 +108,7 @@
 		table.createViewModel(columns));
 	$: ({ selectedDataIds } = pluginStates.select);
 
-	function getSelectedRowData(selectedData: Record<string, boolean>): void {
-		if (!selectedData) return;
-
-		const keys = Object.keys(selectedData || []);
-
-		$selectedRows = [];
-
-		keys.forEach((idx) => {
-			const i = Number(idx);
-
-			selectedRows.update(($row) => {
-				$row.push(data[i].enrollment_id);
-
-				return $row;
-			});
-		});
-	}
-
-	$: getSelectedRowData($selectedDataIds);
+	$: getSelectedRowData(data, selectedRows, $selectedDataIds, 'enrollment_id');
 </script>
 
 <Table.Root {...$tableAttrs}>

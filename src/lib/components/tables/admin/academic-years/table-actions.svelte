@@ -10,9 +10,7 @@
 	import type { AcademicYearSchema } from '$lib/schemas/enrollment';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import { CreateAcademicYearForm } from '$lib/components/forms';
-	import type { Result } from '$lib/types';
-	import { toast } from 'svelte-sonner';
-	import { invalidateAll } from '$app/navigation';
+	import { deleteData } from '$lib';
 
 	export let academicYear: AcademicYear;
 
@@ -24,18 +22,9 @@
 	};
 
 	async function deleteAcademicYear(): Promise<void> {
-		const response = await fetch(`/api/academic-years?id=${academicYear.id}`, { method: 'DELETE' });
-		const result: Result = await response.json();
-
-		if (!response.ok) {
-			toast.error(result.message);
-			return;
-		}
-
-		await invalidateAll();
+		await deleteData([academicYear.id], '/api/academic-years');
 
 		isOpen.delete = false;
-		toast.success(result.message);
 	}
 </script>
 

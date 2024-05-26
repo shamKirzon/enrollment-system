@@ -2,17 +2,40 @@
 	import { type AcademicYearWithStudentCount } from '$lib/types/enrollment';
 	import { createTable, Render, Subscribe, createRender } from 'svelte-headless-table';
 	import * as Table from '$lib/components/ui/table';
-	import { readable } from 'svelte/store';
+	import { readable, type Writable } from 'svelte/store';
 	import TableActions from './table-actions.svelte';
-	import { capitalizeFirstLetter } from '$lib';
+	import { capitalizeFirstLetter, getSelectedRowData } from '$lib';
 	import { Badge } from '$lib/components/ui/badge';
 	import { academicYearStatusMap } from './utils';
 	import { format } from 'date-fns';
+	import { addSelectedRows } from 'svelte-headless-table/plugins';
+	import TableCheckbox from './table-checkbox.svelte';
 
 	export let data: AcademicYearWithStudentCount[];
+	export let selectedRows: Writable<number[]>;
 
-	$: table = createTable(readable(data));
+	$: table = createTable(readable(data), {
+		select: addSelectedRows()
+	});
+
 	$: columns = table.createColumns([
+		table.column({
+			accessor: 'id',
+			header: (_, { pluginStates }) => {
+				const { allPageRowsSelected } = pluginStates.select;
+				return createRender(TableCheckbox, {
+					checked: allPageRowsSelected
+				});
+			},
+			cell: ({ row }, { pluginStates }) => {
+				const { getRowState } = pluginStates.select;
+				const { isSelected } = getRowState(row);
+
+				return createRender(TableCheckbox, {
+					checked: isSelected
+				});
+			}
+		}),
 		table.column({
 			accessor: ({ start_at, end_at }) => {
 				return {
@@ -66,7 +89,11 @@
 		})
 	]);
 
-	$: ({ headerRows, pageRows, tableAttrs, tableBodyAttrs } = table.createViewModel(columns));
+	$: ({ headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates } =
+		table.createViewModel(columns));
+	$: ({ selectedDataIds } = pluginStates.select);
+
+	$: getSelectedRowData(data, selectedRows, $selectedDataIds, 'id');
 </script>
 
 <Table.Root {...$tableAttrs}>

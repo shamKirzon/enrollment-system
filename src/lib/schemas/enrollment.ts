@@ -64,3 +64,10 @@ export const subjectSchema = z.object({
 });
 
 export type SubjectSchema = typeof subjectSchema;
+
+export const sectionAssignmentSchema = z.object({
+	academic_year_id: z.number(),
+	year_level_id: z.string()
+});
+
+export type SectionAssignmentSchema = typeof sectionAssignmentSchema;

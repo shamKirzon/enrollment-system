@@ -81,13 +81,6 @@ export type AcademicYearEnrollment = {
 	year_level?: string;
 };
 
-export type Transaction = {
-	id: string;
-	amount: string | number;
-	payment_receipt_url: string;
-	created_at: string; // Date
-};
-
 export type Section = {
 	id: string;
 	name: string;
@@ -117,6 +110,12 @@ export type SubjectLevel = {
 export type PreviousReportCardPayload = {
 	report_card_url: string;
 	enrollment_id: string;
+};
+
+export type StudentSectionAssignment = UserName & {
+	section_assignment_id: string;
+	enrollment_id: string;
+	section_name: string;
 };
 
 // export type SubjectDetails = {

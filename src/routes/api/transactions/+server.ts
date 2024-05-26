@@ -1,11 +1,11 @@
 import { BACKEND_URL } from '$env/static/private';
 import type { Result } from '$lib/types';
-import { error, json, type RequestHandler } from '@sveltejs/kit';
+import { json, type RequestHandler } from '@sveltejs/kit';
 
-export const DELETE: RequestHandler = async ({ fetch, url, request }) => {
-	const ids: number[] = await request.json();
+export const DELETE: RequestHandler = async ({ fetch, request }) => {
+	const ids: string[] = await request.json();
 
-	const response = await fetch(`${BACKEND_URL}/api/academic-years.php`, {
+	const response = await fetch(`${BACKEND_URL}/api/transactions.php`, {
 		method: 'DELETE',
 		body: JSON.stringify(ids),
 		headers: {
