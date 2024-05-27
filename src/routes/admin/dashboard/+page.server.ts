@@ -6,6 +6,7 @@ import type { PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { User, UserCount } from '$lib/types/user';
+import type { TransactionYearly } from '$lib/types/payment';
 
 export const load: PageServerLoad = async ({ fetch, url }) => {
 	const getAcademicYears = async () => {
@@ -31,7 +32,15 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 		const result: Result<{ users: User[]; role_count: UserCount[] }> = await response.json();
 
 		console.log(result.message);
-		console.log(result.data);
+
+		return result;
+	};
+
+	const getYearlyTransactions = async () => {
+		const response = await fetch(`${BACKEND_URL}/api/transactions/yearly.php`, { method: 'GET' });
+		const result: Result<{ transactions: TransactionYearly[] }> = await response.json();
+
+		console.log(result.message);
 
 		return result;
 	};
@@ -42,6 +51,7 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 	return {
 		form: await superValidate(zod(academicYearSchema)),
 		academicYears,
-		users
+		users,
+		yearlyTransactions: (await getYearlyTransactions()).data?.transactions
 	};
 };

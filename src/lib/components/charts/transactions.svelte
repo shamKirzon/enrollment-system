@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { COLORS, getGradient } from '$lib';
-	import type { AcademicYearWithStudentCount } from '$lib/types/enrollment';
-	import { Chart, registerables, type ChartArea } from 'chart.js';
+	import type { TransactionYearly } from '$lib/types/payment';
+	import { Chart, registerables } from 'chart.js';
 	import { format } from 'date-fns';
 	import { onMount } from 'svelte';
 
-	export let data: AcademicYearWithStudentCount[];
+	export let data: TransactionYearly[];
 
 	let canvasEl: HTMLCanvasElement;
 
@@ -15,13 +15,14 @@
 		new Chart(canvasEl, {
 			type: 'line',
 			data: {
-				labels: data
-					.sort((a, b) => new Date(a.start_at) - new Date(b.start_at))
-					.map((ay) => `${format(ay.start_at, 'yyyy')}-${format(ay.end_at, 'yyyy')}`),
+				labels: data.map(
+					(t) =>
+						`${format(t.academic_year_start_at, 'yyyy')}-${format(t.academic_year_end_at, 'yyyy')}`
+				),
 				datasets: [
 					{
-						label: 'Students',
-						data: data.map((ay) => ay.student_count),
+						label: 'Transactions',
+						data: data.map((t) => t.total_payment_amount),
 						fill: true,
 						backgroundColor: (context) => {
 							const { chart } = context;
@@ -46,7 +47,7 @@
 				scales: {
 					y: {
 						min: 0,
-						suggestedMax: 3
+						suggestedMax: 10000
 					}
 				}
 			}

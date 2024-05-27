@@ -10,7 +10,7 @@
 	import { setContext } from 'svelte';
 	import CirclePlusOutline from 'virtual:icons/flowbite/circle-plus-outline';
 	import { Role } from '$lib/types/user.js';
-	import { StudentsChart, UsersChart } from '$lib/components/charts';
+	import * as Chart from '$lib/components/charts';
 
 	export let data;
 
@@ -67,7 +67,19 @@
 						<Card.Description>Number of students enrolled per academic year.</Card.Description>
 					</Card.Header>
 					<Card.Content>
-						<StudentsChart data={data.academicYears?.academic_years || []} />
+						<Chart.Students data={data.academicYears?.academic_years || []} />
+					</Card.Content>
+				</Card.Root>
+			</Tabs.Content>
+
+			<Tabs.Content value="transactions-chart">
+				<Card.Root>
+					<Card.Header>
+						<Card.Title>Yearly Transactions</Card.Title>
+						<Card.Description>Total amount of money earned per year xD.</Card.Description>
+					</Card.Header>
+					<Card.Content>
+						<Chart.Transactions data={data.yearlyTransactions || []} />
 					</Card.Content>
 				</Card.Root>
 			</Tabs.Content>
@@ -82,7 +94,7 @@
 			</Card.Header>
 
 			<Card.Content>
-				<UsersChart data={data.users?.role_count || []} />
+				<Chart.Users data={data.users?.role_count || []} />
 			</Card.Content>
 		</Card.Root>
 	</div>

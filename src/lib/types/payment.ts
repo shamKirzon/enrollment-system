@@ -36,3 +36,9 @@ export enum PaymentMethod {
 	Cash = 'cash',
 	Installment = 'installment'
 }
+
+export type TransactionYearly = {
+	total_payment_amount: string;
+	academic_year_start_at: string;
+	academic_year_end_at: string;
+};
