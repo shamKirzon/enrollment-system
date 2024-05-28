@@ -1,4 +1,4 @@
-import type { UserName } from './user';
+import type { Sex, UserName } from './user';
 
 export type AcademicYear = {
 	id: number;
@@ -67,7 +67,15 @@ export enum PaymentMethod {
 export type YearLevel = {
 	id: string;
 	name: string;
+	education_level: EducationLevel;
 };
+
+export enum EducationLevel {
+	Preschool = 'preschool',
+	Elementary = 'elementary',
+	JuniorHighSchool = 'junior-high-school',
+	SeniorHighSchool = 'senior-high-school'
+}
 
 export type AcademicYearEnrollment = {
 	academic_year_id: number;
@@ -116,6 +124,22 @@ export type StudentSectionAssignment = UserName & {
 	section_assignment_id: string;
 	enrollment_id: string;
 	section_name: string;
+};
+
+export type SectionLevelDetails = {
+	section_id: string;
+	section_level_id?: string;
+	year_level_id?: string;
+	section_name: string;
+	adviser_id?: string;
+	adviser_first_name?: string;
+	adviser_middle_name?: string;
+	adviser_last_name?: string;
+	adviser_suffix_name?: string;
+	adviser_sex?: Sex;
+	year_level_name: string;
+	strand_id?: string;
+	strand_name?: string;
 };
 
 // export type SubjectDetails = {

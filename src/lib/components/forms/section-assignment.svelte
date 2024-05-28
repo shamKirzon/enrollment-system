@@ -53,7 +53,7 @@
 	const { form: formData, enhance } = form;
 </script>
 
-<form method="POST" use:enhance>
+<form method="POST" action="?/assign" use:enhance>
 	<Form.Field {form} name="academic_year_id">
 		<Form.Control let:attrs>
 			<Form.Label>Academic Year</Form.Label>

@@ -71,3 +71,12 @@ export const sectionAssignmentSchema = z.object({
 });
 
 export type SectionAssignmentSchema = typeof sectionAssignmentSchema;
+
+export const sectionSchema = z.object({
+	section_name: z.string(),
+	year_level_id: z.string().optional(),
+	strand_id: z.string().optional(),
+	adviser_id: z.string().optional()
+});
+
+export type SectionSchema = typeof sectionSchema;

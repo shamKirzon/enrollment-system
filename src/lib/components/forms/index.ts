@@ -4,6 +4,7 @@ import CreateAcademicYear from './create-academic-year.svelte';
 import Enrollment from './enrollment.svelte';
 import Subject from './subject.svelte';
 import SectionAssignment from './section-assignment.svelte';
+import Section from './section.svelte';
 
 export {
 	Register as RegisterForm,
@@ -11,5 +12,6 @@ export {
 	CreateAcademicYear as CreateAcademicYearForm,
 	Enrollment as FormEnrollment,
 	Subject as FormSubject,
-	SectionAssignment as FormSectionAssignment
+	SectionAssignment as FormSectionAssignment,
+	Section as FormSection
 };

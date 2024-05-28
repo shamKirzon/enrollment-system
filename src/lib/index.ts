@@ -10,6 +10,7 @@ import type { Writable } from 'svelte/store';
 import { toast } from 'svelte-sonner';
 import { invalidateAll } from '$app/navigation';
 import { type ChartArea } from 'chart.js';
+import type { UserName } from './types/user';
 
 export function capitalizeFirstLetter(str: string): string {
 	return str.charAt(0).toUpperCase() + str.slice(1);
@@ -39,6 +40,8 @@ export function getSelectedRowData<T, R, L extends keyof T>(
 }
 
 export async function deleteData<T>(data: T[], url: string): Promise<void> {
+	console.log('Deleting data...');
+
 	const response = await fetch(url, {
 		method: 'DELETE',
 		body: JSON.stringify(data),
@@ -48,6 +51,8 @@ export async function deleteData<T>(data: T[], url: string): Promise<void> {
 	});
 
 	const result: Result = await response.json();
+
+	console.log(result.message);
 
 	if (!response.ok) {
 		toast.error(result.message);
@@ -65,6 +70,12 @@ export function getGradient(ctx: CanvasRenderingContext2D, chartArea: ChartArea,
 	gradient.addColorStop(0, 'transparent');
 
 	return gradient;
+}
+
+export function formatName(name: UserName): string {
+	const { last_name, first_name, middle_name, suffix_name } = name;
+
+	return `${last_name}, ${first_name}${middle_name ? ` ${middle_name[0]}.` : ''}${suffix_name ? ` ${suffix_name}.` : ''}`;
 }
 
 export const ROUTES: Route[] = [

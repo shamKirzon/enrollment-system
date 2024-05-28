@@ -32,3 +32,8 @@ export enum Role {
 	Teacher = 'teacher',
 	Admin = 'admin'
 }
+
+export type Teacher = UserName & {
+	id: string;
+	sex: Sex;
+};
