@@ -6,24 +6,56 @@ import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types.js';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
+import { Role } from '$lib/types/user.js';
 
 export const load: PageServerLoad = async ({ fetch, locals }) => {
-	const userId = (await locals.getUserData()).data?.user?.id;
+	const user = (await locals.getUserData()).data?.user;
 
-	if (userId === undefined) {
+	if (user?.id === undefined) {
 		error(404, 'User ID not found.');
 	}
 
-	const response = await fetch(`${BACKEND_URL}/api/enrollments/students.php?student_id=${userId}`, {
-		method: 'GET'
-	});
-	const result: Result<{ academic_year_enrollments: AcademicYearEnrollment[]; count: number }> =
-		await response.json();
+	const getStudentEnrollments = async (studentId: string) => {
+		const response = await fetch(
+			`${BACKEND_URL}/api/enrollments/students.php?student_id=${studentId}`,
+			{
+				method: 'GET'
+			}
+		);
+		const result: Result<{ academic_year_enrollments: AcademicYearEnrollment[]; count: number }> =
+			await response.json();
 
-	console.log(result.message);
+		console.log(result.message);
+
+		return result;
+	};
+
+	let id: string | undefined = user.id;
+
+	if (user?.role === Role.Parent) {
+		const studentId = (await locals.getStudentData(user.id)).data?.student?.id;
+
+		console.log(user.id);
+		console.log(studentId);
+
+		// if (studentId === undefined) {
+		// 	error(404, 'Student ID not found.');
+		// }
+
+		id = studentId;
+	}
+
+	if (id) {
+		const enrollments = await getStudentEnrollments(id);
+
+		return {
+			enrollments,
+			form: await superValidate(zod(enrollmentSchema))
+		};
+	}
 
 	return {
-		enrollments: result,
+		enrollments: undefined,
 		form: await superValidate(zod(enrollmentSchema))
 	};
 };

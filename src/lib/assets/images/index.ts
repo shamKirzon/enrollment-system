@@ -32,6 +32,8 @@ import mathquizbee from './mathquizbee.webp';
 import confirmation from './confirmation.webp';
 import confirmation2 from './confirmation2.webp';
 import equalizer from './equalizer.webp';
+import pcsBgBrown from './pcs-bg-brown.jpg';
+import pcsAdBanner from './pcs-banner.jpg';
 
 export {
 	gradeSchool,
@@ -59,5 +61,7 @@ export {
 	mathquizbee,
 	confirmation,
 	confirmation2,
-	equalizer
+	equalizer,
+	pcsBgBrown,
+	pcsAdBanner
 };

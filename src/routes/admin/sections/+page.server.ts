@@ -1,109 +1,15 @@
 import { BACKEND_URL } from '$env/static/private';
 import { sectionAssignmentSchema, sectionSchema } from '$lib/schemas/enrollment.js';
-import type {
-	AcademicYear,
-	SectionLevelDetails,
-	Strand,
-	StudentSectionAssignment,
-	YearLevel
-} from '$lib/types/enrollment.js';
+import type { Section, StudentSectionAssignment } from '$lib/types/enrollment';
 import type { Result } from '$lib/types/index.js';
 import { error, redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types.js';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { Teacher } from '$lib/types/user.js';
 
-export const load: PageServerLoad = async ({ fetch, url }) => {
-	const getAcademicYears = async () => {
-		const response = await fetch(`${BACKEND_URL}/api/academic-years.php`, { method: 'GET' });
-		const result: Result<{ academic_years: AcademicYear[] }> = await response.json();
-
-		console.log(result.message);
-
-		return result;
-	};
-
-	const getYearLevels = async () => {
-		const response = await fetch(`${BACKEND_URL}/api/year-levels.php`, { method: 'GET' });
-		const result: Result<{ year_levels: YearLevel[] }> = await response.json();
-
-		console.log(result.message);
-
-		return result;
-	};
-
-	const getSectionAssignments = async () => {
-		const searchParams = url.searchParams.toString();
-
-		let api = `${BACKEND_URL}/api/sections/assignments/randomize.php`;
-
-		if (searchParams) {
-			api += `?${searchParams}`;
-		}
-
-		console.log(api);
-
-		const response = await fetch(api, { method: 'GET' });
-
-		if (!response.ok) {
-			error(response.status, 'Failed to assign sections to students.');
-		}
-
-		const result: Result<{ section_assignments: StudentSectionAssignment[] }> =
-			await response.json();
-
-		console.log(result.message);
-
-		return result;
-	};
-
-	const getSectionLevels = async () => {
-		const searchParams = url.searchParams.toString();
-
-		const response = await fetch(`${BACKEND_URL}/api/sections/levels.php?${searchParams}`, {
-			method: 'GET'
-		});
-
-		if (!response.ok) {
-			error(response.status, 'Failed to get section levels.');
-		}
-
-		const result: Result<{ section_levels: SectionLevelDetails[]; count: number }> =
-			await response.json();
-
-		console.log(result.message);
-
-		return result;
-	};
-
-	const getStrands = async () => {
-		const response = await fetch(`${BACKEND_URL}/api/strands.php`, { method: 'GET' });
-		const result: Result<{ strands: Strand[] }> = await response.json();
-
-		console.log(result.message);
-
-		return result;
-	};
-
-	const getTeachers = async () => {
-		const response = await fetch(`${BACKEND_URL}/api/teachers.php`, { method: 'GET' });
-		const result: Result<{ teachers: Teacher[] }> = await response.json();
-
-		console.log(result.message);
-
-		return result;
-	};
-
+export const load: PageServerLoad = async () => {
 	return {
-		formSectionAssignment: await superValidate(zod(sectionAssignmentSchema)),
-		formSection: await superValidate(zod(sectionSchema)),
-		academicYears: (await getAcademicYears()).data?.academic_years,
-		yearLevels: (await getYearLevels()).data?.year_levels,
-		sectionAssignments: (await getSectionAssignments()).data?.section_assignments,
-		sectionLevels: (await getSectionLevels()).data,
-		strands: (await getStrands()).data?.strands,
-		teachers: (await getTeachers()).data?.teachers
+		form: await superValidate(zod(sectionSchema))
 	};
 };
 
@@ -215,11 +121,99 @@ export const actions: Actions = {
 	update: async (event) => {
 		const form = await superValidate(event, zod(sectionSchema));
 
+		console.log(form.data);
+
 		if (!form.valid) {
 			return fail(400, {
 				form,
 				message: 'Invalid form data.'
 			});
+		}
+
+		const updateSection = async (payload: Section) => {
+			const response = await event.fetch(`${BACKEND_URL}/api/sections.php`, {
+				method: 'PATCH',
+				body: JSON.stringify(payload),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			if (!response.ok) {
+				error(response.status, 'Failed to update section.');
+			}
+
+			const result: Result = await response.json();
+
+			console.log(result.message);
+		};
+
+		const updateSectionLevel = async (payload: {
+			section_id: string;
+			year_level_id: string;
+			adviser_id?: string;
+		}) => {
+			const response = await event.fetch(`${BACKEND_URL}/api/sections/levels.php`, {
+				method: 'PATCH',
+				body: JSON.stringify(payload),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			if (!response.ok) {
+				error(response.status, 'Failed to update section level.');
+			}
+
+			const result: Result<{ section_level_id: string }> = await response.json();
+
+			// if (result.data?.section_level_id === undefined) {
+			// 	error(404, 'Section level ID not returned.');
+			// }
+
+			console.log(result.message);
+
+			return result.data?.section_level_id;
+		};
+
+		const updateSectionStrand = async (payload: {
+			section_level_id: string;
+			strand_id: string;
+		}) => {
+			const response = await event.fetch(`${BACKEND_URL}/api/sections/strands.php`, {
+				method: 'PATCH',
+				body: JSON.stringify(payload),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			if (!response.ok) {
+				error(response.status, 'Failed to update section strand.');
+			}
+
+			const result: Result = await response.json();
+
+			console.log(result.message);
+		};
+
+		const { adviser_id, section_level_id, section_id, section_name, strand_id, year_level_id } =
+			form.data;
+
+		await updateSection({ id: section_id, name: section_name });
+
+		if (year_level_id) {
+			const sectionLevelId = await updateSectionLevel({ section_id, adviser_id, year_level_id });
+
+			if (sectionLevelId) {
+				if (strand_id) {
+					await updateSectionStrand({ section_level_id: sectionLevelId, strand_id });
+				}
+			} else {
+				if (strand_id) {
+					await updateSectionStrand({ section_level_id, strand_id });
+				}
+			}
 		}
 
 		return {

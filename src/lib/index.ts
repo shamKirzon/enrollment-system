@@ -75,7 +75,7 @@ export function getGradient(ctx: CanvasRenderingContext2D, chartArea: ChartArea,
 export function formatName(name: UserName): string {
 	const { last_name, first_name, middle_name, suffix_name } = name;
 
-	return `${last_name}, ${first_name}${middle_name ? ` ${middle_name[0]}.` : ''}${suffix_name ? ` ${suffix_name}.` : ''}`;
+	return `${last_name}, ${first_name}${middle_name ? ` ${capitalizeFirstLetter(middle_name[0])}.` : ''}${suffix_name ? ` ${suffix_name}.` : ''}`;
 }
 
 export const ROUTES: Route[] = [

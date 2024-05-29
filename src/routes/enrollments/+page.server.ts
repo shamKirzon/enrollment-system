@@ -53,10 +53,10 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
 	};
 
 	const getStudentStatus = async () => {
-		const userData = await locals.getUserData();
+		const student = (await locals.getStudentData()).data?.student;
 
 		const response = await fetch(
-			`${BACKEND_URL}/api/students/status.php?student_id=${userData?.data?.user?.id}`,
+			`${BACKEND_URL}/api/students/status.php?student_id=${student?.id}`,
 			{ method: 'GET' }
 		);
 		const result: Result<{ student_status: StudentStatus }> = await response.json();
@@ -80,8 +80,8 @@ export const actions: Actions = {
 	default: async (event) => {
 		const form = await superValidate(event, zod(enrollmentSchema));
 
-		const { data } = await event.locals.getUserData();
-		const userId = data?.user?.id;
+		const { data } = await event.locals.getStudentData();
+		const userId = data?.student?.id;
 
 		if (userId === undefined) {
 			error(404, 'User ID not found.');

@@ -15,6 +15,8 @@ export const actions: Actions = {
 	default: async (event) => {
 		const form = await superValidate(event, zod(registerSchema));
 
+		console.log(form.data);
+
 		console.log('Registering user...');
 
 		if (!form.valid) {

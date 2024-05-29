@@ -14,6 +14,9 @@ const config = {
 			}
 		},
 		extend: {
+			backgroundImage: {
+				'pcs-bg-brown': "url('./lib/assets/images/pcs-bg-brown.jpg')"
+			},
 			colors: {
 				border: 'hsl(var(--border) / <alpha-value>)',
 				input: 'hsl(var(--input) / <alpha-value>)',

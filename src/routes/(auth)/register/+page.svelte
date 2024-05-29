@@ -6,7 +6,7 @@
 	export let data;
 </script>
 
-<GuestLayout>
+<GuestLayout class="flex-col">
 	<Card.Root class="w-full max-w-md">
 		<Card.Header>
 			<Card.Title class="text-2xl">Register</Card.Title>

@@ -11,6 +11,7 @@ declare global {
 			user: User;
 			getSession: () => string | undefined;
 			getUserData: () => Promise<Result<{ user: User | undefined }>>;
+			getStudentData: () => Promise<Result<{ student: User | undefined }>>;
 		}
 		// interface PageData {}
 		// interface PageState {}

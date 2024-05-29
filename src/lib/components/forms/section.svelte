@@ -62,9 +62,11 @@
 	if (section) {
 		$formData = {
 			section_name: section.section_name,
-			adviser_id: section.adviser_id,
-			year_level_id: section.year_level_id,
-			strand_id: section.strand_id
+			adviser_id: section.adviser_id || undefined,
+			year_level_id: section.year_level_id || undefined,
+			strand_id: section.strand_id || undefined,
+			section_id: section.section_id,
+			section_level_id: section.section_level_id || undefined
 		};
 	}
 
@@ -81,6 +83,9 @@
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
+
+	<input hidden type="text" name="section_id" bind:value={$formData.section_id} />
+	<input hidden type="text" name="section_level_id" bind:value={$formData.section_level_id} />
 
 	<Form.Field {form} name="year_level_id">
 		<Form.Control let:attrs>

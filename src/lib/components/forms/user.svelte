@@ -1,20 +1,27 @@
 <script lang="ts">
 	import * as Form from '$lib/components/ui/form';
+	import * as Select from '$lib/components/ui/select';
 	import { Input } from '$lib/components/ui/input';
-	import { registerSchema, type RegisterSchema } from '$lib/schemas/auth';
+	import { userSchema, type UserSchema } from '$lib/schemas/user';
+	import { toast } from 'svelte-sonner';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { toast } from 'svelte-sonner';
-	import * as RadioGroup from '$lib/components/ui/radio-group';
+	import { Role, type User } from '$lib/types/user';
+	import { capitalizeFirstLetter } from '$lib';
+	import { getContext } from 'svelte';
 
-	export let data: SuperValidated<Infer<RegisterSchema>>;
+	export let user: User | undefined = undefined;
+	export let mode: 'create' | 'update' = 'create';
+
+	const data = getContext<SuperValidated<Infer<UserSchema>>>('formUser');
 
 	let loadingToast: string | number | undefined;
 
 	const form = superForm(data, {
-		validators: zodClient(registerSchema),
+		validators: zodClient(userSchema),
+		resetForm: false,
 		onSubmit: () => {
-			loadingToast = toast.loading('Creating user...');
+			loadingToast = toast.loading('Creating academic year...');
 		},
 		onError: ({ result }) => {
 			toast.error(result.error.message);
@@ -22,6 +29,7 @@
 		onResult: ({ result }) => {
 			toast.dismiss(loadingToast);
 
+			console.log(result);
 			switch (result.type) {
 				case 'success':
 					{
@@ -35,21 +43,28 @@
 						toast.error(message);
 					}
 					break;
-				case 'redirect':
-					toast.success('Successfully registered. You may now log in.');
-					break;
 			}
 		}
 	});
 
 	const { form: formData, enhance } = form;
+
+	$formData = {
+		...user,
+		password: ''
+	};
+
+	const action = mode === 'create' ? '?/create' : `?/update`;
 </script>
 
-<form method="POST" class="space-y-4" use:enhance>
+<form method="POST" {action} use:enhance>
+	<!-- <input hidden type="text" name="id" value={user.id}> -->
+	<!-- <input hidden type="text" name="id" value={user.id}> -->
+
 	<Form.Field {form} name="first_name">
 		<Form.Control let:attrs>
 			<Form.Label>First Name</Form.Label>
-			<Input {...attrs} bind:value={$formData.first_name} required />
+			<Input {...attrs} bind:value={$formData.first_name} />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -65,7 +80,7 @@
 	<Form.Field {form} name="last_name">
 		<Form.Control let:attrs>
 			<Form.Label>Last Name</Form.Label>
-			<Input {...attrs} bind:value={$formData.last_name} required />
+			<Input {...attrs} bind:value={$formData.last_name} />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -81,7 +96,7 @@
 	<Form.Field {form} name="email">
 		<Form.Control let:attrs>
 			<Form.Label>Email</Form.Label>
-			<Input {...attrs} bind:value={$formData.email} required />
+			<Input {...attrs} bind:value={$formData.email} type="email" />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -89,7 +104,7 @@
 	<Form.Field {form} name="contact_number">
 		<Form.Control let:attrs>
 			<Form.Label>Contact Number</Form.Label>
-			<Input {...attrs} bind:value={$formData.contact_number} type="tel" required />
+			<Input {...attrs} bind:value={$formData.contact_number} type="tel" />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -97,42 +112,38 @@
 	<Form.Field {form} name="password">
 		<Form.Control let:attrs>
 			<Form.Label>Password</Form.Label>
-			<Input {...attrs} type="password" bind:value={$formData.password} required />
+			<Input {...attrs} bind:value={$formData.password} type="password" />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
 
-	<Form.Field {form} name="confirm_password">
+	<Form.Field {form} name="role">
 		<Form.Control let:attrs>
-			<Form.Label>Confirm Password</Form.Label>
-			<Input {...attrs} type="password" bind:value={$formData.confirm_password} required />
+			<Form.Label>Role</Form.Label>
+			<Select.Root
+				selected={{
+					label: capitalizeFirstLetter(user?.role || Role.Student),
+					value: user?.role || Role.Student
+				}}
+				onSelectedChange={(v) => {
+					v && ($formData.role = v.value);
+				}}
+				required
+			>
+				<Select.Trigger {...attrs}>
+					<Select.Value placeholder="Select a role" />
+				</Select.Trigger>
+				<Select.Content>
+					<Select.Item value={Role.Student} label="Student" />
+					<Select.Item value={Role.Parent} label="Parent" />
+					<Select.Item value={Role.Admin} label="Admin" />
+				</Select.Content>
+			</Select.Root>
+
+			<input hidden bind:value={$formData.role} name={attrs.name} />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
 
-	<Form.Fieldset {form} name="role">
-		<div class="flex items-center gap-1 justify-between">
-			<span class="text-sm"> I am a... </span>
-			<RadioGroup.Root bind:value={$formData.role} class="flex gap-6 items-center">
-				<div class="flex items-center gap-2">
-					<Form.Control let:attrs>
-						<RadioGroup.Item value="student" {...attrs} />
-						<Form.Label class="font-normal">Student</Form.Label>
-					</Form.Control>
-				</div>
-				<div class="flex items-center gap-2">
-					<Form.Control let:attrs>
-						<RadioGroup.Item value="parent" {...attrs} />
-						<Form.Label class="font-normal">Parent</Form.Label>
-					</Form.Control>
-				</div>
-				<RadioGroup.Input name="role" />
-			</RadioGroup.Root>
-		</div>
-
-		<Form.FieldErrors />
-	</Form.Fieldset>
-
-	<a href="/login" class="underline text-sm">Already have an account?</a>
-	<Form.Button class="mt-4">Submit</Form.Button>
+	<Form.Button>Submit</Form.Button>
 </form>

@@ -5,6 +5,7 @@ import Enrollment from './enrollment.svelte';
 import Subject from './subject.svelte';
 import SectionAssignment from './section-assignment.svelte';
 import Section from './section.svelte';
+import User from './user.svelte';
 
 export {
 	Register as RegisterForm,
@@ -13,5 +14,6 @@ export {
 	Enrollment as FormEnrollment,
 	Subject as FormSubject,
 	SectionAssignment as FormSectionAssignment,
-	Section as FormSection
+	Section as FormSection,
+	User as FormUser
 };

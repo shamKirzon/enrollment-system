@@ -3,6 +3,7 @@
 	import { ContentLayout } from '$lib/components/layouts';
 	import * as Card from '$lib/components/ui/card';
 	import { StudentStatus } from '$lib/types/enrollment.js';
+	import { Role } from '$lib/types/user';
 
 	export let data;
 </script>
@@ -11,6 +12,11 @@
 	<div>
 		{#if data.studentStatus === StudentStatus.New}
 			<p>Welcome!</p>
+			{#if data.user?.role === Role.Parent}
+				<p>You may now enroll your child: {data.student?.first_name}</p>
+			{:else}
+				<p>You may now enroll</p>
+			{/if}
 		{:else}
 			<p>Welcome Back!</p>
 		{/if}

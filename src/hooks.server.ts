@@ -28,6 +28,38 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return result;
 	};
 
+	event.locals.getStudentData = async () => {
+		const userData = await event.locals.getUserData();
+
+		if (userData.data?.user?.role === Role.Parent) {
+			const response = await event.fetch(
+				`${BACKEND_URL}/api/parents/students.php?parent_id=${userData.data?.user.id}`,
+				{
+					method: 'GET'
+				}
+			);
+
+			if (!response.ok) {
+				console.error('I AM NOT OKAY');
+				return {
+					message: 'Student does not exist.'
+				};
+			}
+
+			const result: Result<{ student: User }> = await response.json();
+
+			console.log('STUDENT');
+			console.log(result);
+
+			return result;
+		}
+
+		return {
+			data: { student: userData.data?.user },
+			message: 'Successfully fetched student.'
+		};
+	};
+
 	if (!event.route.id?.startsWith('/(auth)') && !session) {
 		redirect(303, '/login');
 	}

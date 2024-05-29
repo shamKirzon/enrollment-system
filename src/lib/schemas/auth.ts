@@ -23,5 +23,9 @@ export const loginSchema = z.object({
 	password: z.string()
 });
 
+// export const registerParentSchema = z.object({
+//
+// })
+
 export type RegisterSchema = typeof registerSchema;
 export type LoginSchema = typeof loginSchema;
