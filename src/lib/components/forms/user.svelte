@@ -50,17 +50,21 @@
 	const { form: formData, enhance } = form;
 
 	$formData = {
-		...user,
+		avatar_url: user?.avatar_url,
+		role: user?.role || Role.Student,
+		email: user?.email || '',
+		first_name: user?.first_name || '',
+		middle_name: user?.middle_name,
+		last_name: user?.last_name || '',
+		suffix_name: user?.suffix_name,
+		contact_number: user?.contact_number || '',
 		password: ''
 	};
 
-	const action = mode === 'create' ? '?/create' : `?/update`;
+	const action = mode === 'create' ? '?/create' : `?/update&id=${user?.id}`;
 </script>
 
 <form method="POST" {action} use:enhance>
-	<!-- <input hidden type="text" name="id" value={user.id}> -->
-	<!-- <input hidden type="text" name="id" value={user.id}> -->
-
 	<Form.Field {form} name="first_name">
 		<Form.Control let:attrs>
 			<Form.Label>First Name</Form.Label>
@@ -123,7 +127,7 @@
 			<Select.Root
 				selected={{
 					label: capitalizeFirstLetter(user?.role || Role.Student),
-					value: user?.role || Role.Student
+					value: Role.Student
 				}}
 				onSelectedChange={(v) => {
 					v && ($formData.role = v.value);

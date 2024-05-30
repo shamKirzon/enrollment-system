@@ -10,8 +10,9 @@
 	import { toast } from 'svelte-sonner';
 	import { invalidateAll } from '$app/navigation';
 	import { FormSubject } from '$lib/components/forms';
+	import type { SubjectDetails } from '$lib/types/subject';
 
-	export let subject: Subject;
+	export let subject: SubjectDetails;
 
 	const isOpen = {
 		edit: false,
@@ -21,7 +22,7 @@
 	async function deleteSubjects(): Promise<void> {
 		const response = await fetch(`/api/subjects`, {
 			method: 'DELETE',
-			body: JSON.stringify([subject.id]),
+			body: JSON.stringify([subject.subject_id]),
 			headers: {
 				'Content-Type': 'application/json'
 			}
@@ -68,7 +69,7 @@
 			<Dialog.Title>Edit a subject</Dialog.Title>
 		</Dialog.Header>
 
-		<FormSubject mode="update" />
+		<FormSubject mode="update" {subject} />
 	</Dialog.Content>
 </Dialog.Root>
 

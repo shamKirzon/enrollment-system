@@ -116,7 +116,10 @@
 
 	<Form.Field {form} name="strand_id">
 		<Form.Control let:attrs>
-			<Form.Label>Strand</Form.Label>
+			<Form.Label
+				class={`${selectedYearLevel?.education_level !== EducationLevel.SeniorHighSchool ? 'text-muted-foreground' : ''}`}
+				>Strand</Form.Label
+			>
 			<Select.Root
 				onSelectedChange={(v) => {
 					v && ($formData.strand_id = v.value);

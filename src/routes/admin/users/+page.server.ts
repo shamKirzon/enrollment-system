@@ -36,6 +36,8 @@ export const actions: Actions = {
 	create: async (event) => {
 		const form = await superValidate(event, zod(userSchema));
 
+		console.log(form.data);
+
 		if (!form.valid) {
 			console.error('Invalid form data.');
 			return fail(400, {

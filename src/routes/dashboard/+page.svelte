@@ -41,8 +41,11 @@
 							</div>
 						{:else}
 							<div>
-								<p>Your enrollment has been approved.</p>
-
+								{#if data.user?.role === Role.Parent}
+									<p>Your child's enrollment has been approved.</p>
+								{:else}
+									<p>Your enrollment has been approved.</p>
+								{/if}
 								<p>Welcome to a new journey in Pateros Catholic School!</p>
 							</div>
 						{/if}

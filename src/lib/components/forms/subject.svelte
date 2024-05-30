@@ -1,22 +1,18 @@
 <script lang="ts">
 	import { subjectSchema, type SubjectSchema } from '$lib/schemas/enrollment';
-	import type { Strand, YearLevel } from '$lib/types/enrollment';
+	import { EducationLevel, type Strand, type YearLevel } from '$lib/types/enrollment';
 	import { toast } from 'svelte-sonner';
 	import { superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import * as Form from '$lib/components/ui/form';
 	import * as Select from '$lib/components/ui/select';
-	import { Checkbox } from '$lib/components/ui/checkbox';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import { Button } from '$lib/components/ui/button';
 
 	import { Input } from '$lib/components/ui/input';
 	import { getContext } from 'svelte';
 	import type { Selected } from 'bits-ui';
+	import type { SubjectDetails } from '$lib/types/subject';
 
-	// export let data: SuperValidated<Infer<SubjectSchema>>;
-	// export let yearLevels: YearLevel[];
-	// export let strands: Strand[];
+	export let subject: SubjectDetails | undefined = undefined;
 	export let mode: 'create' | 'update' = 'create';
 
 	const data = getContext<SuperValidated<Infer<SubjectSchema>>>('formSubject');
@@ -56,30 +52,47 @@
 
 	const { form: formData, enhance } = form;
 
-	function addStrand(id: string) {
-		$formData.strand_ids = [...$formData.strand_ids, id];
-	}
+	$formData = {
+		subject_id: subject?.subject_id || '',
+		subject_name: subject?.subject_name || '',
+		year_level_ids: subject?.year_levels.map(({ id }) => id) || [],
+		strand_ids: subject?.strands.map(({ id }) => id) || []
+	};
 
-	function removeStrand(id: string) {
-		$formData.strand_ids = $formData.strand_ids.filter((i) => i !== id);
-	}
-
-	function addYearLevel(id: string) {
-		$formData.year_level_ids = [...$formData.year_level_ids, id];
-	}
-
-	function removeYearLevel(id: string) {
-		$formData.year_level_ids = $formData.year_level_ids.filter((i) => i !== id);
-	}
-
-	function getValues(selected: Selected<unknown>[]) {
+	function getValues<T>(selected: Selected<T>[]) {
 		return selected.map((v) => v.value);
 	}
 
-	// const action = mode === 'create' ? '?/create' : `?/update&id=${subject.id}`;
+	const action = mode === 'create' ? '?/create' : `?/update&id=${subject?.subject_id}`;
+
+	$: shsSelected = $formData.year_level_ids.some((id) => {
+		const yearLevel = yearLevels.find((yl) => yl.id === id);
+		return yearLevel && yearLevel.education_level === EducationLevel.SeniorHighSchool;
+	});
+
+	$: shsUnselected = $formData.year_level_ids.some((id) => {
+		const yearLevel = yearLevels.find((yl) => yl.id === id);
+		return yearLevel && yearLevel.education_level !== EducationLevel.SeniorHighSchool;
+	});
+
+	function selectYearLevels(): Selected<string>[] {
+		const items = subject?.year_levels.map(({ id, name }) => {
+			return { label: name, value: id };
+		});
+
+		return items || [];
+	}
+
+	function selectStrands(): Selected<string>[] {
+		const items = subject?.strands.map(({ id, name }) => {
+			return { label: name, value: id };
+		});
+
+		return items || [];
+	}
 </script>
 
-<form method="POST" action="?/create" class="space-y-8" use:enhance>
+<form method="POST" {action} class="space-y-8" use:enhance>
 	<Form.Field {form} name="subject_id">
 		<Form.Control let:attrs>
 			<Form.Label>Subject ID</Form.Label>
@@ -103,10 +116,9 @@
 			<Select.Root
 				multiple
 				onSelectedChange={(v) => {
-					console.log($formData);
-					console.log(v);
 					v && ($formData.year_level_ids = getValues(v));
 				}}
+				selected={mode === 'update' ? selectYearLevels() : undefined}
 			>
 				<Select.Trigger {...attrs}>
 					<div class="justify-between flex w-full pr-4">
@@ -114,8 +126,10 @@
 							<div {...attrs}>
 								{#if label.split(',').length > 3}
 									{label.split(',').slice(0, 3).join(',')}
-								{:else}
+								{:else if label}
 									{label}
+								{:else}
+									Select year levels
 								{/if}
 							</div>
 						</Select.Value>
@@ -126,7 +140,13 @@
 				</Select.Trigger>
 				<Select.Content class="max-w-full">
 					{#each yearLevels as yearLevel (yearLevel.id)}
-						<Select.Item value={yearLevel.id} label={yearLevel.name} />
+						<Select.Item
+							value={yearLevel.id}
+							label={yearLevel.name}
+							disabled={(shsSelected &&
+								yearLevel.education_level !== EducationLevel.SeniorHighSchool) ||
+								(shsUnselected && yearLevel.education_level === EducationLevel.SeniorHighSchool)}
+						/>
 					{/each}
 				</Select.Content>
 			</Select.Root>
@@ -140,39 +160,55 @@
 		<Form.FieldErrors />
 	</Form.Field>
 
-	<Form.Fieldset {form} name="strand_ids" class="space-y-2">
-		<div>
-			<Form.Legend>Strands</Form.Legend>
-			<Form.Description>Select the strands for this subject.</Form.Description>
-		</div>
+	<Form.Field {form} name="strand_ids">
+		<Form.Control let:attrs>
+			<Form.Label
+				class={shsUnselected || $formData.year_level_ids.length < 1 ? 'text-muted-foreground' : ''}
+			>
+				Strands
+			</Form.Label>
+			<Select.Root
+				multiple
+				onSelectedChange={(v) => {
+					v && ($formData.strand_ids = getValues(v));
+				}}
+				disabled={shsUnselected || $formData.year_level_ids.length < 1}
+				selected={mode === 'update' ? selectStrands() : undefined}
+			>
+				<Select.Trigger {...attrs}>
+					<div class="justify-between flex w-full pr-4">
+						<Select.Value placeholder="Select strands" asChild let:attrs let:label>
+							<div {...attrs}>
+								{#if $formData.strand_ids.length > 1}
+									{label.split(',').slice(0, 1).join(',')}
+								{:else if label}
+									{label}
+								{:else}
+									Select strands
+								{/if}
+							</div>
+						</Select.Value>
 
-		<div class="space-y-2">
+						{#if $formData.strand_ids.length > 1}
+							<span>+{$formData.strand_ids.length} more</span>
+						{/if}
+					</div>
+				</Select.Trigger>
+				<Select.Content class="max-w-full">
+					{#each strands as strand (strand.id)}
+						<Select.Item value={strand.id} label={strand.name} />
+					{/each}
+				</Select.Content>
+			</Select.Root>
+
 			{#each strands as strand (strand.id)}
 				{@const checked = $formData.strand_ids.includes(strand.id)}
 
-				<div class="flex flex-row items-start space-x-3">
-					<Form.Control let:attrs>
-						<Checkbox
-							{...attrs}
-							{checked}
-							onCheckedChange={(v) => {
-								if (v) {
-									addStrand(strand.id);
-								} else {
-									removeStrand(strand.id);
-								}
-							}}
-						/>
-						<Form.Label class="text-sm font-normal">
-							{strand.name}
-						</Form.Label>
-						<input hidden type="checkbox" name={attrs.name} value={strand.id} {checked} />
-					</Form.Control>
-				</div>
+				<input hidden type="checkbox" name={attrs.name} value={strand.id} {checked} />
 			{/each}
-			<Form.FieldErrors />
-		</div>
-	</Form.Fieldset>
+		</Form.Control>
+		<Form.FieldErrors />
+	</Form.Field>
 
 	<Form.Button>Submit</Form.Button>
 </form>

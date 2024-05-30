@@ -61,7 +61,7 @@
 
 						<Dialog.Content>
 							<Dialog.Header>
-								<Dialog.Title>Create a new academic year</Dialog.Title>
+								<Dialog.Title>Create a new user</Dialog.Title>
 							</Dialog.Header>
 
 							<FormUser />

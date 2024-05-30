@@ -8,31 +8,10 @@
 	import DeleteIcon from 'virtual:icons/material-symbols/delete-outline';
 	import { FormSubject } from '$lib/components/forms';
 	import { writable } from 'svelte/store';
-	import { toast } from 'svelte-sonner';
-	import { invalidateAll } from '$app/navigation';
-	import type { Result } from '$lib/types/index.js';
 	import { setContext } from 'svelte';
 	import { deleteData } from '$lib';
 
 	export let data;
-
-	// const subjectUpdateFormData = data.subjectLevelData?.subject_levels.reduce((acc, obj) => {
-	// 	const existingSubject = acc.find((item) => item.subject_id === obj.subject_id);
-	// 	if (existingSubject) {
-	// 		existingSubject.year_level_ids.push(obj.year_level_id);
-	// 		existingSubject.strand_ids.push(obj.strand_id); // Use spread operator for unique elements
-	// 	} else {
-	// 		acc.push({
-	// 			subject_id: obj.subject_id,
-	// 			subject_name: obj.subject_name,
-	// 			year_level_ids: [obj.year_level_id],
-	// 			strand_ids: [obj.strand_id]
-	// 		});
-	// 	}
-	// 	return acc;
-	// }, []);
-
-	// console.log(subjectUpdateFormData);
 
 	const selectedRows = writable<string[]>([]);
 
@@ -91,7 +70,7 @@
 			{/if}
 		</Card.Header>
 		<Card.Content>
-			<TableSubjects data={data.subjectData?.subjects || []} {selectedRows} />
+			<TableSubjects data={data.subjectDetailsData?.subjects || []} {selectedRows} />
 		</Card.Content>
 	</Card.Root>
 </ContentLayout>

@@ -5,7 +5,8 @@ import { fail, superValidate } from 'sveltekit-superforms';
 import type { PageServerLoad } from './$types';
 import { zod } from 'sveltekit-superforms/adapters';
 import { subjectSchema } from '$lib/schemas/enrollment';
-import type { Actions } from '@sveltejs/kit';
+import { error, type Actions } from '@sveltejs/kit';
+import type { SubjectDetails } from '$lib/types/subject';
 
 export const load: PageServerLoad = async ({ fetch }) => {
 	const getSubjects = async () => {
@@ -19,11 +20,11 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		return result;
 	};
 
-	const getSubjectLevels = async () => {
-		const response = await fetch(`${BACKEND_URL}/api/subjects/levels.php`, {
+	const getSubjectsDetails = async () => {
+		const response = await fetch(`${BACKEND_URL}/api/subjects/details.php`, {
 			method: 'GET'
 		});
-		const result: Result<{ subject_levels: SubjectLevel[]; count: number }> = await response.json();
+		const result: Result<{ subjects: SubjectDetails[]; }> = await response.json();
 
 		console.log(result.message);
 
@@ -51,15 +52,17 @@ export const load: PageServerLoad = async ({ fetch }) => {
 	return {
 		form: await superValidate(zod(subjectSchema)),
 		subjectData: (await getSubjects()).data,
-		subjectLevelData: (await getSubjectLevels()).data,
 		yearLevelData: (await getYearLevels()).data,
-		strandData: (await getStrands()).data
+		strandData: (await getStrands()).data,
+		subjectDetailsData: (await getSubjectsDetails()).data
 	};
 };
 
 export const actions: Actions = {
 	create: async (event) => {
 		const form = await superValidate(event, zod(subjectSchema));
+
+		console.log(form.data);
 
 		if (!form.valid) {
 			return fail(400, {
@@ -68,12 +71,10 @@ export const actions: Actions = {
 			});
 		}
 
-		// console.log(form.data);
-
-		const createSubject = async () => {
+		const createSubject = async (payload: Omit<Subject, 'year_level_count'>) => {
 			const response = await event.fetch(`${BACKEND_URL}/api/subjects.php`, {
 				method: 'POST',
-				body: JSON.stringify({ id: form.data.subject_id, name: form.data.subject_name }),
+				body: JSON.stringify(payload),
 				headers: {
 					'Content-Type': 'application/json'
 				}
@@ -89,40 +90,67 @@ export const actions: Actions = {
 			};
 		};
 
-		const createSubjectLevel = async () => {
+		const createSubjectLevel = async (payload: {
+			subject_id: string;
+			year_level_ids: string[];
+		}) => {
 			const response = await event.fetch(`${BACKEND_URL}/api/subjects/levels.php`, {
 				method: 'POST',
-				body: JSON.stringify({
-					subject_id: form.data.subject_id,
-					year_level_id: form.data.year_level_ids,
-					strand_ids: form.data.strand_ids
-				}),
+				body: JSON.stringify(payload),
 				headers: {
 					'Content-Type': 'application/json'
 				}
 			});
 
-			const result: Result = await response.json();
+			const result: Result<{ subject_level_ids: string[] }> = await response.json();
 
 			console.log(result.message);
 
-			return {
-				message: result.message,
-				code: response.status
-			};
+			if (result.data?.subject_level_ids === undefined) {
+				error(404, 'Subject level IDs not returned.');
+			}
+
+			return result.data?.subject_level_ids;
 		};
 
-		let result = await createSubject();
+		const createSubjectStrand = async (payload: {
+			subject_level_id: string;
+			strand_ids: string[];
+		}) => {
+			const response = await event.fetch(`${BACKEND_URL}/api/subjects/strands.php`, {
+				method: 'POST',
+				body: JSON.stringify(payload),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
 
-		if (result.code === 201 || result.code === 409) {
-			result = await createSubjectLevel();
+			if (!response.ok) {
+				error(response.status, 'Failed to create subject strands.');
+			}
+
+			const result: Result = await response.json();
+
+			console.log(result.message);
+		};
+
+		const { subject_id, subject_name, year_level_ids, strand_ids } = form.data;
+
+		await createSubject({ id: subject_id, name: subject_name });
+		const subjectLevelIds = await createSubjectLevel({ subject_id, year_level_ids });
+
+		if (subjectLevelIds.length > 0 && strand_ids.length > 0) {
+			for (let i = 0; i < subjectLevelIds.length; i++) {
+				await createSubjectStrand({ subject_level_id: subjectLevelIds[i], strand_ids });
+			}
 		}
-
-		console.log(result);
 
 		return {
 			form,
-			message: result.message
+			message: 'Successfully created subject.'
 		};
+	},
+
+	update: async () => {
 	}
 };

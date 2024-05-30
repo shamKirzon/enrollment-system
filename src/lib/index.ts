@@ -66,7 +66,7 @@ export async function deleteData<T>(data: T[], url: string): Promise<void> {
 
 export function getGradient(ctx: CanvasRenderingContext2D, chartArea: ChartArea, color: string) {
 	const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-	gradient.addColorStop(0.4, color);
+	gradient.addColorStop(0.6, color);
 	gradient.addColorStop(0, 'transparent');
 
 	return gradient;
