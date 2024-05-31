@@ -6,11 +6,12 @@
 	import { Button } from '$lib/components/ui/button';
 	import { cn } from '$lib/utils';
 	import { tick } from 'svelte';
-	import type { YearLevel } from '$lib/types/enrollment';
+	import { EducationLevel, type YearLevel } from '$lib/types/enrollment';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 
 	export let yearLevels: YearLevel[];
+	export let includeSemester: boolean = false;
 
 	let open = false;
 	let value = '';
@@ -27,10 +28,10 @@
 		});
 	}
 
-	function replaceSearchParam(k: string, v: string) {
+	function replaceSearchParam(k: string, v: string | number) {
 		let query = new URLSearchParams($page.url.searchParams.toString());
 
-		query.set(k, v);
+		query.set(k, v.toString());
 
 		goto(`?${query.toString()}`);
 	}
@@ -41,6 +42,10 @@
 		query.delete(k);
 
 		goto(`?${query.toString()}`);
+	}
+
+	function deleteAllSearchParameters() {
+		goto(`?${new URLSearchParams().toString()}`);
 	}
 </script>
 
@@ -68,7 +73,7 @@
 						onSelect={(currentValue) => {
 							value = currentValue;
 							closeAndFocusTrigger(ids.trigger);
-							replaceSearchParam('level', `${yearLevel.id}`);
+							replaceSearchParam('year_level', `${yearLevel.id}`);
 						}}
 					>
 						<Check class={cn('mr-2 h-4 w-4', value !== yearLevel.name && 'text-transparent')} />
@@ -81,7 +86,7 @@
 				onSelect={() => {
 					value = '';
 					closeAndFocusTrigger(ids.trigger);
-					deleteSearchParam('level');
+					deleteAllSearchParameters();
 				}}
 			>
 				<span class="ml-7"> Reset </span>

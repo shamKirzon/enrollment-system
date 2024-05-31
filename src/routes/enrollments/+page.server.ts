@@ -9,6 +9,7 @@ import {
 	StudentStatus,
 	type AcademicYear,
 	type PreviousReportCardPayload,
+	type Strand,
 	type YearLevel
 } from '$lib/types/enrollment.js';
 import type { PaymentMode, TransactionPayload, TuitionPlan } from '$lib/types/payment.js';
@@ -28,6 +29,15 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
 	const getYearLevels = async () => {
 		const response = await fetch(`${BACKEND_URL}/api/year-levels.php`, { method: 'GET' });
 		const result: Result<{ year_levels: YearLevel[] }> = await response.json();
+
+		console.log(result.message);
+
+		return result;
+	};
+
+	const getStrands = async () => {
+		const response = await fetch(`${BACKEND_URL}/api/strands.php`, { method: 'GET' });
+		const result: Result<{ strands: Strand[] }> = await response.json();
 
 		console.log(result.message);
 
@@ -70,9 +80,10 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
 		form: await superValidate(zod(enrollmentSchema)),
 		yearLevels: (await getYearLevels()).data?.year_levels,
 		academicYears: (await getAcademicYears()).data?.academic_years,
+		strands: (await getStrands()).data?.strands,
 		paymentModes: (await getPaymentModes()).data?.payment_modes,
 		tuitionPlans: (await getTuitionPlans()).data?.tuition_plans,
-		studentStatus: (await getStudentStatus()).data?.student_status
+		studentStatus: (await getStudentStatus()).data?.student_status,
 	};
 };
 
@@ -183,6 +194,24 @@ export const actions: Actions = {
 			return result.data?.enrollment_id;
 		};
 
+		const createEnrollmentStrand = async (payload: {enrollment_id: string, strand_id: string}) => {
+			const response = await event.fetch(`${BACKEND_URL}/api/enrollments/strands.php`, {
+				method: 'POST',
+				body: JSON.stringify(payload),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			if (!response.ok) {
+				error(response.status, 'Failed to create enrollment strand.');
+			}
+
+			const result: Result = await response.json();
+
+			console.log(result.message);
+		}
+
 		// NOTE: Only applicable for those who chose the `installment` payment method
 		const createEnrolledTuitionPlan = async (enrollmentId: string, tuitionPlanId: string) => {
 			const response = await event.fetch(`${BACKEND_URL}/api/enrollments/tuition-plans.php`, {
@@ -264,6 +293,10 @@ export const actions: Actions = {
 			payment_receipt_url: paymentReceiptUrl
 		});
 		const enrollmentId = await createEnrollment(paymentReceiptUrl, transactionId);
+
+		if(form.data.strand_id) {
+			await createEnrollmentStrand({enrollment_id: enrollmentId, strand_id: form.data.strand_id})
+		}
 
 		if (form.data.tuition_plan_id) {
 			await createEnrolledTuitionPlan(enrollmentId, form.data.tuition_plan_id);

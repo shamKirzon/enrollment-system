@@ -62,6 +62,7 @@ export const actions: Actions = {
 	create: async (event) => {
 		const form = await superValidate(event, zod(subjectSchema));
 
+		console.log("CREATE SUBJECT")
 		console.log(form.data);
 
 		if (!form.valid) {
@@ -116,6 +117,7 @@ export const actions: Actions = {
 		const createSubjectStrand = async (payload: {
 			subject_level_id: string;
 			strand_ids: string[];
+			semesters: string[]
 		}) => {
 			const response = await event.fetch(`${BACKEND_URL}/api/subjects/strands.php`, {
 				method: 'POST',
@@ -134,14 +136,17 @@ export const actions: Actions = {
 			console.log(result.message);
 		};
 
-		const { subject_id, subject_name, year_level_ids, strand_ids } = form.data;
+		const { subject_id, subject_name, year_level_ids, strand_ids, semesters } = form.data;
 
 		await createSubject({ id: subject_id, name: subject_name });
 		const subjectLevelIds = await createSubjectLevel({ subject_id, year_level_ids });
 
-		if (subjectLevelIds.length > 0 && strand_ids.length > 0) {
+		console.log("SUBJECT LEVELS")
+		console.log(subjectLevelIds)
+
+		if (subjectLevelIds.length > 0) {
 			for (let i = 0; i < subjectLevelIds.length; i++) {
-				await createSubjectStrand({ subject_level_id: subjectLevelIds[i], strand_ids });
+				await createSubjectStrand({ subject_level_id: subjectLevelIds[i], strand_ids, semesters });
 			}
 		}
 
@@ -150,7 +155,102 @@ export const actions: Actions = {
 			message: 'Successfully created subject.'
 		};
 	},
+	update: async (event) => {
+		const form = await superValidate(event, zod(subjectSchema));
 
-	update: async () => {
+		const id = event.url.searchParams.get('id');
+		console.log("SUBJECT UPDATE")
+		console.log(id);
+		console.log(form.data);
+
+		if (!form.valid) {
+			return fail(400, {
+				form,
+				message: 'Invalid form data.'
+			});
+		}
+
+		const updateSubject = async (payload: Omit<Subject, 'year_level_count'>) => {
+			const response = await event.fetch(`${BACKEND_URL}/api/subjects.php`, {
+				method: 'PATCH',
+				body: JSON.stringify(payload),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			const result: Result = await response.json();
+
+			console.log(result.message);
+
+			return {
+				message: result.message,
+				code: response.status
+			};
+		};
+
+		const updateSubjectLevel = async (payload: {
+			subject_id: string;
+			year_level_ids: string[];
+		}) => {
+			const response = await event.fetch(`${BACKEND_URL}/api/subjects/levels.php`, {
+				method: 'PATCH',
+				body: JSON.stringify(payload),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			const result: Result<{ subject_level_ids: string[] }> = await response.json();
+
+			console.log(result.message);
+
+			if (result.data?.subject_level_ids === undefined) {
+				error(404, 'Subject level IDs not returned.');
+			}
+
+			return result.data?.subject_level_ids;
+		};
+
+		const updateSubjectStrand = async (payload: {
+			subject_level_id: string;
+			strand_ids: string[];
+			semesters: string[];
+		}) => {
+			const response = await event.fetch(`${BACKEND_URL}/api/subjects/strands.php`, {
+				method: 'PATCH',
+				body: JSON.stringify(payload),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			if (!response.ok) {
+				error(response.status, 'Failed to update subject strands.');
+			}
+
+			const result: Result = await response.json();
+
+			console.log(result.message);
+		};
+
+		const { subject_id, subject_name, year_level_ids, strand_ids, semesters } = form.data;
+
+		await updateSubject({ id: subject_id, name: subject_name });
+		const subjectLevelIds = await updateSubjectLevel({ subject_id, year_level_ids });
+
+		console.log(subjectLevelIds)
+		console.log(strand_ids)
+
+		if (subjectLevelIds.length > 0) {
+			for (let i = 0; i < subjectLevelIds.length; i++) {
+				await updateSubjectStrand({ subject_level_id: subjectLevelIds[i], strand_ids, semesters});
+			}
+		}
+
+		return {
+			form,
+			message: 'Successfully updated subject.'
+		};
 	}
 };

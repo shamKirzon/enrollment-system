@@ -5,12 +5,18 @@
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { format } from 'date-fns';
-	import type { AcademicYear, YearLevel } from '$lib/types/enrollment';
+	import {
+		EducationLevel,
+		type AcademicYear,
+		type Strand,
+		type YearLevel
+	} from '$lib/types/enrollment';
 	import { toast } from 'svelte-sonner';
 
 	export let data: SuperValidated<Infer<SectionAssignmentSchema>>;
 	export let academicYears: AcademicYear[];
 	export let yearLevels: YearLevel[];
+	export let strands: Strand[];
 
 	let loadingToast: string | number | undefined;
 
@@ -51,9 +57,13 @@
 	});
 
 	const { form: formData, enhance } = form;
+
+	$: shsSelected = yearLevels.some(({ id, education_level }) => {
+		return id === $formData.year_level_id && education_level === EducationLevel.SeniorHighSchool;
+	});
 </script>
 
-<form method="POST" action="?/assign" use:enhance>
+<form method="POST" use:enhance>
 	<Form.Field {form} name="academic_year_id">
 		<Form.Control let:attrs>
 			<Form.Label>Academic Year</Form.Label>
@@ -96,6 +106,29 @@
 				</Select.Content>
 			</Select.Root>
 			<input hidden bind:value={$formData.year_level_id} name={attrs.name} />
+		</Form.Control>
+		<Form.FieldErrors />
+	</Form.Field>
+
+	<Form.Field {form} name="strand_id">
+		<Form.Control let:attrs>
+			<Form.Label class={!shsSelected ? 'text-muted-foreground' : ''}>Strand</Form.Label>
+			<Select.Root
+				onSelectedChange={(v) => {
+					v && ($formData.strand_id = v.value);
+				}}
+				disabled={!shsSelected}
+			>
+				<Select.Trigger {...attrs}>
+					<Select.Value placeholder="Select a strand" />
+				</Select.Trigger>
+				<Select.Content>
+					{#each strands as strand (strand.id)}
+						<Select.Item value={strand.id} label={strand.name} />
+					{/each}
+				</Select.Content>
+			</Select.Root>
+			<input hidden bind:value={$formData.strand_id} name={attrs.name} />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>

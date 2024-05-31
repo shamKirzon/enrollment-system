@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { subjectSchema, type SubjectSchema } from '$lib/schemas/enrollment';
-	import { EducationLevel, type Strand, type YearLevel } from '$lib/types/enrollment';
+	import { EducationLevel, type Strand, type YearLevel, Semester } from '$lib/types/enrollment';
 	import { toast } from 'svelte-sonner';
 	import { superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -56,7 +56,8 @@
 		subject_id: subject?.subject_id || '',
 		subject_name: subject?.subject_name || '',
 		year_level_ids: subject?.year_levels.map(({ id }) => id) || [],
-		strand_ids: subject?.strands.map(({ id }) => id) || []
+		strand_ids: subject?.strands.map(({ id }) => id) || [],
+		semesters: []
 	};
 
 	function getValues<T>(selected: Selected<T>[]) {
@@ -90,6 +91,10 @@
 
 		return items || [];
 	}
+
+	// function selectSemesters(): Selected<string>[] {
+	// 	subject?.semester
+	// }
 </script>
 
 <form method="POST" {action} class="space-y-8" use:enhance>
@@ -206,6 +211,37 @@
 
 				<input hidden type="checkbox" name={attrs.name} value={strand.id} {checked} />
 			{/each}
+		</Form.Control>
+		<Form.FieldErrors />
+	</Form.Field>
+
+	<Form.Field {form} name="semesters">
+		<Form.Control let:attrs>
+			<Form.Label
+				class={shsUnselected || $formData.year_level_ids.length < 1 ? 'text-muted-foreground' : ''}
+			>
+				Semesters
+			</Form.Label>
+			<Select.Root
+				multiple
+				onSelectedChange={(v) => {
+					v && ($formData.semesters = getValues(v));
+				}}
+				disabled={shsUnselected || $formData.year_level_ids.length < 1}
+			>
+				<Select.Trigger {...attrs}>
+					<div class="justify-between flex w-full pr-4">
+						<Select.Value placeholder="Select semesters" />
+					</div>
+				</Select.Trigger>
+				<Select.Content class="max-w-full">
+						<Select.Item value={Semester.First} label="First" />
+						<Select.Item value={Semester.Second} label="Second" />
+				</Select.Content>
+			</Select.Root>
+
+				<input hidden type="checkbox" name={attrs.name} value={Semester.First} checked={$formData.semesters.includes(Semester.First)} />
+				<input hidden type="checkbox" name={attrs.name} value={Semester.Second} checked={$formData.semesters.includes(Semester.Second)} />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>

@@ -5,6 +5,7 @@ import Money from 'virtual:icons/mdi/money';
 import Calendar from 'virtual:icons/mdi/calendar';
 import Books from 'virtual:icons/ph/books-duotone';
 import Group from 'virtual:icons/lets-icons/group-scan';
+import FileTable from 'virtual:icons/mdi/file-table-outline';
 import type { Result, Route } from './types';
 import type { Writable } from 'svelte/store';
 import { toast } from 'svelte-sonner';
@@ -32,7 +33,7 @@ export function getSelectedRowData<T, R, L extends keyof T>(
 		const i = Number(idx);
 
 		selectedRows.update(($row) => {
-			$row.push(data[i][key]);
+			$row.push(data[i][key] as R);
 
 			return $row;
 		});
@@ -90,9 +91,9 @@ export const ROUTES: Route[] = [
 		icon: Money
 	},
 	{
-		name: 'Report Cards',
-		path: '/report-cards',
-		icon: Money
+		name: 'Grades',
+		path: '/grades',
+		icon: FileTable
 	}
 ];
 

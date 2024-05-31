@@ -46,12 +46,15 @@ export type EnrollmentWithDetails = UserName & {
 	student_id: string;
 	academic_year_id: number;
 	year_level_id: string;
+	year_level_name: string;
+	strand_id?: string;
+	strand_name?: string;
+
 	transaction_id: string;
 	transaction_number: string;
 
 	academic_year_start_at: string;
 	academic_year_end_at: string;
-	year_level_name: string;
 	payment_amount: string;
 	payment_method: PaymentMethod;
 	tuition_plan_name?: string;
@@ -85,8 +88,10 @@ export type AcademicYearEnrollment = {
 	enrollment_id?: string;
 	enrollment_status?: EnrollmentStatus;
 	section_name?: string;
+	strand_id?: string;
+	strand_name?: string;
+	year_level_name?: string;
 	enrolled_at?: string;
-	year_level?: string;
 };
 
 export type Section = {
@@ -113,6 +118,7 @@ export type SubjectLevel = {
 	subject_name: string;
 	year_level_name: string;
 	strand_name?: string;
+	semester?: Semester;
 };
 
 export type PreviousReportCardPayload = {
@@ -141,6 +147,11 @@ export type SectionLevelDetails = {
 	strand_id?: string;
 	strand_name?: string;
 };
+
+export enum Semester {
+	First = '1',
+	Second = '2'
+}
 
 // export type SubjectDetails = {
 //   id

@@ -23,7 +23,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 		const result: Result<{ user: User }> = await response.json();
 
-		console.log(result);
+		// console.log(result);
 
 		return result;
 	};
@@ -48,8 +48,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 			const result: Result<{ student: User }> = await response.json();
 
-			console.log('STUDENT');
-			console.log(result);
+			// console.log('STUDENT');
+			// console.log(result);
 
 			return result;
 		}

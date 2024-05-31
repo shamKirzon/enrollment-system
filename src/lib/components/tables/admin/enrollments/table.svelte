@@ -66,8 +66,20 @@
 			}
 		}),
 		table.column({
-			accessor: 'year_level_name',
-			header: 'Level'
+			accessor: ({ year_level_name, strand_id }) => {
+				return {
+					year_level_name,
+					strand_id
+				};
+			},
+			header: 'Level',
+			cell: ({ value }) => {
+				if (!value.strand_id) {
+					return value.year_level_name;
+				}
+
+				return `${value.year_level_name} - ${value.strand_id.toUpperCase()}`;
+			}
 		}),
 		// table.column({
 		// 	accessor: ({ first_name, middle_name, last_name, payment_receipt_url }) => {

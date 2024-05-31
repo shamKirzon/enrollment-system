@@ -107,18 +107,23 @@ export const actions: Actions = {
 			});
 		}
 
-		const { academic_year_id, year_level_id } = form.data;
+		const { academic_year_id, year_level_id, strand_id } = form.data;
 
 		event.url.searchParams.set('academic_year_id', `${academic_year_id}`);
 		event.url.searchParams.set('year_level_id', year_level_id);
 
-		const createSectionAssignments = async (academic_year_id: number, year_level_id: string) => {
+		if (strand_id) {
+			event.url.searchParams.set('strand_id', strand_id);
+		}
+
+		const createSectionAssignments = async (payload: {
+			academic_year_id: number;
+			year_level_id: string;
+			strand_id?: string;
+		}) => {
 			const response = await event.fetch(`${BACKEND_URL}/api/sections/assignments/randomize.php`, {
 				method: 'POST',
-				body: JSON.stringify({
-					academic_year_id,
-					year_level_id
-				}),
+				body: JSON.stringify(payload),
 				headers: {
 					'Content-Type': 'application/json'
 				}
@@ -133,31 +138,31 @@ export const actions: Actions = {
 			console.log(result.message);
 		};
 
-		const getSectionAssignments = async (academic_year_id: number, year_level_id: string) => {
-			const response = await event.fetch(
-				`${BACKEND_URL}/api/sections/assignments/randomize.php?academic_year_id=${academic_year_id}&year_level_id=${year_level_id}`,
-				{
-					method: 'GET'
-				}
-			);
+		// const getSectionAssignments = async (payload: {academic_year_id: number, year_level_id: string, strand_id?: string}) => {
+		// 	const response = await event.fetch(
+		// 		`${BACKEND_URL}/api/sections/assignments/randomize.php?academic_year_id=${payload.academic_year_id}&year_level_id=${payload.year_level_id}`,
+		// 		{
+		// 			method: 'GET'
+		// 		}
+		// 	);
+		//
+		// 	if (!response.ok) {
+		// 		error(response.status, 'Failed to assign sections to students.');
+		// 	}
+		//
+		// 	const result: Result<{ section_assignments: StudentSectionAssignment[] }> =
+		// 		await response.json();
+		//
+		// 	console.log(result.message);
+		//
+		// 	if (result.data?.section_assignments === undefined) {
+		// 		error(404, 'Section assignments not returned.');
+		// 	}
+		//
+		// 	return result.data?.section_assignments;
+		// };
 
-			if (!response.ok) {
-				error(response.status, 'Failed to assign sections to students.');
-			}
-
-			const result: Result<{ section_assignments: StudentSectionAssignment[] }> =
-				await response.json();
-
-			console.log(result.message);
-
-			if (result.data?.section_assignments === undefined) {
-				error(404, 'Section assignments not returned.');
-			}
-
-			return result.data?.section_assignments;
-		};
-
-		await createSectionAssignments(academic_year_id, year_level_id);
+		await createSectionAssignments({ academic_year_id, year_level_id });
 
 		// const sectionAssignments = await getSectionAssignments(academic_year_id, year_level_id);
 

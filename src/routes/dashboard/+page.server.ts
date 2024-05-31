@@ -33,7 +33,7 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
 	let id: string | undefined = user.id;
 
 	if (user?.role === Role.Parent) {
-		const studentId = (await locals.getStudentData(user.id)).data?.student?.id;
+		const studentId = (await locals.getStudentData()).data?.student?.id;
 
 		console.log(user.id);
 		console.log(studentId);

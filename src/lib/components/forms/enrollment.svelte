@@ -6,7 +6,13 @@
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-sonner';
-	import { StudentStatus, type AcademicYear, type YearLevel } from '$lib/types/enrollment';
+	import {
+		EducationLevel,
+		StudentStatus,
+		type AcademicYear,
+		type Strand,
+		type YearLevel
+	} from '$lib/types/enrollment';
 	import { format } from 'date-fns';
 	import type { PaymentMode, TuitionPlan } from '$lib/types/payment';
 	import { Separator } from '$lib/components/ui/separator';
@@ -14,6 +20,7 @@
 	export let data: SuperValidated<Infer<EnrollmentSchema>>;
 	export let academicYears: AcademicYear[];
 	export let yearLevels: YearLevel[];
+	export let strands: Strand[];
 	export let paymentModes: PaymentMode[];
 	export let tuitionPlans: TuitionPlan[];
 	export let studentStatus: StudentStatus;
@@ -52,6 +59,10 @@
 	const { form: formData, enhance } = form;
 
 	$formData.student_status = studentStatus;
+
+	$: shsSelected = yearLevels.some(({ id, education_level }) => {
+		return id === $formData.year_level_id && education_level === EducationLevel.SeniorHighSchool;
+	});
 </script>
 
 <form method="POST" enctype="multipart/form-data" class="space-y-8" use:enhance>
@@ -93,6 +104,10 @@
 			<Select.Root
 				onSelectedChange={(v) => {
 					v && ($formData.year_level_id = v.value);
+
+					if (!shsSelected) {
+						$formData.strand_id = undefined;
+					}
 				}}
 			>
 				<Select.Trigger {...attrs}>
@@ -105,6 +120,29 @@
 				</Select.Content>
 			</Select.Root>
 			<input hidden bind:value={$formData.year_level_id} name={attrs.name} />
+		</Form.Control>
+		<Form.FieldErrors />
+	</Form.Field>
+
+	<Form.Field {form} name="strand_id">
+		<Form.Control let:attrs>
+			<Form.Label class={!shsSelected ? 'text-muted-foreground' : ''}>Strand</Form.Label>
+			<Select.Root
+				onSelectedChange={(v) => {
+					v && ($formData.strand_id = v.value);
+				}}
+				disabled={!shsSelected}
+			>
+				<Select.Trigger {...attrs}>
+					<Select.Value placeholder="Select a strand" />
+				</Select.Trigger>
+				<Select.Content>
+					{#each strands as strand (strand.id)}
+						<Select.Item value={strand.id} label={strand.name} />
+					{/each}
+				</Select.Content>
+			</Select.Root>
+			<input hidden bind:value={$formData.strand_id} name={attrs.name} />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>

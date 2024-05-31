@@ -19,6 +19,7 @@
 			data={data.form}
 			yearLevels={data.yearLevels || []}
 			academicYears={data.academicYears || []}
+			strands={data.strands || []}
 		/>
 	</Card.Content>
 </Card.Root>

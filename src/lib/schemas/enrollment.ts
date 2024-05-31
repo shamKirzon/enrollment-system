@@ -1,4 +1,4 @@
-import { StudentStatus } from '$lib/types/enrollment';
+import { Semester, StudentStatus } from '$lib/types/enrollment';
 import { PaymentMethod } from '$lib/types/payment';
 import { z } from 'zod';
 
@@ -24,6 +24,7 @@ export const enrollmentSchema = z.object({
 	year_level_id: z.string(),
 	student_id: z.string(),
 	academic_year_id: z.number(),
+	strand_id: z.string().optional(),
 
 	transaction_number: z.string(),
 	payment_amount: z.coerce.number().nonnegative(),
@@ -60,14 +61,16 @@ export const subjectSchema = z.object({
 	subject_id: z.string(),
 	subject_name: z.string(),
 	year_level_ids: z.string().array(),
-	strand_ids: z.string().array()
+	strand_ids: z.string().array(),
+	semesters: z.string().array()
 });
 
 export type SubjectSchema = typeof subjectSchema;
 
 export const sectionAssignmentSchema = z.object({
 	academic_year_id: z.number(),
-	year_level_id: z.string()
+	year_level_id: z.string(),
+	strand_id: z.string().optional(),
 });
 
 export type SectionAssignmentSchema = typeof sectionAssignmentSchema;

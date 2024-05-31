@@ -35,6 +35,7 @@
 				paymentModes={data.paymentModes || []}
 				tuitionPlans={data.tuitionPlans || []}
 				studentStatus={data.studentStatus || StudentStatus.New}
+				strands={data.strands || []}
 			/>
 		</Card.Content>
 	</Card.Root>

@@ -28,8 +28,8 @@
 
 					<Table.Row>
 						<Table.Cell class="font-medium">{year}</Table.Cell>
-						<Table.Cell>{enrollment.year_level || '---'}</Table.Cell>
-						<Table.Cell>{enrollment.section_name || '---'}</Table.Cell>
+						<Table.Cell>{enrollment.year_level_name || '---'}</Table.Cell>
+						<Table.Cell>{enrollment.section_name ? `St. ${enrollment.section_name}${enrollment.strand_id ? ` - ${enrollment.strand_id.toUpperCase()}` : ""}` : '---'}</Table.Cell>
 						<Table.Cell>{enrollment.enrollment_status || '---'}</Table.Cell>
 					</Table.Row>
 				{/each}

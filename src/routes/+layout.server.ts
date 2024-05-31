@@ -8,8 +8,8 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 	const getUser: Result<{ user: User | undefined }> = await getUserData();
 	const getStudent = await locals.getStudentData();
 
-	console.log(getUser.message);
-	console.log(getStudent.message);
+	// console.log(getUser.message);
+	// console.log(getStudent.message);
 
 	return {
 		session,
