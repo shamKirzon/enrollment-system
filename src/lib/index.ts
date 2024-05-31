@@ -143,3 +143,16 @@ export const COLORS = {
 		return `rgba(205, 127, 0, ${opacity})`;
 	}
 };
+
+export function roundNumber(numberString: string, decimalPlaces: number) {
+	try {
+		const number = parseFloat(numberString);
+
+		return number.toFixed(decimalPlaces);
+		// const factor = Math.pow(10, decimalPlaces);
+		// return Number((Math.round(number * factor) / factor).toFixed(decimalPlaces));
+	} catch (error) {
+		console.error('Invalid number format:', error);
+		return Number.NaN; // Or any other default value you prefer
+	}
+}

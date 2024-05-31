@@ -1,17 +1,12 @@
 <script lang="ts">
-	import TableGrades from './table.svelte';
-	import * as Card from '$lib/components/ui/card';
 	import { YearLevelCombobox } from '$lib/components/combobox';
 	import { ContentLayout } from '$lib/components/layouts';
-	import { Button } from '$lib/components/ui/button';
 	import { goto } from '$app/navigation';
 	import * as Tabs from '$lib/components/ui/tabs';
 	import { Semester } from '$lib/types/enrollment';
 
 	export let data;
 
-	console.log('Subject grades');
-	console.log(data.subjectGrades);
 	console.log(data.yearLevels);
 
 	function updateSemester(semester: number) {
@@ -39,14 +34,4 @@
 			</Tabs.List>
 		</Tabs.Root>
 	</div>
-
-	<Card.Root>
-		<Card.Header>
-			<Card.Title>Grades</Card.Title>
-			<Card.Description>Your report card</Card.Description>
-		</Card.Header>
-		<Card.Content>
-			<TableGrades data={data.subjectGrades} semester={data.semester} />
-		</Card.Content>
-	</Card.Root>
 </ContentLayout>
