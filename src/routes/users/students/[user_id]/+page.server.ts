@@ -91,7 +91,7 @@ export const load: PageServerLoad = async ({ fetch, params, locals }) => {
   const studentProfile = (await getStudentProfile(user_id)).data?.student_profile;
   const studentFamilyMembers = (await getStudentFamilyMembers(user_id)).data
     ?.student_family_members;
-  const studentEnrollments = (await getStudentEnrollments(user_id)).data?.academic_year_enrollments;
+  const studentEnrollments = (await getStudentEnrollments(user_id)).data;
 
   if(studentUserData === undefined) {
     error(404, 'Student user data undefined.');

@@ -162,7 +162,7 @@ export const actions: Actions = {
 			return result.data.transaction_id;
 		};
 
-		const createEnrollment = async (paymentReceiptUrl: string, transactionId: string) => {
+		const createEnrollment = async (paymentReceiptUrl: string) => {
 			const { student_id, academic_year_id, year_level_id } = form.data;
 
 			const response = await event.fetch(`${BACKEND_URL}/api/enrollments/students.php`, {
@@ -172,7 +172,6 @@ export const actions: Actions = {
 					academic_year_id,
 					year_level_id,
 					payment_receipt_url: paymentReceiptUrl,
-					transaction_id: transactionId
 				}),
 				headers: {
 					'Content-Type': 'application/json'
@@ -193,6 +192,24 @@ export const actions: Actions = {
 
 			return result.data?.enrollment_id;
 		};
+
+		const createEnrollmentTransaction = async (payload: {enrollment_id: string, transaction_id: string}) => {
+			const response = await event.fetch(`${BACKEND_URL}/api/enrollments/transactions.php`, {
+				method: 'POST',
+				body: JSON.stringify(payload),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			if (!response.ok) {
+				error(response.status, 'Failed to create enrollment transaction.');
+			}
+
+			const result: Result = await response.json();
+
+			console.log(result.message);
+		}
 
 		const createEnrollmentStrand = async (payload: {enrollment_id: string, strand_id: string}) => {
 			const response = await event.fetch(`${BACKEND_URL}/api/enrollments/strands.php`, {
@@ -292,7 +309,9 @@ export const actions: Actions = {
 			payment_mode_id,
 			payment_receipt_url: paymentReceiptUrl
 		});
-		const enrollmentId = await createEnrollment(paymentReceiptUrl, transactionId);
+		const enrollmentId = await createEnrollment(paymentReceiptUrl);
+
+		await createEnrollmentTransaction({enrollment_id: enrollmentId, transaction_id: transactionId })
 
 		if(form.data.strand_id) {
 			await createEnrollmentStrand({enrollment_id: enrollmentId, strand_id: form.data.strand_id})

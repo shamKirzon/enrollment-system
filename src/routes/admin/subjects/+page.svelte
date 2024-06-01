@@ -10,6 +10,7 @@
 	import { writable } from 'svelte/store';
 	import { setContext } from 'svelte';
 	import { deleteData } from '$lib';
+	import { Pagination } from '$lib/components';
 
 	export let data;
 
@@ -20,7 +21,7 @@
 	setContext('strands', data.strandData?.strands || []);
 </script>
 
-<ContentLayout>
+<ContentLayout class="flex-col gap-2">
 	<Card.Root class="w-full">
 		<Card.Header class="flex flex-row items-center justify-between">
 			<div>
@@ -73,4 +74,6 @@
 			<TableSubjects data={data.subjectDetailsData?.subjects || []} {selectedRows} />
 		</Card.Content>
 	</Card.Root>
+
+	<Pagination count={data.subjectDetailsData?.count || 1} />
 </ContentLayout>

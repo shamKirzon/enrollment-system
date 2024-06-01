@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Pagination } from '$lib/components';
 	import { TableEnrollment } from '$lib/components/tables';
 	import { buttonVariants } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
@@ -53,7 +54,17 @@
 				</Card.Root>
 			</div>
 
-			<TableEnrollment enrollments={data.enrollments?.data?.academic_year_enrollments || []} />
+			<Card.Root>
+				<Card.Header>
+					<Card.Title>Enrollments</Card.Title>
+					<Card.Description>Your previously enrolled academic years.</Card.Description>
+				</Card.Header>
+				<Card.Content>
+					<TableEnrollment enrollments={data.enrollments?.data?.academic_year_enrollments || []} />
+				</Card.Content>
+			</Card.Root>
+
+			<Pagination count={data.enrollments?.count || 1} />
 		</div>
 	</div>
 {/if}

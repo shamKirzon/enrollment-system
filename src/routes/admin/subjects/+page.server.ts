@@ -8,12 +8,12 @@ import { subjectSchema } from '$lib/schemas/enrollment';
 import { error, type Actions } from '@sveltejs/kit';
 import type { SubjectDetails } from '$lib/types/subject';
 
-export const load: PageServerLoad = async ({ fetch }) => {
+export const load: PageServerLoad = async ({ fetch, url }) => {
 	const getSubjects = async () => {
 		const response = await fetch(`${BACKEND_URL}/api/subjects.php`, {
 			method: 'GET'
 		});
-		const result: Result<{ subjects: Subject[]; count: number }> = await response.json();
+		const result: Result<{ subjects: Subject[];  }> = await response.json();
 
 		console.log(result.message);
 
@@ -21,10 +21,18 @@ export const load: PageServerLoad = async ({ fetch }) => {
 	};
 
 	const getSubjectsDetails = async () => {
-		const response = await fetch(`${BACKEND_URL}/api/subjects/details.php`, {
+		const searchParams = url.searchParams.toString();
+
+		let api = `${BACKEND_URL}/api/subjects/details.php`;
+
+		if (searchParams) {
+			api += `?${searchParams}`;
+		}
+
+		const response = await fetch(api, {
 			method: 'GET'
 		});
-		const result: Result<{ subjects: SubjectDetails[]; }> = await response.json();
+		const result: Result<{ subjects: SubjectDetails[], count: number }> = await response.json();
 
 		console.log(result.message);
 
