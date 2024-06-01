@@ -37,3 +37,45 @@ export type Teacher = UserName & {
 	id: string;
 	sex: Sex;
 };
+
+export type StudentProfile = {
+	student_profile_id: string;
+	lrn: string;
+	birth_date: string;
+	birth_place: string;
+	sex: Sex;
+	citizenship: string;
+	religion: string;
+	parent_contact_number: string;
+	landline: string;
+	birth_certificate_url: string;
+	baptismal_certificate_url: string;
+	address_id: number;
+
+	country: string;
+	region: string;
+	province: string;
+	city: string;
+	barangay: string;
+	street?: string;
+}
+
+export enum Relationship {
+	Father = 'father',
+	Mother = 'mother',
+	Guardian = 'guardian'
+}
+
+export type StudentFamilyMember = UserName & {
+	id: string;
+	relationship: Relationship;
+	occupation: string;
+	address_id: number;
+
+	country: string;
+	region: string;
+	province: string;
+	city: string;
+	barangay: string;
+	street?: string;
+}

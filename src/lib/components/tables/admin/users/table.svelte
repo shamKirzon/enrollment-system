@@ -6,7 +6,8 @@
 	import { capitalizeFirstLetter, formatName, getSelectedRowData } from '$lib';
 	import { addSelectedRows } from 'svelte-headless-table/plugins';
 	import TableCheckbox from './table-checkbox.svelte';
-	import type { User } from '$lib/types/user';
+	import { Role, type User } from '$lib/types/user';
+	import Link from './link.svelte';
 
 	export let data: User[];
 	export let selectedRows: Writable<string[]>;
@@ -34,17 +35,28 @@
 			}
 		}),
 		table.column({
-			accessor: ({ first_name, middle_name, last_name, suffix_name }) => {
+			accessor: ({ id, first_name, middle_name, last_name, suffix_name, role }) => {
 				return {
+					id,
 					first_name,
 					middle_name,
 					last_name,
-					suffix_name
+					suffix_name,
+					role
 				};
 			},
 			header: 'Name',
 			cell: ({ value }) => {
-				return formatName(value);
+				const { id, role, ...name } = value;
+
+				if (role === Role.Student) {
+					return createRender(Link, {
+						url: `/users/students/${id}`,
+						label: formatName(name)
+					});
+				}
+
+				return formatName(name);
 			}
 		}),
 		table.column({
