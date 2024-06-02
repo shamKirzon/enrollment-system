@@ -48,7 +48,7 @@
 	<Form.Field {form} name="email">
 		<Form.Control let:attrs>
 			<Form.Label>Email</Form.Label>
-			<Input {...attrs} bind:value={$formData.email} type="email" required />
+			<Input {...attrs} bind:value={$formData.email} type="email" required placeholder="pcsian@gmail.com" />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -61,6 +61,9 @@
 		<Form.FieldErrors />
 	</Form.Field>
 
-	<a href="/register" class="underline text-xs">Don't have an account?</a>
-	<Form.Button class="mt-4">Submit</Form.Button>
+	<Form.Button class="mt-4 w-full">Login</Form.Button>
+	<p class="text-center w-full text-sm mt-8">
+		Don't have an account?
+		<a href="/register" class="underline font-inter-semibold text-primary">Sign up</a>
+	</p>
 </form>

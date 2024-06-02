@@ -17,6 +17,7 @@
 	let value = '';
 
 	$: selectedValue = yearLevels.find((f) => f.name === value)?.name ?? 'Select a year level...';
+	$: getSelectedYearLevel = (id: string) => yearLevels.find((yl) => yl.id === id);
 
 	// We want to refocus the trigger button when the user selects
 	// an item from the list so users can continue navigating the
@@ -32,6 +33,16 @@
 		let query = new URLSearchParams($page.url.searchParams.toString());
 
 		query.set(k, v.toString());
+
+		const selectedYearLevel = getSelectedYearLevel(v.toString());
+
+		if (includeSemester && selectedYearLevel) {
+			if (selectedYearLevel.education_level === EducationLevel.SeniorHighSchool) {
+				query.set('semester', '1');
+			} else {
+				query.delete('semester')
+			}
+		}
 
 		goto(`?${query.toString()}`);
 	}
@@ -73,7 +84,7 @@
 						onSelect={(currentValue) => {
 							value = currentValue;
 							closeAndFocusTrigger(ids.trigger);
-							replaceSearchParam('year_level', `${yearLevel.id}`);
+							replaceSearchParam('year_level_id', `${yearLevel.id}`);
 						}}
 					>
 						<Check class={cn('mr-2 h-4 w-4', value !== yearLevel.name && 'text-transparent')} />

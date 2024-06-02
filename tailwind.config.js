@@ -58,7 +58,12 @@ const config = {
 				sm: 'calc(var(--radius) - 4px)'
 			},
 			fontFamily: {
-				sans: [...fontFamily.sans]
+				sans: [...fontFamily.sans],
+				inter: "inter, sans-serif",
+				"inter-medium": "inter-medium, sans-serif",
+				"inter-semibold": "inter-semibold, sans-serif",
+				"inter-bold": "inter-bold, sans-serif",
+				"inter-black": "inter-black, sans-serif",
 			}
 		}
 	}

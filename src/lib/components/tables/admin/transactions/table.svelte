@@ -7,7 +7,9 @@
 	import { format } from 'date-fns';
 	import { addSelectedRows } from 'svelte-headless-table/plugins';
 	import TableCheckbox from './table-checkbox.svelte';
-	import { getSelectedRowData } from '$lib';
+	import { capitalizeFirstLetter, getSelectedRowData } from '$lib';
+	import TableActions from './table-actions.svelte';
+	import { TableColumnSort } from '$lib/components/tables';
 
 	export let data: TransactionDetails[];
 	export let selectedRows: Writable<string[]>;
@@ -36,7 +38,9 @@
 		}),
 		table.column({
 			accessor: 'created_at',
-			header: 'Date',
+			header: () => {
+				return createRender(TableColumnSort, {label: "Date", orderParam: "date_order"})
+			},
 			cell: ({ value }) => {
 				const date = format(value, 'MMMM d, yyyy - h:mm a');
 
@@ -49,7 +53,10 @@
 		}),
 		table.column({
 			accessor: 'payment_method',
-			header: 'Payment Method'
+			header: 'Payment Method',
+			cell: ({value}) => {
+				return capitalizeFirstLetter(value)
+			}
 		}),
 		table.column({
 			accessor: 'payment_amount',
@@ -63,6 +70,15 @@
 			header: 'Payment Receipt',
 			cell: ({ value }) => {
 				return createRender(PaymentReceipt, { paymentReceiptUrl: value });
+			}
+		}),
+		table.column({
+			accessor: (transaction) => {
+				return transaction;
+			},
+			header: '',
+			cell: ({ value }) => {
+				return createRender(TableActions, { transaction: value });
 			}
 		})
 	]);

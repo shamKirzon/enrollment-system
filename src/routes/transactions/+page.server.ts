@@ -1,21 +1,29 @@
 import { BACKEND_URL } from "$env/static/private";
 import type { Result } from "$lib/types";
-import type { Transaction } from "$lib/types/payment";
+import type { TransactionDetails } from "$lib/types/payment";
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async ({fetch, locals}) => {
-	const user = (await locals.getUserData()).data?.user
+export const load: PageServerLoad = async ({fetch, locals, url}) => {
+	const student = (await locals.getStudentData()).data?.student
 
 	const getTransactions = async (studentId: string) => {
-		const response = await fetch(`${BACKEND_URL}/api/transactions.php`, {
+		const searchParams = url.searchParams.toString();
+
+		let api = `${BACKEND_URL}/api/transactions.php?student_id=${studentId}&order=desc`;
+
+		if(searchParams) {
+			api += searchParams;
+		}
+
+		const response = await fetch(api, {
 			method: "GET"
 		})
 
 		if(!response.ok){
 			error(response.status, "Failed to fetch transactions.")
 		}
-		const result: Result<{ transactions: Transaction[] }> = await response.json()
+		const result: Result<{ transactions: TransactionDetails[], count: number }> = await response.json()
 
 		if(result.data === undefined) {
 			error(404, "Transactions undefined.")
@@ -24,16 +32,15 @@ export const load: PageServerLoad = async ({fetch, locals}) => {
 		return result;
 	}
 
-	if(user?.id === undefined) {
-		error(404, "User not found.")
+	if(student?.id === undefined) {
+		error(404, "Student not found.")
 	}
 
-	const transactions = (await getTransactions(user.id)).data
+	const transactions = (await getTransactions(student.id)).data
 
 	if(transactions === undefined){
 		error(404, "Transactions undefined.")
 	}
-	
 
 	return {
 		transactions

@@ -14,13 +14,16 @@ export type SubjectGradeDetails = {
 	education_level: EducationLevel
 }
 
+// ????
 export type Grade = {
-	grade: string;
-	period: string;
+	grade?: string | null;
+	period?: string | null;
+	student_grade_id?: number | null;
 }
 
 export type SubjectGrade = {
 	subject_name: string;
+	subject_level_id: string;
 	grades: Grade[];
-	average_grade: string;
+	average_grade?: string | null;
 }

@@ -4,10 +4,12 @@
 	import * as Avatar from '$lib/components/ui/avatar';
 	import { capitalizeFirstLetter, formatName } from '$lib';
 	import * as Tabs from '$lib/components/ui/tabs';
-	import { TableEnrollment } from '$lib/components/tables';
+	import { TableEnrollment, TableTransactions } from '$lib/components/tables';
 	import { Pagination } from '$lib/components/index.js';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import TabGrades from "./tabs/grades.svelte"
+	import { setContext } from 'svelte';
 
 	export let data;
 
@@ -29,6 +31,8 @@
 
 		goto(`?${query.toString()}`);
 	}
+
+	$: setContext('gradesForm', data.gradesForm)
 </script>
 
 <ContentLayout>
@@ -70,7 +74,7 @@
 	</Card.Root>
 
 	<div class="flex flex-col gap-2 flex-[2_2_0%] h-full">
-		<Tabs.Root value={tabs[0]}>
+		<Tabs.Root value={data.tab || tabs[0]}>
 			<Tabs.List class="bg-background border shadow-sm">
 				{#each tabs as tab (tab)}
 					<Tabs.Trigger
@@ -96,6 +100,19 @@
 								<TableEnrollment enrollments={data.studentEnrollments.academic_year_enrollments} />
 							</Card.Content>
 						</Card.Root>
+					{:else if tab === 'transactions'}
+						<Card.Root class="w-full h-full">
+							<Card.Header>
+								<Card.Title>Transactions</Card.Title>
+								<Card.Description>History of transactions.</Card.Description>
+							</Card.Header>
+
+							<Card.Content>
+								<TableTransactions data={data.studentTransactions.transactions} />
+							</Card.Content>
+						</Card.Root>
+					{:else if tab === 'grades'}
+							<TabGrades data={{studentGrades: data.studentGrades, yearLevels: data.yearLevels}}  />
 					{/if}
 				</Tabs.Content>
 			{/each}

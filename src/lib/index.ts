@@ -144,9 +144,9 @@ export const COLORS = {
 	}
 };
 
-export function roundNumber(numberString: string, decimalPlaces: number) {
+export function roundNumber(numberString: string | number, decimalPlaces: number) {
 	try {
-		const number = parseFloat(numberString);
+		const number = parseFloat(numberString.toString());
 
 		return number.toFixed(decimalPlaces);
 		// const factor = Math.pow(10, decimalPlaces);

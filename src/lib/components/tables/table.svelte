@@ -1,29 +1,24 @@
 <script lang="ts">
-	import type { SubjectDetails } from '$lib/types/subject';
-	import { Column, createRender, createTable, Render, Subscribe } from 'svelte-headless-table';
-	import { addSelectedRows, type AnyPlugins } from 'svelte-headless-table/plugins';
+	import { Column, createTable, Render, Subscribe } from 'svelte-headless-table';
+	import { type AnyPlugins } from 'svelte-headless-table/plugins';
 	import { readable, type Writable } from 'svelte/store';
 	import * as Table from '$lib/components/ui/table';
-	import TableCheckbox from './table-checkbox.svelte';
-	import TableActions from './table-actions.svelte';
 	import { getSelectedRowData } from '$lib';
 
-	type Foo<T> = Record<string, T>;
-
-	export let data: Foo<unknown>[];
+	export let data: any[];
 	export let selectedRows: Writable<string[]>;
-	export let columnsData: Column<Foo<unknown>, AnyPlugins>[];
-	// export let id: string;
+	export let columns: Column<unknown, AnyPlugins>;
+	export let id: string;
 
 	$: table = createTable(readable(data));
 
-	$: columns = table.createColumns(columnsData);
+	// $: columns = table.createColumns(columnsData);
 
 	$: ({ headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates } =
 		table.createViewModel(columns));
 	$: ({ selectedDataIds } = pluginStates.select);
 
-	$: getSelectedRowData(data, selectedRows, $selectedDataIds, 'subject_id');
+	$: getSelectedRowData(data, selectedRows, $selectedDataIds, id);
 </script>
 
 <Table.Root {...$tableAttrs}>

@@ -8,7 +8,7 @@
 
 <div
 	class={cn(
-		`flex justify-center items-center min-h-screen bg-pcs-bg-brown bg-center bg-cover ${className}`
+		`flex justify-center items-center min-h-screen h-screen ${className}`
 	)}
 >
 	<slot />

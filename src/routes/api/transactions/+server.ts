@@ -1,6 +1,6 @@
 import { BACKEND_URL } from '$env/static/private';
 import type { Result } from '$lib/types';
-import { json, type RequestHandler } from '@sveltejs/kit';
+import { error, json, type RequestHandler } from '@sveltejs/kit';
 
 export const DELETE: RequestHandler = async ({ fetch, request }) => {
 	const ids: string[] = await request.json();
@@ -12,6 +12,11 @@ export const DELETE: RequestHandler = async ({ fetch, request }) => {
 			'Content-Type': 'application/json'
 		}
 	});
+
+	if(!response.ok) {
+		error(response.status, "Failed to delete transaction.")
+	}
+
 	const result: Result = await response.json();
 
 	console.log(result.message);

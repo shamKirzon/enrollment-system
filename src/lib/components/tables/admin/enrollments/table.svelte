@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { StudentStatus, type EnrollmentWithDetails } from '$lib/types/enrollment';
+	import { TableColumnSort } from '$lib/components/tables';
 	import { readable, type Writable } from 'svelte/store';
 	import { createRender, createTable, Render, Subscribe } from 'svelte-headless-table';
 	import * as Table from '$lib/components/ui/table';
@@ -58,7 +59,9 @@
 		}),
 		table.column({
 			accessor: 'enrolled_at',
-			header: 'Enrollment Date',
+			header: () => {
+				return createRender(TableColumnSort, {label: "Enrollment Date", orderParam: "enrolled_at_order"})
+			},
 			cell: ({ value }) => {
 				const date = format(value, 'MMMM d, yyyy - h:mm a');
 
@@ -103,7 +106,7 @@
 			header: 'Status',
 			cell: ({ value }) => {
 				return createRender(Badge, { value });
-			}
+			},
 		}),
 		table.column({
 			accessor: (enrollment) => {

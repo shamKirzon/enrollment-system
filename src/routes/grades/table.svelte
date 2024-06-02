@@ -28,10 +28,10 @@
 				<Table.Cell class="w-2/5">{subject_name}</Table.Cell>
 
 				{#each grades as { grade }, j (j)}
-					<Table.Cell>{roundNumber(grade, 0)}</Table.Cell>
+					<Table.Cell>{grade ? roundNumber(grade, 0) : '---'}</Table.Cell>
 				{/each}
 
-				<Table.Cell>{roundNumber(average_grade, 3)}</Table.Cell>
+				<Table.Cell>{average_grade ? roundNumber(average_grade, 3) : '---'}</Table.Cell>
 			</Table.Row>
 		{/each}
 	</Table.Body>

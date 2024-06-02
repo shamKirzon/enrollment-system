@@ -1,6 +1,46 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+*,
+*::before,
+*::after {
+	font-family: inter, sans-serif;
+
+  /* 
+   outline: 1px solid red;
+  */
+}
+
+@font-face {
+	font-family: inter;
+	src: url('/fonts/inter/Inter-Regular.ttf');
+	font-display: swap;
+}
+
+@font-face {
+	font-family: inter-bold;
+	src: url('/fonts/inter/Inter-Bold.ttf');
+	font-display: swap;
+}
+
+@font-face {
+	font-family: inter-medium;
+	src: url('/fonts/inter/Inter-Medium.ttf');
+	font-display: swap;
+}
+
+@font-face {
+	font-family: inter-semibold;
+	src: url('/fonts/inter/Inter-SemiBold.ttf');
+	font-display: swap;
+}
+
+@font-face {
+	font-family: inter-black;
+	src: url('/fonts/inter/Inter-Black.ttf');
+	font-display: swap;
+}
  
 @layer base {
   :root {
@@ -77,8 +117,3 @@
   }
 }
 
-/*
-* {
- outline: 1px solid red;
-}
-*/

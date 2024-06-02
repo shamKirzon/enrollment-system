@@ -7,13 +7,14 @@
 	import { Button } from '$lib/components/ui/button';
 	import DeleteIcon from 'virtual:icons/material-symbols/delete-outline';
 	import { deleteData } from '$lib';
+	import { Pagination } from '$lib/components/index.js';
 
 	export let data;
 
 	const selectedRows = writable<string[]>([]);
 </script>
 
-<ContentLayout>
+<ContentLayout class="flex-col">
 	<Card.Root class="w-full">
 		<Card.Header class="flex flex-row items-center justify-between">
 			<div>
@@ -48,7 +49,9 @@
 			{/if}
 		</Card.Header>
 		<Card.Content>
-			<TableTransactions data={data.resultTransactions?.data?.transactions || []} {selectedRows} />
+			<TableTransactions data={data.resultTransactions?.transactions || []} {selectedRows} />
 		</Card.Content>
 	</Card.Root>
+
+	<Pagination count={data.resultTransactions?.count || 1} />
 </ContentLayout>
