@@ -13,6 +13,16 @@ import { invalidateAll } from '$app/navigation';
 import { type ChartArea } from 'chart.js';
 import type { UserName } from './types/user';
 
+
+export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/avif'];
+export const MAX_IMAGE_SIZE = 5; // Megabytes
+
+
+export function sizeInMB(sizeInBytes: number, decimals = 2): number {
+	const result = sizeInBytes / (1024 * 1024);
+	return +result.toFixed(decimals);
+}
+
 export function capitalizeFirstLetter(str: string): string {
 	return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -93,6 +103,24 @@ export const ROUTES: Route[] = [
 	{
 		name: 'Grades',
 		path: '/grades',
+		icon: FileTable
+	}
+];
+
+export const PARENT_ROUTES: Route[] = [
+	{
+		name: 'Dashboard',
+		path: '/parent/dashboard',
+		icon: Dashboard
+	},
+	{
+		name: 'Transactions',
+		path: '/parent/transactions',
+		icon: Money
+	},
+	{
+		name: 'Grades',
+		path: '/parent/grades',
 		icon: FileTable
 	}
 ];

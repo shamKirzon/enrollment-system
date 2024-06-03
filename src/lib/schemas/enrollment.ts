@@ -1,3 +1,4 @@
+import { ACCEPTED_IMAGE_TYPES, MAX_IMAGE_SIZE, sizeInMB } from '$lib';
 import { Semester, StudentStatus } from '$lib/types/enrollment';
 import { PaymentMethod } from '$lib/types/payment';
 import { z } from 'zod';
@@ -10,15 +11,9 @@ export const academicYearSchema = z.object({
 
 export type AcademicYearSchema = typeof academicYearSchema;
 
-const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/avif'];
 const ACCEPTED_DOCUMENT_TYPES = ['application/pdf'];
-const MAX_IMAGE_SIZE = 5; // Megabytes
 const MAX_DOCUMENT_SIZE = 20; // Megabytes
 
-function sizeInMB(sizeInBytes: number, decimals = 2): number {
-	const result = sizeInBytes / (1024 * 1024);
-	return +result.toFixed(decimals);
-}
 
 export const enrollmentSchema = z.object({
 	year_level_id: z.string(),

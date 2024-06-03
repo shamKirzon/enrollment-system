@@ -61,7 +61,7 @@
 		<Form.FieldErrors />
 	</Form.Field>
 
-	<Form.Button class="mt-4 w-full">Login</Form.Button>
+	<Form.Button class="mt-4 w-full font-inter-semibold">Login</Form.Button>
 	<p class="text-center w-full text-sm mt-8">
 		Don't have an account?
 		<a href="/register" class="underline font-inter-semibold text-primary">Sign up</a>

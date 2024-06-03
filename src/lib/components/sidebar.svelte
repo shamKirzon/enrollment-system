@@ -1,18 +1,26 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { pcsLogo } from '$lib/assets/images';
-	import type { Result } from '$lib/types';
+	import type { Result, Route } from '$lib/types';
 	import { Role, type User } from '$lib/types/user';
 	// import { Dashboard } from 'svelte-radix';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { toast } from 'svelte-sonner';
 	import { invalidateAll } from '$app/navigation';
 	import { DotsHorizontal } from 'svelte-radix';
-	import { ADMIN_ROUTES, ROUTES } from '$lib';
+	import { ADMIN_ROUTES, ROUTES, PARENT_ROUTES } from '$lib';
 
 	export let user: User;
 
-	const routes = user.role === Role.Admin ? ADMIN_ROUTES : ROUTES;
+	let routes: Route[] = [];
+
+	if (user.role === Role.Admin) {
+		routes = ADMIN_ROUTES;
+	} else if (user.role === Role.Parent) {
+		routes = PARENT_ROUTES;
+	} else {
+		routes = ROUTES;
+	}
 
 	async function logout(): Promise<void> {
 		const response = await fetch('/api/logout', { method: 'post' });
@@ -31,7 +39,7 @@
 </script>
 
 <aside
-	class="fixed inset-y-0 left-0 h-full w-60 p-4 bg-white border-r text-black border-gray-200 flex flex-col"
+	class="fixed inset-y-0 left-0 h-full w-60 p-4 bg-white border-r text-black border-gray-200 flex flex-col shadow"
 >
 	<div class="flex justify-center mb-10">
 		<img src={pcsLogo} alt="PCS Logo" class="w-20 h-20" />

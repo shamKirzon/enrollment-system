@@ -23,8 +23,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 		const result: Result<{ user: User }> = await response.json();
 
-		// console.log(result);
-
 		return result;
 	};
 

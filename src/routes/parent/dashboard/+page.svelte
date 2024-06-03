@@ -1,0 +1,29 @@
+<script lang="ts">
+	import { ContentLayout } from '$lib/components/layouts';
+	import DataTable from './data-table.svelte';
+	import * as Card from '$lib/components/ui/card';
+	import * as Dialog from '$lib/components/ui/dialog';
+	import { Button, buttonVariants } from '$lib/components/ui/button';
+	import CirclePlusOutline from 'virtual:icons/flowbite/circle-plus-outline';
+
+	export let data;
+</script>
+
+<ContentLayout class="flex-col">
+	<Card.Root class="w-full">
+		<Card.Header class="flex flex-row items-center justify-between">
+			<div>
+				<Card.Title>Students</Card.Title>
+				<Card.Description>Your registered children</Card.Description>
+			</div>
+
+			<a href="/parent/add-student" class={`${buttonVariants({ variant: 'default' })} space-x-1`}>
+				<CirclePlusOutline />
+				<span>Create</span>
+			</a>
+		</Card.Header>
+		<Card.Content>
+			<DataTable data={data.students} />
+		</Card.Content>
+	</Card.Root>
+</ContentLayout>

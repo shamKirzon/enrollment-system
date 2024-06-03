@@ -5,7 +5,6 @@
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-sonner';
-	import * as RadioGroup from '$lib/components/ui/radio-group';
 
 	export let data: SuperValidated<Infer<RegisterSchema>>;
 
@@ -102,37 +101,10 @@
 		<Form.FieldErrors />
 	</Form.Field>
 
-	<Form.Field {form} name="confirm_password">
-		<Form.Control let:attrs>
-			<Form.Label>Confirm Password</Form.Label>
-			<Input {...attrs} type="password" bind:value={$formData.confirm_password} required />
-		</Form.Control>
-		<Form.FieldErrors />
-	</Form.Field>
+	<Form.Button class="mt-4 w-full font-inter-semibold">Register</Form.Button>
 
-	<Form.Fieldset {form} name="role">
-		<div class="flex items-center gap-1 justify-between">
-			<span class="text-sm"> I am a... </span>
-			<RadioGroup.Root bind:value={$formData.role} class="flex gap-6 items-center">
-				<div class="flex items-center gap-2">
-					<Form.Control let:attrs>
-						<RadioGroup.Item value="student" {...attrs} />
-						<Form.Label class="font-normal">Student</Form.Label>
-					</Form.Control>
-				</div>
-				<div class="flex items-center gap-2">
-					<Form.Control let:attrs>
-						<RadioGroup.Item value="parent" {...attrs} />
-						<Form.Label class="font-normal">Parent</Form.Label>
-					</Form.Control>
-				</div>
-				<RadioGroup.Input name="role" />
-			</RadioGroup.Root>
-		</div>
-
-		<Form.FieldErrors />
-	</Form.Fieldset>
-
-	<a href="/login" class="underline text-sm">Already have an account?</a>
-	<Form.Button class="mt-4">Submit</Form.Button>
+	<p class="text-center w-full text-sm mt-8">
+		Already have an account?
+		<a href="/login" class="underline font-inter-semibold text-primary">Login</a>
+	</p>
 </form>

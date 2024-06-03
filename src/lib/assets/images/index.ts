@@ -34,6 +34,8 @@ import confirmation2 from './confirmation2.webp';
 import equalizer from './equalizer.webp';
 import pcsBgBrown from './pcs-bg-brown.jpg';
 import pcsAdBanner from './pcs-banner.jpg';
+import family from "./family.svg"
+import officeWork from "./office-work.svg"
 
 export {
 	gradeSchool,
@@ -63,5 +65,7 @@ export {
 	confirmation2,
 	equalizer,
 	pcsBgBrown,
-	pcsAdBanner
+	pcsAdBanner,
+	family,
+	officeWork
 };
