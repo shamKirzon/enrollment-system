@@ -19,11 +19,39 @@
 	import { cn } from '$lib/utils';
 	import { capitalizeFirstLetter } from '$lib';
 	import { Sex } from '$lib/types/user';
+	import { toast } from 'svelte-sonner';
 
 	export let data: SuperValidated<Infer<AddStudentSchema>>;
 
+	let loadingToast: string | number | undefined;
+
 	const form = superForm(data, {
-		validators: zodClient(addStudentSchema)
+		validators: zodClient(addStudentSchema),
+		resetForm: false,
+		onSubmit: () => {
+			loadingToast = toast.loading('Creating student...');
+		},
+		onError: ({ result }) => {
+			toast.error(result.error.message);
+		},
+		onResult: ({ result }) => {
+			toast.dismiss(loadingToast);
+
+			switch (result.type) {
+				case 'success':
+					{
+						const message: string = result.data?.message;
+						toast.success(message);
+					}
+					break;
+				case 'failure':
+					{
+						const message: string = result.data?.message || 'Invalid form data.';
+						toast.error(message);
+					}
+					break;
+			}
+		}
 	});
 
 	const { form: formData, enhance } = form;
@@ -60,7 +88,7 @@
 	<Form.Field {form} name="first_name">
 		<Form.Control let:attrs>
 			<Form.Label>First Name</Form.Label>
-			<Input {...attrs} bind:value={$formData.first_name} required />
+			<Input {...attrs} bind:value={$formData.first_name}  />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -76,15 +104,15 @@
 	<Form.Field {form} name="last_name">
 		<Form.Control let:attrs>
 			<Form.Label>Last Name</Form.Label>
-			<Input {...attrs} bind:value={$formData.last_name} required />
+			<Input {...attrs} bind:value={$formData.last_name}  />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
 
 	<Form.Field {form} name="suffix_name">
 		<Form.Control let:attrs>
-			<Form.Label>Last Name</Form.Label>
-			<Input {...attrs} bind:value={$formData.suffix_name} required />
+			<Form.Label>Suffix Name</Form.Label>
+			<Input {...attrs} bind:value={$formData.suffix_name} />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -92,7 +120,7 @@
 	<Form.Field {form} name="email">
 		<Form.Control let:attrs>
 			<Form.Label>Email</Form.Label>
-			<Input {...attrs} bind:value={$formData.email} type="email" required />
+			<Input {...attrs} bind:value={$formData.email} type="email"  />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -100,7 +128,7 @@
 	<Form.Field {form} name="contact_number">
 		<Form.Control let:attrs>
 			<Form.Label>Contact Number</Form.Label>
-			<Input {...attrs} bind:value={$formData.contact_number} type="tel" required />
+			<Input {...attrs} bind:value={$formData.contact_number} type="tel"  />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -108,7 +136,7 @@
 	<Form.Field {form} name="password">
 		<Form.Control let:attrs>
 			<Form.Label>Account Password</Form.Label>
-			<Input {...attrs} bind:value={$formData.contact_number} type="password" required />
+			<Input {...attrs} bind:value={$formData.password} type="password"  />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -116,7 +144,7 @@
 	<Form.Field {form} name="country">
 		<Form.Control let:attrs>
 			<Form.Label>Country</Form.Label>
-			<Input {...attrs} bind:value={$formData.country} required />
+			<Input {...attrs} bind:value={$formData.country}  />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -124,7 +152,7 @@
 	<Form.Field {form} name="region">
 		<Form.Control let:attrs>
 			<Form.Label>Region</Form.Label>
-			<Input {...attrs} bind:value={$formData.region} required />
+			<Input {...attrs} bind:value={$formData.region}  />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -132,7 +160,7 @@
 	<Form.Field {form} name="province">
 		<Form.Control let:attrs>
 			<Form.Label>Province</Form.Label>
-			<Input {...attrs} bind:value={$formData.province} required />
+			<Input {...attrs} bind:value={$formData.province}  />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -140,7 +168,7 @@
 	<Form.Field {form} name="city">
 		<Form.Control let:attrs>
 			<Form.Label>City</Form.Label>
-			<Input {...attrs} bind:value={$formData.city} required />
+			<Input {...attrs} bind:value={$formData.city}  />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -148,7 +176,7 @@
 	<Form.Field {form} name="barangay">
 		<Form.Control let:attrs>
 			<Form.Label>Barangay</Form.Label>
-			<Input {...attrs} bind:value={$formData.barangay} required />
+			<Input {...attrs} bind:value={$formData.barangay}  />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -156,7 +184,7 @@
 	<Form.Field {form} name="street">
 		<Form.Control let:attrs>
 			<Form.Label>Street</Form.Label>
-			<Input {...attrs} bind:value={$formData.street} required />
+			<Input {...attrs} bind:value={$formData.street}  />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -164,7 +192,7 @@
 	<Form.Field {form} name="lrn">
 		<Form.Control let:attrs>
 			<Form.Label>Learning Reference Number (LRN)</Form.Label>
-			<Input {...attrs} bind:value={$formData.lrn} required />
+			<Input {...attrs} bind:value={$formData.lrn}  />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -232,7 +260,7 @@
 	<Form.Field {form} name="birth_place">
 		<Form.Control let:attrs>
 			<Form.Label>Birth Place</Form.Label>
-			<Input {...attrs} bind:value={$formData.birth_place} required />
+			<Input {...attrs} bind:value={$formData.birth_place}  />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -262,7 +290,7 @@
 	<Form.Field {form} name="citizenship">
 		<Form.Control let:attrs>
 			<Form.Label>Citizenship</Form.Label>
-			<Input {...attrs} bind:value={$formData.citizenship} required />
+			<Input {...attrs} bind:value={$formData.citizenship}  />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -270,7 +298,7 @@
 	<Form.Field {form} name="religion">
 		<Form.Control let:attrs>
 			<Form.Label>Religion</Form.Label>
-			<Input {...attrs} bind:value={$formData.religion} required />
+			<Input {...attrs} bind:value={$formData.religion}  />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -278,7 +306,7 @@
 	<Form.Field {form} name="parent_contact_number">
 		<Form.Control let:attrs>
 			<Form.Label>Preferred Parent Contact Number</Form.Label>
-			<Input {...attrs} bind:value={$formData.parent_contact_number} required />
+			<Input {...attrs} bind:value={$formData.parent_contact_number}  />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -286,7 +314,7 @@
 	<Form.Field {form} name="landline">
 		<Form.Control let:attrs>
 			<Form.Label>Preferred Landline</Form.Label>
-			<Input {...attrs} bind:value={$formData.landline} required />
+			<Input {...attrs} bind:value={$formData.landline}  />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>

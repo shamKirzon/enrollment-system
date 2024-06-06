@@ -8,6 +8,7 @@
 	import { gradesSchema, type GradesSchema } from '$lib/schemas/subject';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { toast } from 'svelte-sonner';
+	import { page } from '$app/stores';
 
 	export let data: SubjectGradeDetails;
 	export let interactive: boolean = false;
@@ -20,12 +21,17 @@
 	const { form, errors, enhance } = superForm(gradesForm, {
 		dataType: 'json',
 		validators: zodClient(gradesSchema),
-		invalidateAll: "force",
+		invalidateAll: 'force',
 		resetForm: false,
-		onSubmit: ({jsonData, formData}) => {
-			console.log("Submitting grades...")
-			console.log(jsonData)
-			console.log(formData)
+		onSubmit: ({ jsonData, formData }) => {
+			console.log('Submitting grades...');
+			console.log(jsonData);
+			console.log(formData);
+
+			const yearLevelId = $page.url.searchParams.get('year_level_id');
+			$form.year_level_id = yearLevelId || '';
+
+			console.log($form)
 			loadingToast = toast.loading('Submitting grades...');
 		},
 		onError: ({ result }) => {
@@ -48,11 +54,11 @@
 					}
 					break;
 			}
-		},
+		}
 	});
 </script>
 
-<form method="POST" class="contents" use:enhance>
+<form method="POST" action="?/submit_grades" class="contents" use:enhance>
 	<Table.Root>
 		<Table.Header>
 			<Table.Row>
@@ -101,5 +107,5 @@
 		</Table.Body>
 	</Table.Root>
 
-		<input type="submit" hidden />
+	<input type="submit" hidden />
 </form>

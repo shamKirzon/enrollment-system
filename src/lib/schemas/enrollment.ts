@@ -17,8 +17,12 @@ const MAX_DOCUMENT_SIZE = 20; // Megabytes
 
 export const enrollmentSchema = z.object({
 	year_level_id: z.string(),
+	year_level_name: z.string(),
 	student_id: z.string(),
+
 	academic_year_id: z.number(),
+	academic_year_name: z.string(),
+
 	strand_id: z.string().optional(),
 
 	transaction_number: z.string(),

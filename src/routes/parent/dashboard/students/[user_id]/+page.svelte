@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { ContentLayout } from '$lib/components/layouts';
-	import { setContext } from 'svelte';
 	import { TabsStudent } from '$lib/components/tabs';
+	import { setContext } from 'svelte';
 	import { ProfileStudent } from '$lib/components/profiles';
 
 	export let data;

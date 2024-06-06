@@ -45,8 +45,15 @@ export const actions: Actions = {
 
 		event.cookies.set('session', `${result.data.user.id}`, { path: '/' });
 
-		const dashboardRoute =
-			result.data?.user.role === Role.Admin ? '/admin/dashboard' : '/dashboard';
+		let dashboardRoute = '/dashboard';
+
+		if(result.data?.user.role === Role.Admin) {
+			dashboardRoute = "/admin/dashboard"
+		} else if (result?.data.user.role === Role.Parent) {
+			dashboardRoute = "/parent/dashboard"
+		} else {
+			dashboardRoute = "/dashboard"
+		}
 
 		redirect(303, dashboardRoute);
 	}

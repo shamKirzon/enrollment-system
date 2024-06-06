@@ -79,3 +79,18 @@ export type StudentFamilyMember = UserName & {
 	barangay: string;
 	street?: string;
 }
+
+export type StudentProfilePayload = {
+	lrn: string;
+	birth_date: string;
+	birth_place: string;
+	sex: Sex,
+	citizenship: string,
+	religion: string;
+	parent_contact_number: string;
+	landline: string;
+	birth_certificate_url: string;
+	baptismal_certificate_url: string;
+	address_id: number;
+	student_id: string;
+}

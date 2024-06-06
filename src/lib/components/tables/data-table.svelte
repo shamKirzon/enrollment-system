@@ -1,24 +1,28 @@
 <script lang="ts">
 	import { Column, createTable, Render, Subscribe } from 'svelte-headless-table';
-	import { type AnyPlugins } from 'svelte-headless-table/plugins';
+	import { addSelectedRows, type AnyPlugins } from 'svelte-headless-table/plugins';
 	import { readable, type Writable } from 'svelte/store';
 	import * as Table from '$lib/components/ui/table';
 	import { getSelectedRowData } from '$lib';
 
-	export let data: any[];
+	type Foo<T, L extends keyof T> = {
+		bar: T[];
+		baz: L;
+	};
+
+	export let data: Foo<any, any>;
 	export let selectedRows: Writable<string[]>;
-	export let columns: Column<unknown, AnyPlugins>;
-	export let id: string;
+	export let columns: Column<unknown, AnyPlugins>[];
 
-	$: table = createTable(readable(data));
-
-	// $: columns = table.createColumns(columnsData);
+	$: table = createTable(readable(data.bar), {
+		select: addSelectedRows()
+	});
 
 	$: ({ headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates } =
 		table.createViewModel(columns));
 	$: ({ selectedDataIds } = pluginStates.select);
 
-	$: getSelectedRowData(data, selectedRows, $selectedDataIds, id);
+	$: getSelectedRowData(data.bar, selectedRows, $selectedDataIds, data.baz);
 </script>
 
 <Table.Root {...$tableAttrs}>

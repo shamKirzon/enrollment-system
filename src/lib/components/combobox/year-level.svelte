@@ -9,15 +9,17 @@
 	import { EducationLevel, type YearLevel } from '$lib/types/enrollment';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import type { Selected } from 'bits-ui';
 
 	export let yearLevels: YearLevel[];
 	export let includeSemester: boolean = false;
+	export let selected: string | undefined = undefined;
 
 	let open = false;
 	let value = '';
 
-	$: selectedValue = yearLevels.find((f) => f.name === value)?.name ?? 'Select a year level...';
-	$: getSelectedYearLevel = (id: string) => yearLevels.find((yl) => yl.id === id);
+	$: getSelectedYearLevel = (id: string | undefined) => yearLevels.find((yl) => yl.id === id);
+	$: value = getSelectedYearLevel(selected)?.name ?? "Select a year level...";
 
 	// We want to refocus the trigger button when the user selects
 	// an item from the list so users can continue navigating the
@@ -40,7 +42,7 @@
 			if (selectedYearLevel.education_level === EducationLevel.SeniorHighSchool) {
 				query.set('semester', '1');
 			} else {
-				query.delete('semester')
+				query.delete('semester');
 			}
 		}
 
@@ -69,7 +71,7 @@
 			aria-expanded={open}
 			class="w-52 justify-between"
 		>
-			{selectedValue}
+			{value}
 			<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
 		</Button>
 	</Popover.Trigger>

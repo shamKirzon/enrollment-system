@@ -27,7 +27,7 @@
 				const { id, ...name } = value;
 
 				return createRender(Link, {
-					url: `/users/students/${id}`,
+					url: `/parent/dashboard/students/${id}`,
 					label: formatName(name)
 				});
 			}

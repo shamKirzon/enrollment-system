@@ -14,7 +14,8 @@ export const gradesSchema = z.object({
 		grades: gradeSchema.array(),
 		subject_name: z.string(),
 		average_grade: z.string().optional().nullable()
-	}).array()
+	}).array(),
+	year_level_id: z.string()
 });
 
 export type GradesSchema = typeof gradesSchema;

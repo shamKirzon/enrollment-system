@@ -2,6 +2,7 @@
 	import * as Table from '$lib/components/ui/table';
 	import type { AcademicYearEnrollment } from '$lib/types/enrollment';
 	import { format } from 'date-fns';
+	import { BadgeEnrollment } from '../badges';
 
 	export let enrollments: AcademicYearEnrollment[];
 </script>
@@ -27,7 +28,13 @@
 						? `St. ${enrollment.section_name}${enrollment.strand_id ? ` - ${enrollment.strand_id.toUpperCase()}` : ''}`
 						: '---'}</Table.Cell
 				>
-				<Table.Cell>{enrollment.enrollment_status || '---'}</Table.Cell>
+				<Table.Cell>
+					{#if enrollment.enrollment_status}
+						<BadgeEnrollment value={enrollment.enrollment_status} />
+					{:else}
+						---
+					{/if}
+				</Table.Cell>
 			</Table.Row>
 		{/each}
 	</Table.Body>

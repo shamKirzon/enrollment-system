@@ -12,7 +12,7 @@
 	export let data: {
 		studentGrades: SubjectGradeDetails;
 		yearLevels: YearLevel[];
-		user: User | undefined;
+		user: User;
 	};
 
 	$: isSeniorHigh = data.studentGrades.education_level === EducationLevel.SeniorHighSchool;
@@ -66,7 +66,7 @@
 		<Card.Content>
 			<TableGrades
 				data={data.studentGrades}
-				interactive={data.user?.role === Role.Admin}
+				interactive={data.user.role === Role.Admin}
 				submit={submitGrades}
 			/>
 		</Card.Content>

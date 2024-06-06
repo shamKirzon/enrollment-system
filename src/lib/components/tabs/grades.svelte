@@ -12,7 +12,8 @@
 	export let data: {
 		studentGrades: SubjectGradeDetails;
 		yearLevels: YearLevel[];
-		user: User | undefined;
+		user: User;
+		selectedYearLevel?: string
 	};
 
 	$: isSeniorHigh = data.studentGrades.education_level === EducationLevel.SeniorHighSchool;
@@ -32,7 +33,7 @@
 
 <div class="space-y-2">
 	<div class="flex items-center gap-2 justify-between">
-		<YearLevelCombobox yearLevels={data.yearLevels || []} includeSemester={true} />
+		<YearLevelCombobox yearLevels={data.yearLevels || []} includeSemester={true} selected={data.selectedYearLevel} />
 
 		<Tabs.Root value={Semester.First}>
 			<Tabs.List class="bg-background border">
@@ -66,7 +67,7 @@
 		<Card.Content>
 			<TableGrades
 				data={data.studentGrades}
-				interactive={data.user?.role === Role.Admin}
+				interactive={data.user.role === Role.Admin}
 				submit={submitGrades}
 			/>
 		</Card.Content>

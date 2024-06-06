@@ -16,6 +16,8 @@
 	import { format } from 'date-fns';
 	import type { PaymentMode, TuitionPlan } from '$lib/types/payment';
 	import { Separator } from '$lib/components/ui/separator';
+	import { goto } from '$app/navigation';
+	import { Role, type User } from '$lib/types/user';
 
 	export let data: SuperValidated<Infer<EnrollmentSchema>>;
 	export let academicYears: AcademicYear[];
@@ -24,19 +26,22 @@
 	export let paymentModes: PaymentMode[];
 	export let tuitionPlans: TuitionPlan[];
 	export let studentStatus: StudentStatus;
+	export let user: User | undefined;
 
 	let loadingToast: string | number | undefined;
 
 	const form = superForm(data, {
 		validators: zodClient(enrollmentSchema),
 		resetForm: false,
-		onSubmit: () => {
-			loadingToast = toast.loading('Submitting enrollment...');
+		onSubmit: async () => {
+			loadingToast = toast.loading('Submitting enrollment...', {
+				duration: Number.POSITIVE_INFINITY
+			});
 		},
 		onError: ({ result }) => {
 			toast.error(result.error.message);
 		},
-		onResult: ({ result }) => {
+		onResult: async ({ result }) => {
 			toast.dismiss(loadingToast);
 
 			switch (result.type) {
@@ -52,6 +57,12 @@
 						toast.error(message);
 					}
 					break;
+				case 'redirect':
+					{
+						const message: string = 'Successfully submitted enrollment.';
+						toast.success(message);
+					}
+					break;
 			}
 		}
 	});
@@ -60,19 +71,36 @@
 
 	$formData.student_status = studentStatus;
 
-	$: shsSelected = yearLevels.some(({ id, education_level }) => {
+	$: isShsSelected = yearLevels.some(({ id, education_level }) => {
 		return id === $formData.year_level_id && education_level === EducationLevel.SeniorHighSchool;
 	});
+
+	$: isJhsSelected = yearLevels.some(({ id, education_level }) => {
+		return id === $formData.year_level_id && education_level === EducationLevel.JuniorHighSchool;
+	});
+
+	$: isAboveHighSchool = isJhsSelected || isShsSelected || user?.role !== Role.Student;
+
+	$: selectedYearLevel = $formData.year_level_id
+		? {
+				label: $formData.year_level_name,
+				value: $formData.year_level_id
+			}
+		: undefined;
+
+	$: selectedAcademicYear = $formData.academic_year_id
+		? {
+				label: $formData.academic_year_name,
+				value: $formData.academic_year_id
+			}
+		: undefined;
+
+	$: console.log($formData);
 </script>
 
 <form method="POST" enctype="multipart/form-data" class="space-y-8" use:enhance>
-	<!-- <Form.Field {form} name="year_level_id"> -->
-	<!-- 	<Form.Control let:attrs> -->
-	<!-- 		<Form.Label>Year Level</Form.Label> -->
-	<!-- 		<Input {...attrs} bind:value={$formData.year_level_id} /> -->
-	<!-- 	</Form.Control> -->
-	<!-- 	<Form.FieldErrors /> -->
-	<!-- </Form.Field> -->
+	<input hidden bind:value={$formData.academic_year_name} name="academic_year_name" />
+	<input hidden bind:value={$formData.year_level_name} name="year_level_name" />
 
 	<Form.Field {form} name="academic_year_id">
 		<Form.Control let:attrs>
@@ -80,7 +108,9 @@
 			<Select.Root
 				onSelectedChange={(v) => {
 					v && ($formData.academic_year_id = v.value);
+					v && ($formData.academic_year_name = v.label || '');
 				}}
+				selected={selectedAcademicYear}
 			>
 				<Select.Trigger {...attrs}>
 					<Select.Value placeholder="Select an academic year" />
@@ -104,11 +134,13 @@
 			<Select.Root
 				onSelectedChange={(v) => {
 					v && ($formData.year_level_id = v.value);
+					v && ($formData.year_level_name = v.label || '');
 
-					if (!shsSelected) {
+					if (!isShsSelected) {
 						$formData.strand_id = undefined;
 					}
 				}}
+				selected={selectedYearLevel}
 			>
 				<Select.Trigger {...attrs}>
 					<Select.Value placeholder="Select a year level" />
@@ -126,12 +158,12 @@
 
 	<Form.Field {form} name="strand_id">
 		<Form.Control let:attrs>
-			<Form.Label class={!shsSelected ? 'text-muted-foreground' : ''}>Strand</Form.Label>
+			<Form.Label class={!isShsSelected ? 'text-muted-foreground' : ''}>Strand</Form.Label>
 			<Select.Root
 				onSelectedChange={(v) => {
 					v && ($formData.strand_id = v.value);
 				}}
-				disabled={!shsSelected}
+				disabled={!isShsSelected}
 			>
 				<Select.Trigger {...attrs}>
 					<Select.Value placeholder="Select a strand" />
@@ -163,6 +195,7 @@
 						$formData.report_card = e.currentTarget.files ? e.currentTarget.files[0] : undefined;
 					}}
 					required
+					disabled={!isAboveHighSchool}
 				/>
 			</Form.Control>
 			<Form.Description>Your previous report card.</Form.Description>
@@ -179,6 +212,7 @@
 				onSelectedChange={(v) => {
 					v && ($formData.payment_method = v.value);
 				}}
+				disabled={!isAboveHighSchool}
 			>
 				<Select.Trigger {...attrs}>
 					<Select.Value placeholder="Select a payment method" />
@@ -201,6 +235,7 @@
 					onSelectedChange={(v) => {
 						v && ($formData.tuition_plan_id = v.value);
 					}}
+					disabled={!isAboveHighSchool}
 				>
 					<Select.Trigger {...attrs}>
 						<Select.Value placeholder="Select a tuition plan" />
@@ -220,7 +255,7 @@
 	<Form.Field {form} name="transaction_number">
 		<Form.Control let:attrs>
 			<Form.Label>Transaction Number</Form.Label>
-			<Input {...attrs} bind:value={$formData.transaction_number} />
+			<Input {...attrs} bind:value={$formData.transaction_number} disabled={!isAboveHighSchool} />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -228,7 +263,12 @@
 	<Form.Field {form} name="payment_amount">
 		<Form.Control let:attrs>
 			<Form.Label>Payment Amount</Form.Label>
-			<Input {...attrs} bind:value={$formData.payment_amount} type="number" />
+			<Input
+				{...attrs}
+				bind:value={$formData.payment_amount}
+				type="number"
+				disabled={!isAboveHighSchool}
+			/>
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -240,6 +280,7 @@
 				onSelectedChange={(v) => {
 					v && ($formData.payment_mode_id = v.value);
 				}}
+				disabled={!isAboveHighSchool}
 			>
 				<Select.Trigger {...attrs}>
 					<Select.Value placeholder="Select a payment method" />
@@ -266,6 +307,7 @@
 				on:change={(e) => {
 					$formData.payment_receipt = e.currentTarget.files ? e.currentTarget.files[0] : undefined;
 				}}
+				disabled={!isAboveHighSchool}
 			/>
 		</Form.Control>
 		<Form.FieldErrors />

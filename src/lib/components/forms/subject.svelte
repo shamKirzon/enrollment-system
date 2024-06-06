@@ -92,9 +92,18 @@
 		return items || [];
 	}
 
-	// function selectSemesters(): Selected<string>[] {
-	// 	subject?.semester
-	// }
+	function selectSemesters(): Selected<string>[] {
+		return [
+			{
+				label: "First",
+				value: Semester.First
+			},
+			{
+				label: "Second",
+				value: Semester.Second
+			}
+		];
+	}
 </script>
 
 <form method="POST" {action} class="space-y-8" use:enhance>
@@ -228,6 +237,7 @@
 					v && ($formData.semesters = getValues(v));
 				}}
 				disabled={shsUnselected || $formData.year_level_ids.length < 1}
+				selected={mode === 'update' ? selectSemesters() : undefined}
 			>
 				<Select.Trigger {...attrs}>
 					<div class="justify-between flex w-full pr-4">
@@ -235,13 +245,25 @@
 					</div>
 				</Select.Trigger>
 				<Select.Content class="max-w-full">
-						<Select.Item value={Semester.First} label="First" />
-						<Select.Item value={Semester.Second} label="Second" />
+					<Select.Item value={Semester.First} label="First" />
+					<Select.Item value={Semester.Second} label="Second" />
 				</Select.Content>
 			</Select.Root>
 
-				<input hidden type="checkbox" name={attrs.name} value={Semester.First} checked={$formData.semesters.includes(Semester.First)} />
-				<input hidden type="checkbox" name={attrs.name} value={Semester.Second} checked={$formData.semesters.includes(Semester.Second)} />
+			<input
+				hidden
+				type="checkbox"
+				name={attrs.name}
+				value={Semester.First}
+				checked={$formData.semesters.includes(Semester.First)}
+			/>
+			<input
+				hidden
+				type="checkbox"
+				name={attrs.name}
+				value={Semester.Second}
+				checked={$formData.semesters.includes(Semester.Second)}
+			/>
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>

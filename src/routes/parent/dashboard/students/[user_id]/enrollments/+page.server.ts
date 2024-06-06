@@ -1,7 +1,7 @@
-import { enrollmentSchema, type EnrollmentSchema } from '$lib/schemas/enrollment.js';
+import { enrollmentSchema } from '$lib/schemas/enrollment.js';
 import { error, redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types.js';
-import { fail, superValidate, withFiles, type Infer, type SuperValidated } from 'sveltekit-superforms';
+import { fail, superValidate, withFiles } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { BACKEND_URL } from '$env/static/private';
 import type { Result } from '$lib/types/index.js';
@@ -13,9 +13,25 @@ import {
 	type YearLevel
 } from '$lib/types/enrollment.js';
 import type { PaymentMode, TransactionPayload, TuitionPlan } from '$lib/types/payment.js';
+import type { User } from '$lib/types/user';
 import { submitEnrollment } from '$lib/server/enrollment.js';
 
-export const load: PageServerLoad = async ({ fetch, locals }) => {
+export const load: PageServerLoad = async ({ fetch, params }) => {
+	const { user_id } = params;
+
+	const getStudentData = async (studentId: string) => {
+		const response = await fetch(`${BACKEND_URL}/users/user.php?id=${studentId}`);
+		const result: Result<{ user: User }> = await response.json();
+
+		console.log(result.message);
+
+		if (result.data === undefined) {
+			error(404, 'User undefined.');
+		}
+
+		return result.data;
+	};
+
 	const getAcademicYears = async () => {
 		const response = await fetch(`${BACKEND_URL}/api/academic-years.php?status=open`, {
 			method: 'GET'
@@ -24,7 +40,11 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
 
 		console.log(result.message);
 
-		return result;
+		if (result.data === undefined) {
+			error(404, 'Academic years undefined.');
+		}
+
+		return result.data;
 	};
 
 	const getYearLevels = async () => {
@@ -33,7 +53,11 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
 
 		console.log(result.message);
 
-		return result;
+		if (result.data === undefined) {
+			error(404, 'Year levels undefined.');
+		}
+
+		return result.data;
 	};
 
 	const getStrands = async () => {
@@ -42,7 +66,11 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
 
 		console.log(result.message);
 
-		return result;
+		if (result.data === undefined) {
+			error(404, 'Strands undefined.');
+		}
+
+		return result.data;
 	};
 
 	const getPaymentModes = async () => {
@@ -51,7 +79,11 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
 
 		console.log(result.message);
 
-		return result;
+		if (result.data === undefined) {
+			error(404, 'Payment modes undefined.');
+		}
+
+		return result.data;
 	};
 
 	const getTuitionPlans = async () => {
@@ -60,31 +92,37 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
 
 		console.log(result.message);
 
-		return result;
+		if (result.data === undefined) {
+			error(404, 'Tuiton plans undefined.');
+		}
+
+		return result.data;
 	};
 
-	const getStudentStatus = async () => {
-		const student = (await locals.getStudentData()).data?.student;
-
-		const response = await fetch(
-			`${BACKEND_URL}/api/students/status.php?student_id=${student?.id}`,
-			{ method: 'GET' }
-		);
+	const getStudentStatus = async (studentId: string) => {
+		const response = await fetch(`${BACKEND_URL}/api/students/status.php?student_id=${studentId}`, {
+			method: 'GET'
+		});
 		const result: Result<{ student_status: StudentStatus }> = await response.json();
 
 		console.log(result.message);
 
-		return result;
+		if (result.data === undefined) {
+			error(404, 'Student status undefined.');
+		}
+
+		return result.data;
 	};
 
 	return {
 		form: await superValidate(zod(enrollmentSchema)),
-		yearLevels: (await getYearLevels()).data?.year_levels,
-		academicYears: (await getAcademicYears()).data?.academic_years,
-		strands: (await getStrands()).data?.strands,
-		paymentModes: (await getPaymentModes()).data?.payment_modes,
-		tuitionPlans: (await getTuitionPlans()).data?.tuition_plans,
-		studentStatus: (await getStudentStatus()).data?.student_status
+		yearLevels: (await getYearLevels()).year_levels,
+		academicYears: (await getAcademicYears()).academic_years,
+		strands: (await getStrands()).strands,
+		paymentModes: (await getPaymentModes()).payment_modes,
+		tuitionPlans: (await getTuitionPlans()).tuition_plans,
+		studentStatus: (await getStudentStatus(user_id)).student_status,
+		student: (await getStudentData(user_id)).user
 	};
 };
 
@@ -92,16 +130,13 @@ export const actions: Actions = {
 	default: async (event) => {
 		const form = await superValidate(event, zod(enrollmentSchema));
 
-		const { data } = await event.locals.getUserData();
-		const userId = data?.user?.id;
+		const { user_id } = event.params;
 
-		if (userId === undefined) {
+		if (user_id === undefined) {
 			error(404, 'User ID not found.');
 		}
 
-		form.data.student_id = userId;
-
-		console.log(form.data)
+		form.data.student_id = user_id;
 
 		if (!form.valid) {
 			return fail(
@@ -115,7 +150,6 @@ export const actions: Actions = {
 
 		await submitEnrollment(event.fetch, form);
 
-		redirect(303, "/dashboard")
+		redirect(303, `/parent/dashboard/students/${user_id}`);
 	}
 };
-

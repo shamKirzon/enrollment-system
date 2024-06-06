@@ -30,32 +30,10 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
 		return result;
 	};
 
-	let id: string | undefined = user.id;
-
-	if (user?.role === Role.Parent) {
-		const studentId = (await locals.getStudentData()).data?.student?.id;
-
-		console.log(user.id);
-		console.log(studentId);
-
-		// if (studentId === undefined) {
-		// 	error(404, 'Student ID not found.');
-		// }
-
-		id = studentId;
-	}
-
-	if (id) {
-		const enrollments = await getStudentEnrollments(id);
-
-		return {
-			enrollments,
-			form: await superValidate(zod(enrollmentSchema))
-		};
-	}
+	const enrollments = await getStudentEnrollments(user.id);
 
 	return {
-		enrollments: undefined,
+		enrollments,
 		form: await superValidate(zod(enrollmentSchema))
 	};
 };

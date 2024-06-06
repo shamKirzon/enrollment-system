@@ -199,14 +199,21 @@ type PayloadGrade = {
 };
 
 export const actions: Actions = {
-  submit_grades: async (event) => {
+  default: async (event) => {
     const form = await superValidate(event, zod(gradesSchema));
 
+    const yearLevelId = event.url.searchParams.get('year_level_id');
     const { user_id } = event.params;
 
-    if (!user_id) {
-      error(404, 'Student ID not found.');
+    console.log(yearLevelId);
+    console.log(user_id);
+
+    if (!user_id || !yearLevelId) {
+      error(404, 'User ID or Year level ID not found.');
     }
+
+    console.log('FORMDATA');
+    console.log(form.data);
 
     if (!form.valid) {
       return fail(400, {
@@ -223,11 +230,15 @@ export const actions: Actions = {
         }
       );
 
-      const result: Result<{ strand: Strand | undefined }> = await response.json();
+      if (!response.ok) {
+        error(response.status, 'Failed to get student strand.');
+      }
 
-      console.log(result.message)
-      console.log(result.data)
-      console.log(result.data?.strand?.id)
+      const result: Result<{ strand: Strand }> = await response.json();
+
+      // if (result.data === undefined) {
+      //   error(404, 'Strand is undefined.');
+      // }
 
       return result.data?.strand;
     };
@@ -256,8 +267,7 @@ export const actions: Actions = {
       console.log(result.message);
     };
 
-    const strand = await getStrand({ student_id: user_id, year_level_id: form.data.year_level_id });
-
+    const strand = await getStrand({ student_id: user_id, year_level_id: yearLevelId });
     await createGrades(form.data.subject_grades, user_id, strand?.id);
 
     return {
