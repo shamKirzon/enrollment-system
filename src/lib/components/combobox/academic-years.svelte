@@ -87,7 +87,7 @@
 				onSelect={() => {
 					value = '';
 					closeAndFocusTrigger(ids.trigger);
-					deleteSearchParam('year');
+					deleteSearchParam('academic_year_id');
 				}}
 			>
 				<span class="ml-7"> Reset </span>

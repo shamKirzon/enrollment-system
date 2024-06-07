@@ -49,6 +49,7 @@ export type EnrollmentWithDetails = UserName & {
 	year_level_name: string;
 	strand_id?: string;
 	strand_name?: string;
+	avatar_url?: string;
 
 	transaction_id: string;
 	transaction_number: string;
@@ -130,6 +131,7 @@ export type StudentSectionAssignment = UserName & {
 	section_assignment_id: string;
 	enrollment_id: string;
 	section_name: string;
+	avatar_url?: string;
 };
 
 export type SectionLevelDetails = {
@@ -156,3 +158,17 @@ export enum Semester {
 // export type SubjectDetails = {
 //   id
 // }
+
+
+export type EnrollmentFeeLevel = {
+	id: string;
+	amount: string;
+	enrollment_fee_id: string;
+	year_level_id: string;
+}
+
+export type EnrollmentFeeLevelDetails = Omit<EnrollmentFeeLevel, 'id'> & {
+	enrollment_fee_level_id: string;
+	year_level_name: string;
+	enrollment_fee_name: string;
+}

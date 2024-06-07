@@ -3,18 +3,19 @@ import type { Result } from '$lib/types';
 import type {
 	AcademicYearWithStudentCount,
 	EnrollmentWithDetails,
+	Strand,
 	YearLevel
 } from '$lib/types/enrollment';
+import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ fetch, url }) => {
-	const yearLevelId = url.searchParams.get('year_level_id') || undefined
-	const academicYearId = url.searchParams.get('academic_year_id') || undefined
-	const enrollmentStatus = url.searchParams.get('status')
+	const yearLevelId = url.searchParams.get('year_level_id') || undefined;
+	const academicYearId = url.searchParams.get('academic_year_id') || undefined;
+	const strandId = url.searchParams.get('strand_id') || undefined;
+	const enrollmentStatus = url.searchParams.get('status') || undefined;
 
-	const getEnrollments = async (): Promise<
-		Result<{ enrollments: EnrollmentWithDetails[]; count: number }>
-	> => {
+	const getEnrollments = async () => {
 		const searchParams = url.searchParams.toString();
 
 		let api = `${BACKEND_URL}/api/enrollments.php`;
@@ -29,7 +30,11 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 
 		console.log(result.message);
 
-		return result;
+		if (result.data === undefined) {
+			error(404, 'Enrollments undefined.');
+		}
+
+		return result.data;
 	};
 
 	const getAcademicYears = async () => {
@@ -39,7 +44,11 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 
 		console.log(result.message);
 
-		return result;
+		if (result.data === undefined) {
+			error(404, 'Academic years undefined.');
+		}
+
+		return result.data;
 	};
 
 	const getYearLevels = async () => {
@@ -48,20 +57,35 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 
 		console.log(result.message);
 
-		return result;
+		if (result.data === undefined) {
+			error(404, 'Year levels undefined.');
+		}
+
+		return result.data;
 	};
 
-	const { data: enrollmentsData } = await getEnrollments();
-	const { data: academicYearsData } = await getAcademicYears();
-	const { data: yearLevelsData } = await getYearLevels();
+	const getStrands = async () => {
+		const response = await fetch(`${BACKEND_URL}/api/strands.php`, { method: 'GET' });
+		const result: Result<{ strands: Strand[] }> = await response.json();
+
+		console.log(result.message);
+
+		if (result.data === undefined) {
+			error(404, 'Strands undefined.');
+		}
+
+		return result.data;
+	};
 
 	return {
-		enrollments: enrollmentsData?.enrollments || [],
-		enrollmentCount: enrollmentsData?.count || 0,
-		academicYears: academicYearsData?.academic_years || [],
-		yearLevels: yearLevelsData?.year_levels || [],
+		enrollments: (await getEnrollments()).enrollments,
+		enrollmentCount: (await getEnrollments()).count || 0,
+		academicYears: (await getAcademicYears()).academic_years,
+		yearLevels: (await getYearLevels()).year_levels,
+		strands: (await getStrands()).strands,
 		selectedYearLevelId: yearLevelId,
 		selectedAcademicYearId: academicYearId,
-		selectedEnrollmentStatus: enrollmentStatus
+		selectedEnrollmentStatus: enrollmentStatus,
+		selectedStrandId: strandId
 	};
 };

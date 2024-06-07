@@ -68,15 +68,16 @@
 
 	<nav class="flex flex-col">
 		{#each routes as route (route.path)}
-			{@const isCurrentPath = $page.url.pathname === route.path}
+			{@const isCurrentPath = $page.url.pathname.includes(route.path)}
+
 			<a
 				href={route.path}
-				class={`relative px-4 rounded-lg items-center py-3 border border-transparent transition-all`}
+				class={`relative px-4 rounded-lg items-center py-3 border border-transparent transition-all ${isCurrentPath ? "" : "[&>div>span]:hover:text-primary-foreground [&>div>svg]:hover:text-secondary"}`}
 				data-sveltekit-noscroll
 			>
 				{#if isCurrentPath}
 					<div
-						class={`absolute inset-0 rounded-lg border border-transparent transition-all ${isCurrentPath ? 'text-primary-foreground bg-primary/50 border-primary/50 shadow-sm' : 'text-muted-foreground hover:bg-primary/40 hover:text-primary-foreground/60 '}`}
+						class={`absolute inset-0 rounded-lg border transition-all text-primary-foreground bg-primary/50 border-primary/50 shadow-sm `}
 						in:send={{ key: 'active-sidebar-tab' }}
 						out:receive={{ key: 'active-sidebar-tab' }}
 					>
@@ -100,25 +101,6 @@
 			</a>
 		{/each}
 	</nav>
-
-	<!-- <DropdownMenu.Root> -->
-	<!-- 	<DropdownMenu.Trigger -->
-	<!-- 		class="mt-auto text-start flex items-center justify-between bg-amber-600 px-4 py-3 rounded-lg text-primary-foreground" -->
-	<!-- 	> -->
-	<!-- 		<span class="text-primary-foreground"> -->
-	<!-- 			{user.first_name} -->
-	<!-- 			{user.last_name} -->
-	<!-- 		</span> -->
-	<!-- 		<DotsHorizontal size={16} /> -->
-	<!-- 	</DropdownMenu.Trigger> -->
-	<!-- 	<DropdownMenu.Content class="w-52"> -->
-	<!-- 		<DropdownMenu.Group> -->
-	<!-- 			<DropdownMenu.Label>My Account</DropdownMenu.Label> -->
-	<!-- 			<DropdownMenu.Separator /> -->
-	<!-- 			<DropdownMenu.Item on:click={logout}>Log Out</DropdownMenu.Item> -->
-	<!-- 		</DropdownMenu.Group> -->
-	<!-- 	</DropdownMenu.Content> -->
-	<!-- </DropdownMenu.Root> -->
 
 	<Button
 		on:click={logout}

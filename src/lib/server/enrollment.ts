@@ -19,6 +19,10 @@ export async function submitEnrollment(
 			body: blob
 		});
 
+		if(!response.ok) {
+			error(response.status, "Failed to upload payment receipt.")
+		}
+
 		const result: Result<{ payment_receipt_url: string }> = await response.json();
 
 		console.log(result.message);
@@ -152,14 +156,22 @@ export async function submitEnrollment(
 		const queryString = new URLSearchParams(params).toString();
 		const blob = new Blob([file], { type: 'image/*' });
 
+		console.log("QUERY")
+		console.log(queryString)
+
 		const response = await fetch(`${BACKEND_URL}/api/upload/report-card.php?${queryString}`, {
 			method: 'POST',
 			body: blob
 		});
 
+		if(!response.ok) {
+			error(response.status, "Failed to upload report card.")
+		}
+
 		const result: Result<{ report_card_url: string }> = await response.json();
 
 		console.log(result.message);
+		console.log(result.data?.report_card_url);
 
 		if (result.data?.report_card_url === undefined) {
 			error(404, 'Report card URL not returned.');
@@ -192,7 +204,7 @@ export async function submitEnrollment(
 		subject: string;
 		body: string;
 	}) => {
-		console.log("Sending emails...")
+		console.log('Sending emails...');
 
 		const response = await fetch(`${BACKEND_URL}/api/mail.php`, {
 			method: 'POST',
@@ -257,7 +269,7 @@ export async function submitEnrollment(
 			error(404, 'Report Card file not found.');
 		}
 
-		const reportCardUrl = await uploadReportCard(form.data.report_card, { student_id });
+		const reportCardUrl = await uploadReportCard(form.data.report_card, { student_id: student_id });
 
 		await insertPreviousReportCard({
 			enrollment_id: enrollmentId,

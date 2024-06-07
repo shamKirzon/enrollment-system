@@ -4,6 +4,7 @@
 	import type { StudentFamilyMember, StudentProfile, User } from '$lib/types/user';
 	import { capitalizeFirstLetter, formatName } from '$lib';
 	import * as Table from '$lib/components/ui/table';
+	import { format } from 'date-fns';
 
 	export let props: {
 		profile: StudentProfile;
@@ -41,11 +42,23 @@
 		<Table.Root>
 			<Table.Header>
 				<Table.Row>
-					<Table.Head class="w-28">Name</Table.Head>
+					<Table.Head class="w-40">Name</Table.Head>
 					<Table.Cell>{name}</Table.Cell>
 				</Table.Row>
 			</Table.Header>
 			<Table.Body>
+				<Table.Row>
+					<Table.Head>Email</Table.Head>
+					<Table.Cell>{user.email}</Table.Cell>
+				</Table.Row>
+				<Table.Row>
+					<Table.Head>Contact Number</Table.Head>
+					<Table.Cell>{user.contact_number}</Table.Cell>
+				</Table.Row>
+				<Table.Row>
+					<Table.Head>Registered At</Table.Head>
+					<Table.Cell>{format(user.created_at, 'MMMM d, yyyy - h:mm a')}</Table.Cell>
+				</Table.Row>
 				<Table.Row>
 					<Table.Head>Sex</Table.Head>
 					<Table.Cell>{capitalizeFirstLetter(profile.sex)}</Table.Cell>

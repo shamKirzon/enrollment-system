@@ -58,7 +58,13 @@ export const load: LayoutServerLoad = async ({ fetch, url }) => {
 	const getSectionLevels = async () => {
 		const searchParams = url.searchParams.toString();
 
-		const response = await fetch(`${BACKEND_URL}/api/sections/levels.php?${searchParams}`, {
+		let api = `${BACKEND_URL}/api/sections/levels.php`;
+
+		if (searchParams) {
+			api += `?${searchParams}`;
+		}
+
+		const response = await fetch(api, {
 			method: 'GET'
 		});
 

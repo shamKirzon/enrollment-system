@@ -8,6 +8,7 @@
 	import {
 		AcademicYearsCombobox,
 		EnrollmentStatusCombobox,
+		StrandCombobox,
 		YearLevelCombobox
 	} from '$lib/components/combobox';
 	import DeleteIcon from 'virtual:icons/material-symbols/delete-outline';
@@ -33,14 +34,15 @@
 		<div class="flex gap-2">
 			<AcademicYearsCombobox {academicYears} selected={data.selectedAcademicYearId} />
 			<YearLevelCombobox yearLevels={data.yearLevels} selected={data.selectedYearLevelId} />
+			<StrandCombobox strands={data.strands} selected={data.selectedStrandId} />
 		</div>
 		<EnrollmentStatusCombobox selected={data.selectedEnrollmentStatus} />
 	</div>
 
-	<div class="flex w-full h-full flex-col gap-2" data-vaul-drawer-wrapper>
+	<div class="flex w-full h-full flex-col gap-2">
 		<Card.Root class="w-full h-full flex flex-col overflow-y-auto">
-			<Card.Header class="flex flex-row items-center justify-between">
-				<div>
+			<Card.Header class="flex flex-row items-center justify-between space-y-0">
+				<div class="space-y-1.5">
 					<Card.Title>Enrollments</Card.Title>
 					<Card.Description>A list of enrolled students.</Card.Description>
 				</div>

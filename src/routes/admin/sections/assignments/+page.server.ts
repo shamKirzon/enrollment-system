@@ -14,6 +14,10 @@ import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
 export const load: PageServerLoad = async ({ fetch, url }) => {
+	const yearLevelId = url.searchParams.get('year_level_id') || undefined;
+	const academicYearId = url.searchParams.get('academic_year_id') || undefined;
+	const strandId = url.searchParams.get('strand_id') || undefined;
+
 	const getAcademicYears = async () => {
 		const response = await fetch(`${BACKEND_URL}/api/academic-years.php`, { method: 'GET' });
 		const result: Result<{ academic_years: AcademicYear[] }> = await response.json();
@@ -91,7 +95,10 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 		yearLevels: (await getYearLevels()).data?.year_levels,
 		sectionAssignments: (await getSectionAssignments()).data?.section_assignments,
 		sectionLevels: (await getSectionLevels()).data,
-		strands: (await getStrands()).data?.strands
+		strands: (await getStrands()).data?.strands,
+		selectedYearLevelId: yearLevelId,
+		selectedAcademicYearId: academicYearId,
+		selectedStrandId: strandId
 	};
 };
 

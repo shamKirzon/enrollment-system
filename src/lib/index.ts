@@ -1,11 +1,12 @@
 import Users from 'virtual:icons/mdi/users';
 import Dashboard from 'virtual:icons/radix-icons/dashboard';
 import School from 'virtual:icons/fluent/notepad-edit-16-regular';
-import Money from 'virtual:icons/uil/transaction';
+import Transaction from 'virtual:icons/uil/transaction';
 import Calendar from 'virtual:icons/mdi/calendar';
 import Books from 'virtual:icons/ph/books-duotone';
 import Group from 'virtual:icons/lets-icons/group-scan';
 import FileTable from 'virtual:icons/mdi/file-table-outline';
+import Money from 'virtual:icons/tdesign/money';
 import type { Result, Route } from './types';
 import type { Writable } from 'svelte/store';
 import { toast } from 'svelte-sonner';
@@ -88,10 +89,16 @@ export function getGradient(ctx: CanvasRenderingContext2D, chartArea: ChartArea,
 	return gradient;
 }
 
-export function formatName(name: UserName): string {
+export function formatName(name: UserName, format: 'fmls' | 'lfms' = 'lfms'): string {
 	const { last_name, first_name, middle_name, suffix_name } = name;
 
-	return `${last_name}, ${first_name}${middle_name ? ` ${capitalizeFirstLetter(middle_name[0])}.` : ''}${suffix_name ? ` ${suffix_name}.` : ''}`;
+	let formattedName = `${last_name}, ${first_name}${middle_name ? ` ${capitalizeFirstLetter(middle_name[0])}.` : ''}${suffix_name ? ` ${suffix_name}.` : ''}`;
+
+	if (format === 'fmls') {
+		formattedName = `${first_name}${middle_name ? ` ${capitalizeFirstLetter(middle_name[0])}.` : ''} ${last_name}${suffix_name ? ` ${suffix_name}.` : ''}`;
+	}
+
+	return formattedName;
 }
 
 export const ROUTES: Route[] = [
@@ -103,13 +110,18 @@ export const ROUTES: Route[] = [
 	{
 		name: 'Transactions',
 		path: '/transactions',
-		icon: Money
+		icon: Transaction
 	},
 	{
 		name: 'Grades',
 		path: '/grades',
 		icon: FileTable
-	}
+	},
+	{
+		name: 'Enrollments',
+		path: '/enrollments',
+		icon: School
+	},
 ];
 
 export const PARENT_ROUTES: Route[] = [
@@ -121,13 +133,13 @@ export const PARENT_ROUTES: Route[] = [
 	{
 		name: 'Transactions',
 		path: '/parent/transactions',
-		icon: Money
+		icon: Transaction
 	},
-	{
-		name: 'Grades',
-		path: '/parent/grades',
-		icon: FileTable
-	}
+	// {
+	// 	name: 'Grades',
+	// 	path: '/parent/grades',
+	// 	icon: FileTable
+	// },
 ];
 
 export const ADMIN_ROUTES: Route[] = [
@@ -144,6 +156,11 @@ export const ADMIN_ROUTES: Route[] = [
 	{
 		name: 'Transactions',
 		path: '/admin/transactions',
+		icon: Transaction
+	},
+	{
+		name: 'Fees',
+		path: '/admin/fees',
 		icon: Money
 	},
 	{
@@ -165,7 +182,7 @@ export const ADMIN_ROUTES: Route[] = [
 		name: 'Users',
 		path: '/admin/users',
 		icon: Users
-	}
+	},
 ];
 
 export const COLORS = {
@@ -179,7 +196,7 @@ export const COLORS = {
 		return `rgba(146, 64, 14, ${opacity})`;
 	},
 	amber2: (opacity: number = 1) => {
-		return `rgba(180, 83, 9, ${opacity})`
+		return `rgba(180, 83, 9, ${opacity})`;
 	}
 };
 

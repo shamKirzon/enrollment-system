@@ -18,6 +18,7 @@
 	import { Separator } from '$lib/components/ui/separator';
 	import { goto } from '$app/navigation';
 	import { Role, type User } from '$lib/types/user';
+	import { page } from '$app/stores';
 
 	export let data: SuperValidated<Infer<EnrollmentSchema>>;
 	export let academicYears: AcademicYear[];
@@ -95,7 +96,13 @@
 			}
 		: undefined;
 
-	$: console.log($formData);
+	function replaceSearchParam(k: string, v: string) {
+		let query = new URLSearchParams($page.url.searchParams.toString());
+
+		query.set(k, v);
+
+		goto(`?${query.toString()}`);
+	}
 </script>
 
 <form method="POST" enctype="multipart/form-data" class="space-y-8" use:enhance>
@@ -139,6 +146,8 @@
 					if (!isShsSelected) {
 						$formData.strand_id = undefined;
 					}
+
+					// replaceSearchParam('year_level_id', v?.value)
 				}}
 				selected={selectedYearLevel}
 			>
@@ -252,10 +261,25 @@
 		</Form.Field>
 	{/if}
 
-	<Form.Field {form} name="transaction_number">
+	<Form.Field {form} name="payment_mode_id">
 		<Form.Control let:attrs>
-			<Form.Label>Transaction Number</Form.Label>
-			<Input {...attrs} bind:value={$formData.transaction_number} disabled={!isAboveHighSchool} />
+			<Form.Label>Payment Mode</Form.Label>
+			<Select.Root
+				onSelectedChange={(v) => {
+					v && ($formData.payment_mode_id = v.value);
+				}}
+				disabled={!isAboveHighSchool}
+			>
+				<Select.Trigger {...attrs}>
+					<Select.Value placeholder="Select a payment mode" />
+				</Select.Trigger>
+				<Select.Content>
+					{#each paymentModes as paymentMode (paymentMode.id)}
+						<Select.Item value={paymentMode.id} label={paymentMode.payment_channel} />
+					{/each}
+				</Select.Content>
+			</Select.Root>
+			<input hidden bind:value={$formData.payment_mode_id} name={attrs.name} />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
@@ -273,28 +297,14 @@
 		<Form.FieldErrors />
 	</Form.Field>
 
-	<Form.Field {form} name="payment_mode_id">
+	<Form.Field {form} name="transaction_number">
 		<Form.Control let:attrs>
-			<Form.Label>Payment Method</Form.Label>
-			<Select.Root
-				onSelectedChange={(v) => {
-					v && ($formData.payment_mode_id = v.value);
-				}}
-				disabled={!isAboveHighSchool}
-			>
-				<Select.Trigger {...attrs}>
-					<Select.Value placeholder="Select a payment method" />
-				</Select.Trigger>
-				<Select.Content>
-					{#each paymentModes as paymentMode (paymentMode.id)}
-						<Select.Item value={paymentMode.id} label={paymentMode.payment_channel} />
-					{/each}
-				</Select.Content>
-			</Select.Root>
-			<input hidden bind:value={$formData.payment_mode_id} name={attrs.name} />
+			<Form.Label>Transaction Number</Form.Label>
+			<Input {...attrs} bind:value={$formData.transaction_number} disabled={!isAboveHighSchool} />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
+
 
 	<Form.Field {form} name="payment_receipt">
 		<Form.Control let:attrs>

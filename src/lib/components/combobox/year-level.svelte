@@ -18,7 +18,7 @@
 	let value = '';
 
 	$: getSelectedYearLevel = (id: string | undefined) => yearLevels.find((yl) => yl.id === id);
-	$: value = getSelectedYearLevel(selected)?.name ?? "Select a year level...";
+	$: value = getSelectedYearLevel(selected)?.name ?? 'Select a year level...';
 
 	// We want to refocus the trigger button when the user selects
 	// an item from the list so users can continue navigating the
@@ -45,13 +45,19 @@
 			}
 		}
 
+		if (selectedYearLevel?.education_level !== EducationLevel.SeniorHighSchool) {
+			query.delete('strand_id');
+		}
+
 		goto(`?${query.toString()}`);
 	}
 
-	function deleteSearchParam(k: string) {
+	function deleteSearchParam(k: string[]) {
 		let query = new URLSearchParams($page.url.searchParams.toString());
 
-		query.delete(k);
+		k.forEach((s) => {
+			query.delete(s);
+		});
 
 		goto(`?${query.toString()}`);
 	}
@@ -98,7 +104,8 @@
 				onSelect={() => {
 					value = '';
 					closeAndFocusTrigger(ids.trigger);
-					deleteAllSearchParameters();
+					deleteSearchParam(['year_level_id', 'strand_id']);
+					// deleteAllSearchParameters();
 				}}
 			>
 				<span class="ml-7"> Reset </span>

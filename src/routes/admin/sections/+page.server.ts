@@ -1,15 +1,28 @@
 import { BACKEND_URL } from '$env/static/private';
 import { sectionAssignmentSchema, sectionSchema } from '$lib/schemas/enrollment.js';
-import type { Section, StudentSectionAssignment } from '$lib/types/enrollment';
+import type {
+	AcademicYear,
+	Section,
+	Strand,
+	StudentSectionAssignment,
+	YearLevel
+} from '$lib/types/enrollment';
 import type { Result } from '$lib/types/index.js';
 import { error, redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types.js';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ url }) => {
+	const yearLevelId = url.searchParams.get('year_level_id') || undefined;
+	const academicYearId = url.searchParams.get('academic_year_id') || undefined;
+	const strandId = url.searchParams.get('strand_id') || undefined;
+
 	return {
-		form: await superValidate(zod(sectionSchema))
+		form: await superValidate(zod(sectionSchema)),
+		selectedYearLevelId: yearLevelId,
+		selectedAcademicYearId: academicYearId,
+		selectedStrandId: strandId
 	};
 };
 

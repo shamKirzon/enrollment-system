@@ -4,6 +4,8 @@ import type { TransactionDetails } from '$lib/types/payment';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ fetch, url }) => {
+	const paymentMethod = url.searchParams.get('payment_method') || undefined
+
 	const searchParams = url.searchParams.toString();
 	let api = `${BACKEND_URL}/api/transactions.php`;
 
@@ -18,6 +20,7 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 		await response.json();
 
 	return {
-		resultTransactions: result.data
+		resultTransactions: result.data,
+		selectedPaymentMethod: paymentMethod
 	};
 };

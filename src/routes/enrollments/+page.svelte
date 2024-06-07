@@ -3,29 +3,23 @@
 	import { ContentLayout } from '$lib/components/layouts';
 	import * as Card from '$lib/components/ui/card';
 	import { StudentStatus } from '$lib/types/enrollment.js';
-	import { Role } from '$lib/types/user';
+	import Table from './table.svelte'
 
 	export let data;
+
+	let title = "Welcome Back!"
+	let description = "You may now enroll."
+
+	if(data.studentStatus === StudentStatus.New) {
+		title = "Welcome!"
+	}
 </script>
 
-<ContentLayout class="flex-col">
-	<div>
-		{#if data.studentStatus === StudentStatus.New}
-			<p>Welcome!</p>
-			{#if data.user?.role === Role.Parent}
-				<p>You may now enroll your child: {data.student?.first_name}</p>
-			{:else}
-				<p>You may now enroll</p>
-			{/if}
-		{:else}
-			<p>Welcome Back!</p>
-		{/if}
-	</div>
-
+<ContentLayout class="">
 	<Card.Root class="w-full">
 		<Card.Header>
-			<Card.Title>Enrollment</Card.Title>
-			<Card.Description>Description here</Card.Description>
+			<Card.Title>{title}</Card.Title>
+			<Card.Description>{description}</Card.Description>
 		</Card.Header>
 		<Card.Content>
 			<FormEnrollment
@@ -38,6 +32,17 @@
 				strands={data.strands || []}
 				user={data.user}
 			/>
+
+		</Card.Content>
+	</Card.Root>
+
+	<Card.Root class="w-full">
+		<Card.Header>
+			<Card.Title>Enrollment Fees</Card.Title>
+			<Card.Description>See how much you have to pay</Card.Description>
+		</Card.Header>
+		<Card.Content>
+		<Table data={data.enrollmentFeeLevels} />
 		</Card.Content>
 	</Card.Root>
 </ContentLayout>

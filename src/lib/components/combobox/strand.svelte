@@ -12,6 +12,7 @@
 
 	export let strands: Strand[];
 	export let selected: string | undefined;
+	export let disabled: boolean = false;
 
 	let open = false;
 	let value = '';
@@ -51,6 +52,7 @@
 			role="combobox"
 			aria-expanded={open}
 			class="w-52 justify-between"
+			{disabled}
 		>
 			{selectedValue}
 			<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />

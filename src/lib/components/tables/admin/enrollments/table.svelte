@@ -11,6 +11,8 @@
 	import { addSelectedRows } from 'svelte-headless-table/plugins';
 	import TableCheckbox from './table-checkbox.svelte';
 	import { getSelectedRowData } from '$lib';
+	import Avatar from './avatar.svelte';
+	import type { UserName } from '$lib/types/user';
 
 	export let data: EnrollmentWithDetails[];
 	export let selectedRows: Writable<string[]>;
@@ -38,29 +40,45 @@
 			}
 		}),
 		table.column({
-			accessor: ({ first_name, middle_name, last_name, student_status }) => {
+			accessor: ({
+				first_name,
+				middle_name,
+				last_name,
+				suffix_name,
+				student_status,
+				avatar_url
+			}) => {
 				return {
 					first_name,
 					middle_name,
 					last_name,
-					student_status
+					suffix_name,
+					student_status,
+					avatar_url
 				};
 			},
 			header: 'Student',
 			cell: ({ value }) => {
-				if (value.student_status === StudentStatus.New) {
-					return createRender(BadgeNewStudent, {
-						name: `${value.last_name}, ${value.first_name} ${value.middle_name ? `${value.middle_name}.` : ''}`
-					});
-				}
+				const { student_status, avatar_url, ...name } = value;
 
-				return `${value.last_name}, ${value.first_name} ${value.middle_name ? `${value.middle_name}.` : ''}`;
+				// if (student_status === StudentStatus.New) {
+				// 	return createRender(BadgeNewStudent, {
+				// 		name: `${value.last_name}, ${value.first_name} ${value.middle_name ? `${value.middle_name}.` : ''}`
+				// 	});
+				// }
+
+				return createRender(Avatar, { name, avatarUrl: avatar_url, studentStatus: student_status });
+
+				// return `${value.last_name}, ${value.first_name} ${value.middle_name ? `${value.middle_name}.` : ''}`;
 			}
 		}),
 		table.column({
 			accessor: 'enrolled_at',
 			header: () => {
-				return createRender(TableColumnSort, {label: "Enrollment Date", orderParam: "enrolled_at_order"})
+				return createRender(TableColumnSort, {
+					label: 'Enrollment Date',
+					orderParam: 'enrolled_at_order'
+				});
 			},
 			cell: ({ value }) => {
 				const date = format(value, 'MMMM d, yyyy - h:mm a');
@@ -106,7 +124,7 @@
 			header: 'Status',
 			cell: ({ value }) => {
 				return createRender(Badge, { value });
-			},
+			}
 		}),
 		table.column({
 			accessor: (enrollment) => {

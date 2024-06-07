@@ -8,6 +8,7 @@ import type { Result } from '$lib/types/index.js';
 import {
 	StudentStatus,
 	type AcademicYear,
+	type EnrollmentFeeLevelDetails,
 	type PreviousReportCardPayload,
 	type Strand,
 	type YearLevel
@@ -15,14 +16,23 @@ import {
 import type { PaymentMode, TransactionPayload, TuitionPlan } from '$lib/types/payment.js';
 import { submitEnrollment } from '$lib/server/enrollment.js';
 
-export const load: PageServerLoad = async ({ fetch, locals }) => {
+export const load: PageServerLoad = async ({ fetch, locals, url }) => {
 	const getAcademicYears = async () => {
 		const response = await fetch(`${BACKEND_URL}/api/academic-years.php?status=open`, {
 			method: 'GET'
 		});
+
+		if(!response.ok) {
+			error(response.status, "Failed to fetch academic years.")
+		}
+
 		const result: Result<{ academic_years: AcademicYear[] }> = await response.json();
 
 		console.log(result.message);
+
+		if(result.data === undefined) {
+			error(404, "Academic years undefined.")
+		}
 
 		return result;
 	};
@@ -33,6 +43,10 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
 
 		console.log(result.message);
 
+		if(result.data === undefined) {
+			error(404, "Year levels undefined.")
+		}
+
 		return result;
 	};
 
@@ -41,6 +55,10 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
 		const result: Result<{ strands: Strand[] }> = await response.json();
 
 		console.log(result.message);
+
+		if(result.data === undefined) {
+			error(404, "Strands undefined.")
+		}
 
 		return result;
 	};
@@ -51,6 +69,10 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
 
 		console.log(result.message);
 
+		if(result.data === undefined) {
+			error(404, "Payment modes undefined.")
+		}
+
 		return result;
 	};
 
@@ -59,6 +81,10 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
 		const result: Result<{ tuition_plans: TuitionPlan[] }> = await response.json();
 
 		console.log(result.message);
+
+		if(result.data === undefined) {
+			error(404, "Tuition plans undefined.")
+		}
 
 		return result;
 	};
@@ -74,8 +100,39 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
 
 		console.log(result.message);
 
+		if(result.data === undefined) {
+			error(404, "Student status undefined.")
+		}
+
 		return result;
 	};
+
+	const getEnrollmentFees = async () => {
+		let api = `${BACKEND_URL}/api/enrollments/fees/levels.php`;
+		// const searchParams = url.searchParams.toString();
+		//
+		// if(searchParams) {
+		// 	api += `?${searchParams}`
+		// }
+
+		const response = await fetch(api, {
+			method: "GET"
+		})
+
+		if(!response.ok) {
+			error(response.status, "Failed to fetch enrollment fees.")
+		}
+
+		const result: Result<{ enrollment_fee_levels: EnrollmentFeeLevelDetails[] }> = await response.json();
+
+		console.log(result.message);
+
+		if(result.data === undefined) {
+			error(404, "Enrollment fees undefined.")
+		}
+
+		return result.data;
+	}
 
 	return {
 		form: await superValidate(zod(enrollmentSchema)),
@@ -84,7 +141,8 @@ export const load: PageServerLoad = async ({ fetch, locals }) => {
 		strands: (await getStrands()).data?.strands,
 		paymentModes: (await getPaymentModes()).data?.payment_modes,
 		tuitionPlans: (await getTuitionPlans()).data?.tuition_plans,
-		studentStatus: (await getStudentStatus()).data?.student_status
+		studentStatus: (await getStudentStatus()).data?.student_status,
+		enrollmentFeeLevels: (await getEnrollmentFees()).enrollment_fee_levels
 	};
 };
 

@@ -17,6 +17,13 @@
 	export let academicYears: AcademicYear[];
 	export let yearLevels: YearLevel[];
 	export let strands: Strand[];
+	export let selected:
+		| {
+				yearLevel?: string;
+				academicYear?: string;
+				strand?: string;
+		  }
+		| undefined = undefined;
 
 	let loadingToast: string | number | undefined;
 
@@ -57,6 +64,14 @@
 	});
 
 	const { form: formData, enhance } = form;
+
+	$formData = {
+		academic_year_id: selected?.academicYear
+			? Number(selected.academicYear)
+			: $formData.academic_year_id,
+		year_level_id: selected?.yearLevel ? selected.yearLevel : $formData.year_level_id,
+		strand_id: selected?.strand ? selected.strand : $formData.strand_id
+	};
 
 	$: shsSelected = yearLevels.some(({ id, education_level }) => {
 		return id === $formData.year_level_id && education_level === EducationLevel.SeniorHighSchool;

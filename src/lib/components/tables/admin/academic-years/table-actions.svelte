@@ -5,12 +5,15 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import EditIcon from 'virtual:icons/lucide/edit';
 	import DeleteIcon from 'virtual:icons/material-symbols/delete-outline';
-	import type { AcademicYear } from '$lib/types/enrollment';
+	import { AcademicYearStatus, type AcademicYear } from '$lib/types/enrollment';
 	import { getContext } from 'svelte';
 	import type { AcademicYearSchema } from '$lib/schemas/enrollment';
 	import type { Infer, SuperValidated } from 'sveltekit-superforms';
 	import { CreateAcademicYearForm } from '$lib/components/forms';
 	import { deleteData } from '$lib';
+	import { toast } from 'svelte-sonner';
+	import { invalidateAll } from '$app/navigation';
+	import type { Result } from '$lib/types';
 
 	export let academicYear: AcademicYear;
 
@@ -26,6 +29,27 @@
 
 		isOpen.delete = false;
 	}
+
+	async function setAcademicYearStatus(status: AcademicYearStatus): Promise<void> {
+		const response = await fetch(`/api/academic-years?id=${academicYear.id}`, {
+			method: 'PATCH',
+			body: JSON.stringify({ ...academicYear, status }),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+
+		const result: Result = await response.json();
+
+		if (!response.ok) {
+			toast.error(result.message);
+			return;
+		}
+
+		await invalidateAll();
+
+		toast.success(result.message);
+	}
 </script>
 
 <DropdownMenu.Root>
@@ -37,11 +61,36 @@
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content>
 		<DropdownMenu.Label>Actions</DropdownMenu.Label>
+
 		<DropdownMenu.Separator />
+
+		<DropdownMenu.Sub>
+			<DropdownMenu.SubTrigger>Set status</DropdownMenu.SubTrigger>
+			<DropdownMenu.SubContent class="p-0" sideOffset={6}>
+				<DropdownMenu.Item on:click={() => setAcademicYearStatus(AcademicYearStatus.Upcoming)}>
+					Upcoming
+				</DropdownMenu.Item>
+				<DropdownMenu.Item on:click={() => setAcademicYearStatus(AcademicYearStatus.Open)}>
+					Open
+				</DropdownMenu.Item>
+				<DropdownMenu.Item on:click={() => setAcademicYearStatus(AcademicYearStatus.Ongoing)}>
+					Ongoing
+				</DropdownMenu.Item>
+				<DropdownMenu.Item on:click={() => setAcademicYearStatus(AcademicYearStatus.Finished)}>
+					Finished
+				</DropdownMenu.Item>
+			</DropdownMenu.SubContent>
+		</DropdownMenu.Sub>
+
+		<DropdownMenu.Separator />
+
 		<DropdownMenu.Item on:click={() => (isOpen.edit = true)}>
 			<span class="mr-auto"> Edit </span>
 			<EditIcon />
 		</DropdownMenu.Item>
+
+		<DropdownMenu.Separator />
+
 		<DropdownMenu.Item class="text-destructive" on:click={() => (isOpen.delete = true)}>
 			<span class="mr-auto"> Delete </span>
 			<DeleteIcon />

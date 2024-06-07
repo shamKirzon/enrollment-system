@@ -8,6 +8,7 @@ import type { Result } from '$lib/types/index.js';
 import {
 	StudentStatus,
 	type AcademicYear,
+	type EnrollmentFeeLevelDetails,
 	type PreviousReportCardPayload,
 	type Strand,
 	type YearLevel
@@ -16,7 +17,7 @@ import type { PaymentMode, TransactionPayload, TuitionPlan } from '$lib/types/pa
 import type { User } from '$lib/types/user';
 import { submitEnrollment } from '$lib/server/enrollment.js';
 
-export const load: PageServerLoad = async ({ fetch, params }) => {
+export const load: PageServerLoad = async ({ fetch, params, url }) => {
 	const { user_id } = params;
 
 	const getStudentData = async (studentId: string) => {
@@ -114,6 +115,33 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
 		return result.data;
 	};
 
+	const getEnrollmentFees = async () => {
+		let api = `${BACKEND_URL}/api/enrollments/fees/levels.php`;
+		const searchParams = url.searchParams.toString();
+
+		if(searchParams) {
+			api += `?${searchParams}`
+		}
+
+		const response = await fetch(api, {
+			method: "GET"
+		})
+
+		if(!response.ok) {
+			error(response.status, "Failed to fetch enrollment fees.")
+		}
+
+		const result: Result<{ enrollment_fee_levels: EnrollmentFeeLevelDetails[] }> = await response.json();
+
+		console.log(result.message);
+
+		if(result.data === undefined) {
+			error(404, "Enrollment fees undefined.")
+		}
+
+		return result.data;
+	}
+
 	return {
 		form: await superValidate(zod(enrollmentSchema)),
 		yearLevels: (await getYearLevels()).year_levels,
@@ -122,7 +150,8 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
 		paymentModes: (await getPaymentModes()).payment_modes,
 		tuitionPlans: (await getTuitionPlans()).tuition_plans,
 		studentStatus: (await getStudentStatus(user_id)).student_status,
-		student: (await getStudentData(user_id)).user
+		student: (await getStudentData(user_id)).user,
+		enrollmentFeeLevels: (await getEnrollmentFees()).enrollment_fee_levels
 	};
 };
 

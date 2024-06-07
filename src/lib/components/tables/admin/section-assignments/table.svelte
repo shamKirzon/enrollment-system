@@ -4,8 +4,9 @@
 	import { createRender, createTable, Render, Subscribe } from 'svelte-headless-table';
 	import { readable, type Writable } from 'svelte/store';
 	import TableCheckbox from './table-checkbox.svelte';
-	import { getSelectedRowData } from '$lib';
+	import { formatName, getSelectedRowData } from '$lib';
 	import * as Table from '$lib/components/ui/table';
+	import { AvatarStudent } from '$lib/components/avatars';
 
 	export let data: StudentSectionAssignment[];
 	export let selectedRows: Writable<string[]>;
@@ -33,17 +34,23 @@
 			}
 		}),
 		table.column({
-			accessor: ({ first_name, middle_name, last_name, suffix_name }) => {
+			accessor: ({ first_name, middle_name, last_name, suffix_name, avatar_url }) => {
 				return {
+					suffix_name,
+					last_name,
 					first_name,
 					middle_name,
-					last_name,
-					suffix_name
+					avatar_url
 				};
 			},
 			header: 'Student',
 			cell: ({ value }) => {
-				return `${value.last_name}, ${value.first_name}${value.middle_name ? ` ${value.middle_name}.` : ''}${value.suffix_name ? ` ${value.suffix_name}.` : ''}`;
+				const { avatar_url, ...name } = value;
+
+				return createRender(AvatarStudent, {
+					avatarUrl: avatar_url,
+					name
+				});
 			}
 		}),
 		table.column({
@@ -59,7 +66,7 @@
 		table.createViewModel(columns));
 	$: ({ selectedDataIds } = pluginStates.select);
 
-	$: getSelectedRowData(data, selectedRows, $selectedDataIds, 'enrollment_id');
+	$: getSelectedRowData(data, selectedRows, $selectedDataIds, 'section_assignment_id');
 </script>
 
 <Table.Root {...$tableAttrs}>

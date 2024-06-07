@@ -5,7 +5,6 @@
 	export let data;
 </script>
 
-asdhadaudsa
 <div class="flex justify-center items-center min-h-screen bg-gray-100">
 	<Card.Root class="w-full max-w-md">
 		<Card.Header>

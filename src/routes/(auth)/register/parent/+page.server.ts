@@ -18,7 +18,7 @@ export const actions: Actions = {
 
 		form.data.role = 'parent';
 
-		console.log('Registering student...');
+		console.log('Registering parent...');
 		console.log(form.data);
 
 		if (!form.valid) {

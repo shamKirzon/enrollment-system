@@ -8,6 +8,7 @@
 	import TableCheckbox from './table-checkbox.svelte';
 	import { Role, type User } from '$lib/types/user';
 	import Link from './link.svelte';
+	import Avatar from './avatar.svelte';
 
 	export let data: User[];
 	export let selectedRows: Writable<string[]>;
@@ -35,28 +36,27 @@
 			}
 		}),
 		table.column({
-			accessor: ({ id, first_name, middle_name, last_name, suffix_name, role }) => {
+			accessor: ({ id, first_name, middle_name, last_name, suffix_name, role, avatar_url }) => {
 				return {
 					id,
 					first_name,
 					middle_name,
 					last_name,
 					suffix_name,
-					role
+					role,
+					avatar_url
 				};
 			},
 			header: 'Name',
 			cell: ({ value }) => {
-				const { id, role, ...name } = value;
+				const { id, role, avatar_url, ...name } = value;
 
-				if (role === Role.Student) {
-					return createRender(Link, {
-						url: `/users/students/${id}`,
-						label: formatName(name)
-					});
-				}
-
-				return formatName(name);
+				return createRender(Avatar, {
+					url: `/admin/users/students/${id}`,
+					name,
+					avatarUrl: avatar_url,
+					role
+				});
 			}
 		}),
 		table.column({

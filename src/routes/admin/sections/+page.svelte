@@ -10,6 +10,10 @@
 	import CirclePlusOutline from 'virtual:icons/flowbite/circle-plus-outline';
 	import { Pagination } from '$lib/components/index.js';
 	import { setContext } from 'svelte';
+	import {
+		StrandCombobox,
+		YearLevelCombobox
+	} from '$lib/components/combobox/index.js';
 
 	export let data;
 
@@ -20,6 +24,13 @@
 	setContext('strands', data.strands || []);
 	setContext('teachers', data.teachers || []);
 </script>
+
+<div class="flex gap-2 justify-between">
+	<div class="flex gap-2">
+		<YearLevelCombobox yearLevels={data.yearLevels || []} selected={data.selectedYearLevelId} />
+		<StrandCombobox strands={data.strands || []} selected={data.selectedStrandId} />
+	</div>
+</div>
 
 <div class="flex flex-col gap-2 flex-[2_2_0%] h-full">
 	<Card.Root>

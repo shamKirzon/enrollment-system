@@ -22,10 +22,10 @@
 <ContentLayout>
 	<div class="flex flex-col gap-2 flex-[2_2_0%] h-full">
 		<Card.Root>
-			<Card.Header class="flex flex-row items-center justify-between">
-				<div>
+			<Card.Header class="flex flex-row items-center justify-between space-y-0">
+				<div class="space-y-1.5">
 					<Card.Title>Academic Years</Card.Title>
-					<Card.Description>Previous academic years.</Card.Description>
+					<Card.Description>All academic years.</Card.Description>
 				</div>
 
 				{#if $selectedRows.length > 0}

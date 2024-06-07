@@ -10,6 +10,7 @@
 	import { format } from 'date-fns';
 	import { addSelectedRows } from 'svelte-headless-table/plugins';
 	import TableCheckbox from './table-checkbox.svelte';
+	import { TableColumnSort } from '../..';
 
 	export let data: AcademicYearWithStudentCount[];
 	export let selectedRows: Writable<number[]>;
@@ -43,7 +44,9 @@
 					end_at
 				};
 			},
-			header: 'Year',
+			header: () => {
+				return createRender(TableColumnSort, {label: "Year", orderParam: "year_order"})
+			},
 			cell: ({ value }) => {
 				return `${format(value.start_at, 'yyyy')}-${format(value.end_at, 'yyyy')}`;
 			}

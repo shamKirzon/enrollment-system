@@ -5,6 +5,6 @@
 	export let label: string;
 </script>
 
-<Button variant="link" class="p-0 h-auto" href={url}>
+<Button variant="link" class="p-0 h-auto underline text-amber-700" href={url}>
 	{label}
 </Button>

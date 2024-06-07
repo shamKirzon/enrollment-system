@@ -8,6 +8,7 @@
 	import DeleteIcon from 'virtual:icons/material-symbols/delete-outline';
 	import { deleteData } from '$lib';
 	import { Pagination } from '$lib/components/index.js';
+	import { PaymentMethodCombobox } from '$lib/components/combobox/index.js';
 
 	export let data;
 
@@ -15,9 +16,13 @@
 </script>
 
 <ContentLayout class="flex-col">
+	<div class="flex gap-2 justify-between">
+		<PaymentMethodCombobox selected={data.selectedPaymentMethod} />
+		</div>
+
 	<Card.Root class="w-full">
-		<Card.Header class="flex flex-row items-center justify-between">
-			<div>
+		<Card.Header class="flex flex-row items-center justify-between space-y-0">
+			<div class="space-y-1.5">
 				<Card.Title>Transactions</Card.Title>
 				<Card.Description>A list of transactions.</Card.Description>
 			</div>

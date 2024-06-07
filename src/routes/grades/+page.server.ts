@@ -6,7 +6,7 @@ import type { SubjectGrade, SubjectGradeDetails } from '$lib/types/subject';
 import { EducationLevel, Semester, type YearLevel } from '$lib/types/enrollment';
 
 export const load: PageServerLoad = async ({ fetch, locals, url }) => {
-	const student = (await locals.getStudentData()).data?.student;
+	const student = (await locals.getUserData()).data?.user;
 	// const semester: Semester | undefined = url.searchParams.get('semester') || undefined;
 	// const yearLevel = url.searchParams.get('year_level') || undefined;
 

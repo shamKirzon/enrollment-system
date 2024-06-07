@@ -2,7 +2,7 @@
 	import { Toaster } from '$lib/components/ui/sonner';
 	import { Sidebar } from '$lib/components';
 	import '../app.pcss';
-	import { LayoutDrawerScale } from '$lib/components/layouts';
+	import { LayoutAuthenticated, GuestLayout, LayoutDrawerScale } from '$lib/components/layouts';
 
 	export let data;
 
@@ -17,8 +17,14 @@
 	{/if}
 
 	<main class={`h-full min-h-screen bg-primary/5 ${data.session ? 'pl-64' : ''}`}>
-		<!-- <div class="h-screen"> -->
-		<slot />
-		<!-- </div> -->
+		{#if data.session && data.user}
+			<LayoutAuthenticated user={data.user}>
+				<slot />
+			</LayoutAuthenticated>
+		{:else}
+			<GuestLayout>
+				<slot />
+			</GuestLayout>
+		{/if}
 	</main>
 </LayoutDrawerScale>
