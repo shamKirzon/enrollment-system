@@ -21,6 +21,8 @@
 		onResult: ({ result }) => {
 			toast.dismiss(loadingToast);
 
+			console.log(result)
+
 			switch (result.type) {
 				case 'success':
 					{
@@ -97,6 +99,14 @@
 		<Form.Control let:attrs>
 			<Form.Label>Password</Form.Label>
 			<Input {...attrs} type="password" bind:value={$formData.password} required />
+		</Form.Control>
+		<Form.FieldErrors />
+	</Form.Field>
+
+	<Form.Field {form} name="confirm_password">
+		<Form.Control let:attrs>
+			<Form.Label>Confirm Password</Form.Label>
+			<Input {...attrs} type="password" bind:value={$formData.confirm_password} required />
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>

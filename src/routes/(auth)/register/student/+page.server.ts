@@ -16,7 +16,7 @@ export const actions: Actions = {
 	default: async (event) => {
 		const form = await superValidate(event, zod(registerSchema));
 
-		form.data.role = Role.Student
+		form.data.role = 'student'
 
 		console.log('Registering student...');
 		console.log(form.data);
