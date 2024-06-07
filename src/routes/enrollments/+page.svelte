@@ -15,7 +15,7 @@
 	}
 </script>
 
-<ContentLayout class="">
+<ContentLayout class="flex-col-reverse">
 	<Card.Root class="w-full">
 		<Card.Header>
 			<Card.Title>{title}</Card.Title>

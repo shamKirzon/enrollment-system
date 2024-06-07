@@ -7,6 +7,7 @@
 	import EditIcon from 'virtual:icons/lucide/edit';
 	import DeleteIcon from 'virtual:icons/material-symbols/delete-outline';
 	import { deleteData } from '$lib';
+	import Form from './form.svelte';
 
 	export let fee: EnrollmentFeeLevelDetails;
 
@@ -20,6 +21,7 @@
 
 		isOpen.delete = false;
 	}
+
 </script>
 
 <DropdownMenu.Root>
@@ -48,6 +50,8 @@
 		<Dialog.Header>
 			<Dialog.Title>Edit a fee</Dialog.Title>
 		</Dialog.Header>
+
+		<Form {fee} />
 	</Dialog.Content>
 </Dialog.Root>
 

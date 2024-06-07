@@ -84,3 +84,10 @@ export const sectionSchema = z.object({
 });
 
 export type SectionSchema = typeof sectionSchema;
+
+export const feeSchema = z.object({
+	id: z.string(),
+	amount: z.coerce.number()
+})
+
+export type FeeSchema = typeof feeSchema

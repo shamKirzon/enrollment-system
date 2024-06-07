@@ -4,10 +4,13 @@
 	import DataTable from './table.svelte';
 
 	import * as Card from '$lib/components/ui/card';
+	import { setContext } from 'svelte';
 
 	export let data;
 
 	const selectedRows = writable<string[]>([]);
+
+	$: setContext('feeForm', data.form);
 </script>
 
 <ContentLayout>
