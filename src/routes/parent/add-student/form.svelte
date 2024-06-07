@@ -20,6 +20,7 @@
 	import { capitalizeFirstLetter } from '$lib';
 	import { Sex } from '$lib/types/user';
 	import { toast } from 'svelte-sonner';
+	import { Separator } from '$lib/components/ui/separator';
 
 	export let data: SuperValidated<Infer<AddStudentSchema>>;
 
@@ -140,6 +141,8 @@
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
+
+	<Separator />
 
 	<Form.Field {form} name="country">
 		<Form.Control let:attrs>

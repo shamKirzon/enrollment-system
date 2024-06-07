@@ -94,6 +94,26 @@
 					<Table.Head>Religion</Table.Head>
 					<Table.Cell>{profile.religion}</Table.Cell>
 				</Table.Row>
+				<Table.Row>
+					<Table.Head>Birth Certificate</Table.Head>
+					<Table.Cell>
+						<a
+							href={profile.birth_certificate_url}
+							target="_blank"
+							rel="noreferrer"
+							class="underline line-clamp-1">{profile.birth_certificate_url}</a>
+					</Table.Cell>
+				</Table.Row>
+				<Table.Row>
+					<Table.Head>Baptismal Certificate</Table.Head>
+					<Table.Cell>
+						<a
+							href={profile.baptismal_certificate_url}
+							target="_blank"
+							rel="noreferrer"
+							class="underline line-clamp-1">{profile.baptismal_certificate_url}</a>
+					</Table.Cell>
+				</Table.Row>
 			</Table.Body>
 		</Table.Root>
 

@@ -1,4 +1,4 @@
-<div class="bg-gray-100 min-h-screen">
+<div class="bg-gray-100">
 	<div data-vaul-drawer-wrapper>
 		<slot />
 	</div>
