@@ -9,6 +9,10 @@ import { error, type Actions } from '@sveltejs/kit';
 import type { SubjectDetails } from '$lib/types/subject';
 
 export const load: PageServerLoad = async ({ fetch, url }) => {
+
+	const yearLevelId = url.searchParams.get('year_level_id') || undefined
+	const strandId = url.searchParams.get('strand_id') || undefined
+
 	const getSubjects = async () => {
 		const response = await fetch(`${BACKEND_URL}/api/subjects.php`, {
 			method: 'GET'
@@ -36,7 +40,11 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 
 		console.log(result.message);
 
-		return result;
+		if(result.data === undefined) {
+			error(404, "Subjects not found.");
+		}
+
+		return result.data;
 	};
 
 	const getYearLevels = async () => {
@@ -45,7 +53,11 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 
 		console.log(result.message);
 
-		return result;
+		if(result.data === undefined) {
+			error(404, "Year levels not found.");
+		}
+
+		return result.data;
 	};
 
 	const getStrands = async () => {
@@ -54,15 +66,21 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 
 		console.log(result.message);
 
-		return result;
+		if(result.data === undefined) {
+			error(404, "Strands not found.");
+		}
+
+		return result.data;
 	};
 
 	return {
 		form: await superValidate(zod(subjectSchema)),
 		subjectData: (await getSubjects()).data,
-		yearLevelData: (await getYearLevels()).data,
-		strandData: (await getStrands()).data,
-		subjectDetailsData: (await getSubjectsDetails()).data
+		yearLevelData: (await getYearLevels()),
+		strandData: (await getStrands()),
+		subjectDetailsData: (await getSubjectsDetails()),
+		selectedYearLevelId: yearLevelId,
+		selectedStrandId: strandId
 	};
 };
 

@@ -25,7 +25,8 @@ const config = {
 				foreground: 'hsl(var(--foreground) / <alpha-value>)',
 				primary: {
 					DEFAULT: 'hsl(var(--primary) / <alpha-value>)',
-					foreground: 'hsl(var(--primary-foreground) / <alpha-value>)'
+					foreground: 'hsl(var(--primary-foreground) / <alpha-value>)',
+					dark: 'hsl(18.85, 65%, 8%)'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary) / <alpha-value>)',
@@ -59,11 +60,11 @@ const config = {
 			},
 			fontFamily: {
 				sans: [...fontFamily.sans],
-				inter: "inter, sans-serif",
-				"inter-medium": "inter-medium, sans-serif",
-				"inter-semibold": "inter-semibold, sans-serif",
-				"inter-bold": "inter-bold, sans-serif",
-				"inter-black": "inter-black, sans-serif",
+				inter: 'inter, sans-serif',
+				'inter-medium': 'inter-medium, sans-serif',
+				'inter-semibold': 'inter-semibold, sans-serif',
+				'inter-bold': 'inter-bold, sans-serif',
+				'inter-black': 'inter-black, sans-serif'
 			}
 		}
 	}

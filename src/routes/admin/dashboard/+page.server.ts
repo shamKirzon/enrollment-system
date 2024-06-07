@@ -7,6 +7,7 @@ import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { User, UserCount } from '$lib/types/user';
 import type { TransactionYearly } from '$lib/types/payment';
+import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ fetch, url }) => {
 	const getAcademicYears = async () => {
@@ -24,7 +25,11 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 
 		console.log(result.message);
 
-		return result;
+		if (result.data === undefined) {
+			error(404, 'Academic years undefined.');
+		}
+
+		return result.data;
 	};
 
 	const getUsers = async () => {
@@ -33,7 +38,11 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 
 		console.log(result.message);
 
-		return result;
+		if (result.data === undefined) {
+			error(404, 'Users undefined.');
+		}
+
+		return result.data;
 	};
 
 	const getYearlyTransactions = async () => {
@@ -42,16 +51,17 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 
 		console.log(result.message);
 
-		return result;
-	};
+		if (result.data === undefined) {
+			error(404, 'Yearly transactions undefined.');
+		}
 
-	const { data: academicYears } = await getAcademicYears();
-	const { data: users } = await getUsers();
+		return result.data;
+	};
 
 	return {
 		form: await superValidate(zod(academicYearSchema)),
-		academicYears,
-		users,
-		yearlyTransactions: (await getYearlyTransactions()).data?.transactions
+		academicYears: await getAcademicYears(),
+		users: await getUsers(),
+		yearlyTransactions: await getYearlyTransactions()
 	};
 };

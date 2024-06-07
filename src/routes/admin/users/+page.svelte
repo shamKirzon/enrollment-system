@@ -9,56 +9,29 @@
 	import { setContext } from 'svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import DeleteIcon from 'virtual:icons/material-symbols/delete-outline';
-	import Search from 'virtual:icons/lucide/search';
 	import { writable } from 'svelte/store';
 	import { FormUser } from '$lib/components/forms';
+	import { Search } from '$lib/components';
 	import ComboboxRole from './combobox/role.svelte';
-	import { Input } from '$lib/components/ui/input';
-	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
 
 	export let data;
 
 	const selectedRows = writable<string[]>([]);
 
-	let searchQuery = '';
-
-	function replaceSearchParam(k: string, v: string | number) {
-		let query = new URLSearchParams($page.url.searchParams.toString());
-
-		query.set(k, v.toString());
-
-		goto(`?${query.toString()}`);
-	}
-
-	function handleKeyPress(event: KeyboardEvent) {
-		if (event.key === 'Enter') {
-			console.log('Search query:', searchQuery);
-			replaceSearchParam('q', searchQuery);
-		}
-	}
 
 	setContext('formUser', data.form);
 </script>
 
 <ContentLayout class="flex-col">
 	<div class="flex gap-2 justify-between">
-		<div class="relative w-full max-w-96">
-			<Search class="absolute top-1/2 -translate-y-1/2 left-2.5 h-4 w-4" />
-			<Input
-				class="bg-background pl-8"
-				placeholder="Search a user..."
-				bind:value={searchQuery}
-				on:keypress={handleKeyPress}
-			/>
-		</div>
+		<Search placeholder="Search a user..." />
 		<ComboboxRole />
 	</div>
 
 	<div class="flex flex-col gap-2 flex-[2_2_0%] h-full">
 		<Card.Root>
-			<Card.Header class="flex flex-row items-center justify-between">
-				<div>
+			<Card.Header class="flex flex-row items-center justify-between space-y-0">
+				<div class="space-y-1.5">
 					<Card.Title>Users</Card.Title>
 					<Card.Description>All registered users.</Card.Description>
 				</div>

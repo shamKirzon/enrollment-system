@@ -10,6 +10,8 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 
+	export let selected: string | undefined;
+
 	const enrollmentStatuses = [
 		{
 			value: EnrollmentStatus.Pending,
@@ -24,8 +26,8 @@
 	let open = false;
 	let value = '';
 
-	$: selectedValue =
-		enrollmentStatuses.find((f) => f.value === value)?.label ?? 'Select a status...';
+	$: getSelectedValue = (id: string | undefined) => enrollmentStatuses.find((s) => s.value === id);
+	$: selectedValue = getSelectedValue(selected)?.label ?? 'Select a status...';
 
 	// We want to refocus the trigger button when the user selects
 	// an item from the list so users can continue navigating the

@@ -1,7 +1,7 @@
 import Users from 'virtual:icons/mdi/users';
 import Dashboard from 'virtual:icons/radix-icons/dashboard';
-import School from 'virtual:icons/lucide/school';
-import Money from 'virtual:icons/mdi/money';
+import School from 'virtual:icons/fluent/notepad-edit-16-regular';
+import Money from 'virtual:icons/uil/transaction';
 import Calendar from 'virtual:icons/mdi/calendar';
 import Books from 'virtual:icons/ph/books-duotone';
 import Group from 'virtual:icons/lets-icons/group-scan';
@@ -12,11 +12,16 @@ import { toast } from 'svelte-sonner';
 import { invalidateAll } from '$app/navigation';
 import { type ChartArea } from 'chart.js';
 import type { UserName } from './types/user';
+import { format } from 'date-fns';
 
-
-export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/avif'];
+export const ACCEPTED_IMAGE_TYPES = [
+	'image/jpeg',
+	'image/jpg',
+	'image/png',
+	'image/webp',
+	'image/avif'
+];
 export const MAX_IMAGE_SIZE = 5; // Megabytes
-
 
 export function sizeInMB(sizeInBytes: number, decimals = 2): number {
 	const result = sizeInBytes / (1024 * 1024);
@@ -164,11 +169,17 @@ export const ADMIN_ROUTES: Route[] = [
 ];
 
 export const COLORS = {
-	primary: (opacity: number) => {
+	primary: (opacity: number = 1) => {
 		return `rgba(73, 34, 20, ${opacity})`;
 	},
-	secondary: (opacity: number) => {
+	secondary: (opacity: number = 1) => {
 		return `rgba(205, 127, 0, ${opacity})`;
+	},
+	amber: (opacity: number = 1) => {
+		return `rgba(146, 64, 14, ${opacity})`;
+	},
+	amber2: (opacity: number = 1) => {
+		return `rgba(180, 83, 9, ${opacity})`
 	}
 };
 
@@ -183,4 +194,16 @@ export function roundNumber(numberString: string | number, decimalPlaces: number
 		console.error('Invalid number format:', error);
 		return Number.NaN; // Or any other default value you prefer
 	}
+}
+
+export function ayFormat(
+	startAt: string,
+	endAt: string,
+	mode: 'label' | 'default' = 'default'
+): string {
+	if (mode === 'label') {
+		return `${format(startAt, 'yyyy')} - ${format(endAt, 'yyyy')}`;
+	}
+
+	return `${format(startAt, 'yyyy')}-${format(endAt, 'yyyy')}`;
 }

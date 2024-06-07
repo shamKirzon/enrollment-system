@@ -1,28 +1,24 @@
 <script lang="ts">
+	import type { Strand } from '$lib/types/enrollment';
 	import Check from 'virtual:icons/mdi/check';
 	import ChevronsUpDown from 'virtual:icons/lucide/chevrons-up-down';
 	import * as Command from '$lib/components/ui/command';
-	import * as Popover from '$lib/components/ui/popover';
 	import { Button } from '$lib/components/ui/button';
 	import { cn } from '$lib/utils';
-	import { tick } from 'svelte';
-	import { EducationLevel, type YearLevel } from '$lib/types/enrollment';
+	import * as Popover from '$lib/components/ui/popover';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { tick } from 'svelte';
 
-	export let yearLevels: YearLevel[];
-	export let includeSemester: boolean = false;
-	export let selected: string | undefined = undefined;
+	export let strands: Strand[];
+	export let selected: string | undefined;
 
 	let open = false;
 	let value = '';
 
-	$: getSelectedYearLevel = (id: string | undefined) => yearLevels.find((yl) => yl.id === id);
-	$: value = getSelectedYearLevel(selected)?.name ?? "Select a year level...";
+	$: getSelectedValue = (id: string | undefined) => strands.find((s) => s.id === id);
+	$: selectedValue = getSelectedValue(selected)?.id.toUpperCase() ?? 'Select a strand...';
 
-	// We want to refocus the trigger button when the user selects
-	// an item from the list so users can continue navigating the
-	// rest of the form with the keyboard.
 	function closeAndFocusTrigger(triggerId: string) {
 		open = false;
 		tick().then(() => {
@@ -35,16 +31,6 @@
 
 		query.set(k, v.toString());
 
-		const selectedYearLevel = getSelectedYearLevel(v.toString());
-
-		if (includeSemester && selectedYearLevel) {
-			if (selectedYearLevel.education_level === EducationLevel.SeniorHighSchool) {
-				query.set('semester', '1');
-			} else {
-				query.delete('semester');
-			}
-		}
-
 		goto(`?${query.toString()}`);
 	}
 
@@ -54,10 +40,6 @@
 		query.delete(k);
 
 		goto(`?${query.toString()}`);
-	}
-
-	function deleteAllSearchParameters() {
-		goto(`?${new URLSearchParams().toString()}`);
 	}
 </script>
 
@@ -70,26 +52,26 @@
 			aria-expanded={open}
 			class="w-52 justify-between"
 		>
-			{value}
+			{selectedValue}
 			<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
 		</Button>
 	</Popover.Trigger>
 	<Popover.Content class="w-52 p-0">
 		<Command.Root>
-			<Command.Input placeholder="Search year level..." />
-			<Command.Empty>No year level found.</Command.Empty>
+			<Command.Input placeholder="Search strand..." class="h-9" />
+			<Command.Empty>No framework found.</Command.Empty>
 			<Command.Group>
-				{#each yearLevels as yearLevel (yearLevel.id)}
+				{#each strands as { id, name } (id)}
 					<Command.Item
-						value={yearLevel.name}
+						value={id}
 						onSelect={(currentValue) => {
 							value = currentValue;
 							closeAndFocusTrigger(ids.trigger);
-							replaceSearchParam('year_level_id', `${yearLevel.id}`);
+							replaceSearchParam('strand_id', `${id}`);
 						}}
 					>
-						<Check class={cn('mr-2 h-4 w-4', value !== yearLevel.name && 'text-transparent')} />
-						{yearLevel.name}
+						<Check class={cn('mr-2 h-4 w-4', value !== id && 'text-transparent')} />
+						{id.toUpperCase()}
 					</Command.Item>
 				{/each}
 			</Command.Group>
@@ -98,7 +80,7 @@
 				onSelect={() => {
 					value = '';
 					closeAndFocusTrigger(ids.trigger);
-					deleteAllSearchParameters();
+					deleteSearchParam('strand_id');
 				}}
 			>
 				<span class="ml-7"> Reset </span>

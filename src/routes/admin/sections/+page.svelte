@@ -23,8 +23,8 @@
 
 <div class="flex flex-col gap-2 flex-[2_2_0%] h-full">
 	<Card.Root>
-		<Card.Header class="flex flex-row items-center justify-between">
-			<div>
+		<Card.Header class="flex flex-row items-center justify-between space-y-0">
+			<div class="space-y-1.5">
 				<Card.Title>Sections</Card.Title>
 				<Card.Description>Description</Card.Description>
 			</div>
@@ -62,7 +62,7 @@
 
 					<Dialog.Content>
 						<Dialog.Header>
-							<Dialog.Title>Create a new academic year</Dialog.Title>
+							<Dialog.Title>Create a new section</Dialog.Title>
 						</Dialog.Header>
 
 						<FormSection />

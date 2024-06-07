@@ -11,20 +11,34 @@
 	import { setContext } from 'svelte';
 	import { deleteData } from '$lib';
 	import { Pagination } from '$lib/components';
+	import { Search } from '$lib/components';
+	import { YearLevelCombobox, StrandCombobox } from '$lib/components/combobox';
 
 	export let data;
 
 	const selectedRows = writable<string[]>([]);
 
 	setContext('formSubject', data.form);
-	setContext('yearLevels', data.yearLevelData?.year_levels || []);
-	setContext('strands', data.strandData?.strands || []);
+	setContext('yearLevels', data.yearLevelData.year_levels);
+	setContext('strands', data.strandData.strands);
 </script>
 
 <ContentLayout class="flex-col gap-2">
+	<div class="flex gap-2 justify-between">
+		<Search placeholder="Search a subject..." />
+
+		<div>
+			<StrandCombobox strands={data.strandData.strands} selected={data.selectedStrandId} />
+			<YearLevelCombobox
+				yearLevels={data.yearLevelData.year_levels}
+				selected={data.selectedYearLevelId}
+			/>
+		</div>
+	</div>
+
 	<Card.Root class="w-full">
-		<Card.Header class="flex flex-row items-center justify-between">
-			<div>
+		<Card.Header class="flex flex-row items-center justify-between space-y-0">
+			<div class="space-y-1.5">
 				<Card.Title>Subjects</Card.Title>
 				<Card.Description>Description here</Card.Description>
 			</div>

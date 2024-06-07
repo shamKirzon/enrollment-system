@@ -6,33 +6,24 @@
 	import { Button } from '$lib/components/ui/button';
 	import { cn } from '$lib/utils';
 	import { tick } from 'svelte';
-	import { format } from 'date-fns';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { ayFormat } from '$lib';
 
 	// export let academicYears: string[];
 	export let academicYears: { id: number; start_at: string; end_at: string }[];
+	export let selected: string | undefined;
 
 	let open = false;
 	let value = '';
 
-	$: selectedValue = academicYears.find((f) => ayFormat(f.start_at, f.end_at) === value)
-		? value
-		: 'Select an academic year...';
+	$: getSelectedValue = (id: string | undefined) =>
+		academicYears.find((s) => s.id.toString() === id);
+	$: selectedValue = getSelectedValue(selected);
+	$: formattedValue = selectedValue ? ayFormat(selectedValue.start_at, selectedValue.end_at, "label") : "Select an academic year..."
 
-	// console.log(selectedValue);
+	$: console.log(getSelectedValue(selected))
 
-	function ayFormat(startAt: string, endAt: string, mode: 'label' | 'default' = 'default'): string {
-		if (mode === 'label') {
-			return `${format(startAt, 'yyyy')} - ${format(endAt, 'yyyy')}`;
-		}
-
-		return `${format(startAt, 'yyyy')}-${format(endAt, 'yyyy')}`;
-	}
-
-	// We want to refocus the trigger button when the user selects
-	// an item from the list so users can continue navigating the
-	// rest of the form with the keyboard.
 	function closeAndFocusTrigger(triggerId: string) {
 		open = false;
 		tick().then(() => {
@@ -66,7 +57,7 @@
 			aria-expanded={open}
 			class="w-60 justify-between"
 		>
-			{selectedValue}
+			{formattedValue}
 			<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
 		</Button>
 	</Popover.Trigger>
@@ -81,7 +72,7 @@
 						onSelect={(currentValue) => {
 							value = currentValue;
 							closeAndFocusTrigger(ids.trigger);
-							replaceSearchParam('year', `${id}`);
+							replaceSearchParam('academic_year_id', `${id}`);
 						}}
 					>
 						<Check

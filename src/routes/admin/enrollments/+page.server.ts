@@ -8,6 +8,10 @@ import type {
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ fetch, url }) => {
+	const yearLevelId = url.searchParams.get('year_level_id') || undefined
+	const academicYearId = url.searchParams.get('academic_year_id') || undefined
+	const enrollmentStatus = url.searchParams.get('status')
+
 	const getEnrollments = async (): Promise<
 		Result<{ enrollments: EnrollmentWithDetails[]; count: number }>
 	> => {
@@ -55,6 +59,9 @@ export const load: PageServerLoad = async ({ fetch, url }) => {
 		enrollments: enrollmentsData?.enrollments || [],
 		enrollmentCount: enrollmentsData?.count || 0,
 		academicYears: academicYearsData?.academic_years || [],
-		yearLevels: yearLevelsData?.year_levels || []
+		yearLevels: yearLevelsData?.year_levels || [],
+		selectedYearLevelId: yearLevelId,
+		selectedAcademicYearId: academicYearId,
+		selectedEnrollmentStatus: enrollmentStatus
 	};
 };

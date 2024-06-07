@@ -31,10 +31,10 @@
 <ContentLayout class="flex-col">
 	<div class="flex gap-2 justify-between">
 		<div class="flex gap-2">
-			<AcademicYearsCombobox {academicYears} />
-			<YearLevelCombobox yearLevels={data.yearLevels} />
+			<AcademicYearsCombobox {academicYears} selected={data.selectedAcademicYearId} />
+			<YearLevelCombobox yearLevels={data.yearLevels} selected={data.selectedYearLevelId} />
 		</div>
-		<EnrollmentStatusCombobox />
+		<EnrollmentStatusCombobox selected={data.selectedEnrollmentStatus} />
 	</div>
 
 	<div class="flex w-full h-full flex-col gap-2" data-vaul-drawer-wrapper>

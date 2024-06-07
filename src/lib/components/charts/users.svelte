@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { capitalizeFirstLetter } from '$lib';
+	import { COLORS, capitalizeFirstLetter } from '$lib';
 	import type { UserCount } from '$lib/types/user';
 	import { Chart, registerables } from 'chart.js';
 	import { onMount } from 'svelte';
@@ -19,7 +19,7 @@
 					{
 						label: 'Users',
 						data: data.map((u) => u.value),
-						backgroundColor: ['rgb(255, 99, 132)', 'rgb(54, 162, 235)', 'rgb(255, 205, 86)'],
+						backgroundColor: [COLORS.secondary(), COLORS.amber2(), COLORS.amber()],
 						hoverOffset: 4
 					}
 				]
