@@ -55,7 +55,7 @@
 			variant="outline"
 			role="combobox"
 			aria-expanded={open}
-			class="w-60 justify-between"
+			class="w-full lg:w-60 justify-between"
 		>
 			{formattedValue}
 			<ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />

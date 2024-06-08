@@ -268,7 +268,6 @@
 
 			<input hidden value={$formData.birth_date} name={attrs.name} />
 		</Form.Control>
-		<Form.Description>The start of the academic year.</Form.Description>
 		<Form.FieldErrors />
 	</Form.Field>
 

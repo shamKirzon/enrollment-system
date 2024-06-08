@@ -16,7 +16,7 @@
 		<Sidebar user={data.user} />
 	{/if}
 
-	<main class={`h-full min-h-screen bg-primary/5 ${data.session ? 'pl-64' : ''}`}>
+	<main class={`h-full min-h-screen bg-primary/5 ${data.session ? 'px-4 md:pl-64' : ''}`}>
 		{#if data.session && data.user}
 			<LayoutAuthenticated user={data.user}>
 				<slot />

@@ -264,5 +264,8 @@ export const actions: Actions = {
       form,
       message: 'Successfully submitted grades.'
     };
+  },
+  enroll: async () => {
+
   }
 };

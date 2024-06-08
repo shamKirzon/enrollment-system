@@ -23,7 +23,7 @@
 	}
 </script>
 
-<div class="relative w-full max-w-96">
+<div class="relative w-full lg:max-w-96">
 	<Search class="absolute top-1/2 -translate-y-1/2 left-2.5 h-4 w-4" />
 	<Input
 		class="bg-background pl-8"

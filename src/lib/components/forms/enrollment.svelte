@@ -105,7 +105,7 @@
 	}
 </script>
 
-<form method="POST" enctype="multipart/form-data" class="space-y-8" use:enhance>
+<form method="POST" enctype="multipart/form-data" class="space-y-4" use:enhance>
 	<input hidden bind:value={$formData.academic_year_name} name="academic_year_name" />
 	<input hidden bind:value={$formData.year_level_name} name="year_level_name" />
 
@@ -323,5 +323,5 @@
 		<Form.FieldErrors />
 	</Form.Field>
 
-	<Form.Button>Submit</Form.Button>
+	<Form.Button class="w-full">Submit</Form.Button>
 </form>

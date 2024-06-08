@@ -15,6 +15,9 @@
 	import { EnrollmentsPagination } from '$lib/components/paginations';
 	import { writable } from 'svelte/store';
 	import { deleteData } from '$lib';
+	import { FormEnrollment } from '$lib/components/forms/index.js';
+	import { StudentStatus } from '$lib/types/enrollment.js';
+	import * as Sheet from '$lib/components/ui/sheet';
 
 	export let data;
 
@@ -30,8 +33,8 @@
 </script>
 
 <ContentLayout class="flex-col">
-	<div class="flex gap-2 justify-between">
-		<div class="flex gap-2">
+	<div class="flex gap-2 justify-between lg:flex-row flex-col">
+		<div class="flex gap-2 w-full lg:flex-row flex-col">
 			<AcademicYearsCombobox {academicYears} selected={data.selectedAcademicYearId} />
 			<YearLevelCombobox yearLevels={data.yearLevels} selected={data.selectedYearLevelId} />
 			<StrandCombobox strands={data.strands} selected={data.selectedStrandId} />
@@ -72,20 +75,48 @@
 						</Dialog.Content>
 					</Dialog.Root>
 				{:else}
-					<Dialog.Root>
-						<Dialog.Trigger asChild let:builder>
+					<Sheet.Root>
+						<Sheet.Trigger asChild let:builder>
 							<Button class="space-x-1" builders={[builder]}>
 								<CirclePlusOutline />
 								<span>Create</span>
 							</Button>
-						</Dialog.Trigger>
+						</Sheet.Trigger>
+						<Sheet.Content class="overflow-y-auto space-y-4">
+							<Sheet.Header>
+								<Sheet.Title>Enrollment</Sheet.Title>
+								<Sheet.Description>Enter the following enrollment details.</Sheet.Description>
+							</Sheet.Header>
 
-						<Dialog.Content>
-							<Dialog.Header>
-								<Dialog.Title>Create a new enrollment entry</Dialog.Title>
-							</Dialog.Header>
-						</Dialog.Content>
-					</Dialog.Root>
+							<FormEnrollment
+								data={data.form}
+								yearLevels={data.yearLevels || []}
+								academicYears={data.academicYears || []}
+								paymentModes={data.paymentModes || []}
+								tuitionPlans={data.tuitionPlans || []}
+								studentStatus={data.studentStatus || StudentStatus.New}
+								strands={data.strands || []}
+								user={data.user}
+							/>
+						</Sheet.Content>
+					</Sheet.Root>
+
+					<!-- <Dialog.Root> -->
+					<!-- 	<Dialog.Trigger asChild let:builder> -->
+					<!-- 		<Button class="space-x-1" builders={[builder]}> -->
+					<!-- 			<CirclePlusOutline /> -->
+					<!-- 			<span>Create</span> -->
+					<!-- 		</Button> -->
+					<!-- 	</Dialog.Trigger> -->
+					<!---->
+					<!-- 	<Dialog.Content> -->
+					<!-- 		<Dialog.Header> -->
+					<!-- 			<Dialog.Title>Create a new enrollment entry</Dialog.Title> -->
+					<!-- 		</Dialog.Header> -->
+					<!---->
+					<!---->
+					<!-- 	</Dialog.Content> -->
+					<!-- </Dialog.Root> -->
 				{/if}
 			</Card.Header>
 			<Card.Content class="h-full overflow-y-auto flex flex-col">

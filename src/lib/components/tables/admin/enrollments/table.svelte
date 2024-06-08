@@ -46,7 +46,8 @@
 				last_name,
 				suffix_name,
 				student_status,
-				avatar_url
+				avatar_url,
+				student_id
 			}) => {
 				return {
 					first_name,
@@ -54,12 +55,13 @@
 					last_name,
 					suffix_name,
 					student_status,
-					avatar_url
+					avatar_url,
+					student_id
 				};
 			},
 			header: 'Student',
 			cell: ({ value }) => {
-				const { student_status, avatar_url, ...name } = value;
+				const { student_status, student_id, avatar_url, ...name } = value;
 
 				// if (student_status === StudentStatus.New) {
 				// 	return createRender(BadgeNewStudent, {
@@ -67,7 +69,7 @@
 				// 	});
 				// }
 
-				return createRender(Avatar, { name, avatarUrl: avatar_url, studentStatus: student_status });
+				return createRender(Avatar, { name, avatarUrl: avatar_url, studentStatus: student_status, studentId: student_id });
 
 				// return `${value.last_name}, ${value.first_name} ${value.middle_name ? `${value.middle_name}.` : ''}`;
 			}

@@ -10,7 +10,7 @@
 	export let data;
 </script>
 
-<ContentLayout>
+<ContentLayout class="flex-col xl:flex-row">
 	<ProfileParent props={{ user: data.user }} />
 
 	<div class="flex flex-col gap-2 flex-[2_2_0%] h-full">

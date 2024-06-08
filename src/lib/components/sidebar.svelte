@@ -13,6 +13,7 @@
 	import Logout from 'virtual:icons/material-symbols/logout';
 	import { crossfade } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
+	import ChevronRight from "virtual:icons/material-symbols/chevron-right"
 
 	export let user: User;
 
@@ -45,10 +46,12 @@
 		duration: 300,
 		easing: cubicInOut
 	});
+
+	let isOpen = false;
 </script>
 
 <aside
-	class="fixed inset-y-0 left-0 h-full w-64 p-4 bg-primary-dark border-r text-black border-gray-200 flex flex-col shadow"
+	class={`fixed z-50 inset-y-0 ${isOpen ? 'left-0' : '-left-64'} md:left-0 transition-all duration-300 ease-in-out h-full w-64 p-4 bg-primary-dark border-r text-black border-gray-200 flex flex-col shadow`}
 >
 	<div class="flex justify-between mb-10 gap-1 items-center relative">
 		<img src={pcsLogoNewOutlineWhite} alt="PCS Logo" class="w-20 h-20" />
@@ -66,13 +69,20 @@
 		</div>
 	</div>
 
+	<button
+		class={ `absolute flex  justify-end items-center text-4xl md:hidden text-primary-foreground -right-7 bg-primary-dark w-16 h-16 rounded-full top-1/2 -translate-y-1/2` }
+		on:click={() => (isOpen = !isOpen)}
+	>
+		<ChevronRight class={` ${isOpen ? 'rotate-180' : 'rotate-0'} transition-all duration-300 ease-in-out`} />
+	</button>
+
 	<nav class="flex flex-col">
 		{#each routes as route (route.path)}
 			{@const isCurrentPath = $page.url.pathname.includes(route.path)}
 
 			<a
 				href={route.path}
-				class={`relative px-4 rounded-lg items-center py-3 border border-transparent transition-all ${isCurrentPath ? "" : "[&>div>span]:hover:text-primary-foreground [&>div>svg]:hover:text-secondary"}`}
+				class={`relative px-4 rounded-lg items-center py-3 border border-transparent transition-all ${isCurrentPath ? '' : '[&>div>span]:hover:text-primary-foreground [&>div>svg]:hover:text-secondary'}`}
 				data-sveltekit-noscroll
 			>
 				{#if isCurrentPath}
@@ -90,7 +100,7 @@
 				<div class="z-10 flex gap-4 relative">
 					<svelte:component
 						this={route.icon}
-						class={`text-2xl transition-all duration-300 ease-in-out ${isCurrentPath ? 'text-secondary' : 'text-muted-foreground'}`}
+						class={`text-base md:text-xl lg:text-2xl transition-all duration-300 ease-in-out ${isCurrentPath ? 'text-secondary' : 'text-muted-foreground'}`}
 					/>
 					<span
 						class={`text-sm md:text-base duration-300 ease-in-out transition-all lg:text-lg font-inter-medium ${isCurrentPath ? 'text-primary-foreground' : 'text-muted-foreground'}`}

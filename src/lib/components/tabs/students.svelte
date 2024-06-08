@@ -9,7 +9,7 @@
 	import TabGrades from './grades.svelte';
 	import { Pagination } from '$lib/components';
 	import type { SubjectGradeDetails } from '$lib/types/subject';
-	import type { User } from '$lib/types/user';
+	import { Role, type User } from '$lib/types/user';
 	import type { TransactionDetails } from '$lib/types/payment';
 	import type { AcademicYearEnrollment, YearLevel } from '$lib/types/enrollment';
 
@@ -55,6 +55,8 @@
 	</Tabs.List>
 
 	{#each tabs as tab (tab)}
+			{@const link = props.user.role === Role.Admin ? "/admin/users/students" : '/parent/dashboard/students'}
+
 		<Tabs.Content value={tab} class="space-y-2">
 			{#if tab === 'enrollments'}
 				<Card.Root class="w-full h-full">
@@ -65,7 +67,7 @@
 						</div>
 
 						<a
-							href={`/parent/dashboard/students/${props.studentId}/enrollments`}
+							href={`${link}/${props.studentId}/enrollments`}
 							class={buttonVariants({ variant: 'default' })}
 						>
 							Enroll

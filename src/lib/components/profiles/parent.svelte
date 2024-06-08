@@ -22,7 +22,7 @@
 	$: initials = `${user.first_name[0].toUpperCase()}${user.last_name[0].toUpperCase()}`;
 </script>
 
-<Card.Root class="h-full w-96">
+<Card.Root class="h-full w-full xl:w-96">
 	<Card.Header class="items-center w-full">
 		<!-- <Card.Title>Card Title</Card.Title> -->
 		<!-- <Card.Description>Card Description</Card.Description> -->

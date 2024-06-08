@@ -51,7 +51,7 @@
 			variant="outline"
 			role="combobox"
 			aria-expanded={open}
-			class="w-52 justify-between"
+			class="w-full lg:w-52  justify-between"
 			{disabled}
 		>
 			{selectedValue}

@@ -46,7 +46,7 @@
 	const { form: formData, enhance } = form;
 </script>
 
-<form method="POST" class="space-y-4" use:enhance>
+<form method="POST" class="space-y-4 w-full" use:enhance>
 	<Form.Field {form} name="first_name">
 		<Form.Control let:attrs>
 			<Form.Label>First Name</Form.Label>

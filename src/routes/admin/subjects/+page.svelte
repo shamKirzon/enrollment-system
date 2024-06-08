@@ -24,10 +24,10 @@
 </script>
 
 <ContentLayout class="flex-col gap-2">
-	<div class="flex gap-2 justify-between">
+	<div class="flex flex-col lg:flex-row gap-2 justify-between">
 		<Search placeholder="Search a subject..." />
 
-		<div>
+		<div class="flex gap-2 flex-col sm:flex-row">
 			<StrandCombobox strands={data.strandData.strands} selected={data.selectedStrandId} />
 			<YearLevelCombobox
 				yearLevels={data.yearLevelData.year_levels}

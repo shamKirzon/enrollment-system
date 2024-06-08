@@ -30,7 +30,7 @@
 	);
 </script>
 
-<div class="flex gap-2">
+<div class="flex-col gap-2 xl:flex-row flex">
 	<ProfileStudent
 		props={{
 			familyMembers: data.familyMembers,

@@ -26,7 +26,7 @@
 </script>
 
 <div class="flex gap-2 justify-between">
-	<div class="flex gap-2">
+	<div class="flex gap-2 w-full flex-col sm:flex-row">
 		<YearLevelCombobox yearLevels={data.yearLevels || []} selected={data.selectedYearLevelId} />
 		<StrandCombobox strands={data.strands || []} selected={data.selectedStrandId} />
 	</div>
@@ -37,7 +37,7 @@
 		<Card.Header class="flex flex-row items-center justify-between space-y-0">
 			<div class="space-y-1.5">
 				<Card.Title>Sections</Card.Title>
-				<Card.Description>Description</Card.Description>
+				<Card.Description>Sections and their year levels</Card.Description>
 			</div>
 
 			{#if $selectedRows.length > 0}

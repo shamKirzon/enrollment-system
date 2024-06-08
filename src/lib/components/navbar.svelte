@@ -13,7 +13,7 @@
 </script>
 
 <div class="flex w-full justify-between items-center">
-	<h1 class="font-inter-bold text-4xl">{label ?? 'Label'}</h1>
+	<h1 class="font-inter-bold text-3xl lg:text-4xl">{label ?? 'Label'}</h1>
 
 	<div class="flex items-center gap-2">
 		<Avatar.Root class="shadow-sm border">

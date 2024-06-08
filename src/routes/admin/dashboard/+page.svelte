@@ -14,14 +14,14 @@
 	setContext('form', data.form);
 </script>
 
-<ContentLayout>
+<ContentLayout class="flex-col xl:flex-row">
 	<div class="flex flex-col gap-2 flex-[2_2_0%] h-full">
-		<div class="flex gap-2">
+		<div class="flex gap-2 flex-col md:flex-row">
 			<div class="flex-1">
 				<Card.Root>
 					<Card.Header>
 						<Card.Description>Students Enrolled</Card.Description>
-						<Card.Title class="text-4xl">{studentCount}</Card.Title>
+						<Card.Title class="lg:text-4xl md:text-3xl text-2xl">{studentCount}</Card.Title>
 					</Card.Header>
 				</Card.Root>
 			</div>
@@ -30,7 +30,7 @@
 				<Card.Root>
 					<Card.Header>
 						<Card.Description>Money</Card.Description>
-						<Card.Title class="text-4xl">₱ {totalRevenue.toFixed(2)}</Card.Title>
+						<Card.Title class="lg:text-4xl md:text-3xl text-2xl">₱ {totalRevenue.toFixed(2)}</Card.Title>
 					</Card.Header>
 				</Card.Root>
 			</div>

@@ -172,3 +172,23 @@ export type EnrollmentFeeLevelDetails = Omit<EnrollmentFeeLevel, 'id'> & {
 	year_level_name: string;
 	enrollment_fee_name: string;
 }
+
+export type TuitionPlanLevels = {
+	id: string;
+	down_payment_amount: string;
+	monthly_payment_amount: string;
+	tuition_plan_id: string;
+	tuition_plan_name: string;
+	year_level_id: string;
+	year_level_name: string;
+}
+
+export type TuitionPlanLevelDetails = {
+	tuition_plan_level_id: string;
+	down_payment_amount: string;
+	monthly_payment_amount: string;
+	tuition_plan_id: string;
+	tuition_plan_name: string;
+	year_level_id: string;
+	year_level_name: string;
+}

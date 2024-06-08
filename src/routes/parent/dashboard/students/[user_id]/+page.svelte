@@ -9,7 +9,7 @@
 	$: setContext('gradesForm', data.gradesForm);
 </script>
 
-<ContentLayout>
+<ContentLayout class="flex-col xl:flex-row">
 	<ProfileStudent
 		props={{
 			familyMembers: data.studentFamilyMembers,
